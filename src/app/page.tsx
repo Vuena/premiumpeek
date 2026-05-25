@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { CtaButton } from "@/components/ui/cta-button"
 import { Users, Calendar, ShieldCheck, Clock, FileText, Star, ArrowRight, Sparkles, Smartphone, CheckCircle } from "lucide-react"
 import { CREDIT_COST_POST, CREDIT_EARN_PER_TEST, CREDIT_EARN_BONUS_FEEDBACK, CREDIT_SIGNUP_BONUS } from "@/lib/firestore"
 
@@ -70,11 +71,11 @@ export default function Home() {
               Google Play yayın şartlarını karşıla ve yayına geç. Ücretsiz başla.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/signup">
+              <CtaButton>
                 <Button size="lg" className="text-base gap-2 w-full sm:w-auto shadow-lg shadow-blue-600/20">
                   Ücretsiz Başla <ArrowRight size={18} />
                 </Button>
-              </Link>
+              </CtaButton>
               <Link href="/#how-it-works">
                 <Button variant="outline" size="lg" className="text-base w-full sm:w-auto border-zinc-300 dark:border-zinc-600">
                   Nasıl Çalışır?
@@ -152,7 +153,7 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
-                <Link href="/signup"><Button variant="outline" className="w-full">Ücretsiz Başla</Button></Link>
+                <CtaButton><Button variant="outline" className="w-full">Ücretsiz Başla</Button></CtaButton>
               </CardContent>
             </Card>
 
@@ -265,11 +266,11 @@ export default function Home() {
           <p className="text-lg text-muted mb-8 max-w-xl mx-auto">
             5.000+ geliştiricinin kullandığı sistemi sen de dene. Ücretsiz başla.
           </p>
-          <Link href="/signup">
+          <CtaButton>
             <Button size="lg" className="text-base gap-2 shadow-lg shadow-blue-600/20">
               Hemen Başla <ArrowRight size={18} />
             </Button>
-          </Link>
+          </CtaButton>
         </div>
       </section>
     </div>
