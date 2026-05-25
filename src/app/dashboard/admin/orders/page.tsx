@@ -35,7 +35,7 @@ export default function AdminOrdersPage() {
   }
 
   const handleAssignTesters = async (id: string) => {
-    const uids = await assignTestersToOrder(id, 25)
+    const uids = await assignTestersToOrder(id, 18)
     loadOrders()
   }
 

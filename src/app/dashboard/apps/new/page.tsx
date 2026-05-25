@@ -246,7 +246,7 @@ export default function NewAppPage() {
         <Card className="border-0 shadow-sm">
           <CardHeader>
             <CardTitle className="text-xl">Uygulamanı Yükle</CardTitle>
-            <CardDescription>25 profesyonel testçi tarafından 16 gün boyunca test edilmek üzere uygulamanı gönder.</CardDescription>
+            <CardDescription>18 pack üyesi tarafından 16 gün boyunca test edilmek üzere uygulamanı gönder.</CardDescription>
           </CardHeader>
           <CardContent>
             {error && <div className="mb-4 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 p-3 text-sm text-red-600 dark:text-red-400">{error}</div>}
@@ -351,7 +351,7 @@ export default function NewAppPage() {
                   <h3 className="font-semibold">Ücretsiz - Pack'e Katıl</h3>
                 </div>
                 <ul className="space-y-1.5 text-xs text-zinc-500 mb-4">
-                  <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 25 geliştirici birbirinin uygulamasını test eder</li>
+                  <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 18 geliştirici birbirinin uygulamasını test eder</li>
                   <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> Diğer uygulamaları her gün test etmen gerekir</li>
                   <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 16 gün sonra yayına hazır</li>
                 </ul>
@@ -365,7 +365,7 @@ export default function NewAppPage() {
                   <h3 className="font-semibold">$10 USDT - Profesyonel</h3>
                 </div>
                 <ul className="space-y-1.5 text-xs text-zinc-500 mb-4">
-                  <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 25 profesyonel testçi</li>
+                  <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 18 pack üyesi test eder</li>
                   <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> Diğer uygulamaları test etmene gerek yok</li>
                   <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 6 saat içinde başlangıç, 16 gün bekle</li>
                   <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> İade garantisi</li>

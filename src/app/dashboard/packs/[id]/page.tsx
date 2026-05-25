@@ -7,8 +7,9 @@ import { useRouter } from "next/navigation"
 import { useParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { getPackById, getUserApps, getPackApps, leavePack, type Pack, type App } from "@/lib/firestore"
-import { ArrowLeft, Users, Clock, Calendar, CheckCircle2, Loader2, LogOut, ExternalLink } from "lucide-react"
+import { getPackById, getUserApps, getPackApps, leavePack, confirmInstall, transitionInstallingToTesting, type Pack, type App } from "@/lib/firestore"
+import type { Timestamp } from "firebase/firestore"
+import { ArrowLeft, Users, Clock, Calendar, CheckCircle2, Loader2, LogOut, ExternalLink, Smartphone, Hourglass, Trophy } from "lucide-react"
 import Link from "next/link"
 
 export default function PackDetailPage() {
@@ -20,12 +21,44 @@ export default function PackDetailPage() {
   const [myApps, setMyApps] = useState<App[]>([])
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState(false)
+  const [installTimeLeft, setInstallTimeLeft] = useState("")
+
+  const isPremium = pack?.members.find(m => m.uid === user?.uid)?.type === "premium"
 
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
     loadData()
   }, [user, authLoading, packId])
+
+  useEffect(() => {
+    if (pack?.status !== "installing" || !pack?.id) return
+    const doTransition = async () => {
+      try {
+        await transitionInstallingToTesting(pack.id)
+        const fresh = await getPackById(pack.id)
+        if (fresh && fresh.status !== pack.status) setPack(fresh)
+      } catch {}
+    }
+    doTransition()
+    const interval = setInterval(doTransition, 30000)
+    return () => clearInterval(interval)
+  }, [pack?.status, pack?.id])
+
+  useEffect(() => {
+    if (pack?.status !== "installing" || !pack?.installDeadline) return
+    const updateTimer = () => {
+      const remaining = pack.installDeadline!.toMillis() - Date.now()
+      if (remaining <= 0) { setInstallTimeLeft("Süre doldu"); return }
+      const h = Math.floor(remaining / 3600000)
+      const m = Math.floor((remaining % 3600000) / 60000)
+      const s = Math.floor((remaining % 60000) / 1000)
+      setInstallTimeLeft(`${h}s ${m}d ${s}s`)
+    }
+    updateTimer()
+    const interval = setInterval(updateTimer, 1000)
+    return () => clearInterval(interval)
+  }, [pack?.status, pack?.installDeadline])
 
   const loadData = async () => {
     if (!user || !packId) return
@@ -34,7 +67,15 @@ export default function PackDetailPage() {
       getPackApps(packId as string),
       getUserApps(user.uid),
     ])
-    setPack(packData)
+    if (!packData) { setLoading(false); return }
+    if (packData.status === "installing") {
+      await transitionInstallingToTesting(packData.id)
+      const fresh = await getPackById(packData.id)
+      if (fresh) setPack(fresh)
+      else setPack(packData)
+    } else {
+      setPack(packData)
+    }
     setApps(packApps)
     setMyApps(userApps.filter(a => a.packId === packId))
     setLoading(false)
@@ -56,13 +97,56 @@ export default function PackDetailPage() {
     }
   }
 
+  const handleConfirmInstall = async () => {
+    if (!pack || !user) return
+    setActionLoading(true)
+    try {
+      await confirmInstall(pack.id, user.uid)
+      const fresh = await getPackById(pack.id)
+      if (fresh) setPack(fresh)
+      alert("Tüm uygulamalar yüklendi! Pack başlıyor...")
+    } catch (err: any) {
+      alert(err.message)
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
   if (loading) return <div className="flex items-center justify-center min-h-[40vh]"><Loader2 className="h-8 w-8 animate-spin text-zinc-400" /></div>
   if (!pack) return <div className="text-center py-16 text-zinc-500">Pack bulunamadı.</div>
 
   if (!isMember) { router.push("/dashboard"); return null }
-  if (myApps.length === 0) { router.push("/dashboard/apps/new"); return null }
+  if (myApps.length === 0 && !isPremium && pack.status === "testing") { router.push("/dashboard/apps/new"); return null }
 
-  const daysCompleted = pack.status === "active" ? pack.currentDay - 1 : pack.status === "completed" ? pack.totalDays : 0
+  const daysCompleted = pack.status === "testing" ? pack.currentDay - 1 : pack.status === "completed" ? pack.totalDays : 0
+
+  const myMemberInfo = pack.members.find(m => m.uid === user?.uid)
+  const myInstallConfirmed = myMemberInfo?.installConfirmed
+
+  const phaseSteps = [
+    { label: "Kayıt", status: "forming", icon: Users, done: pack.members.length >= pack.maxMembers },
+    { label: "Yükleme", status: "installing", icon: Smartphone, done: pack.status === "testing" || pack.status === "completed" || (pack.status === "installing" && myMemberInfo?.type !== "premium" && pack.members.filter(m => m.type === "free").every(m => m.installConfirmed)) },
+    { label: "Test", status: "testing", icon: Clock, done: pack.status === "testing" || pack.status === "completed" },
+    { label: "Bitiş", status: "completed", icon: Trophy, done: pack.status === "completed" },
+  ]
+
+  const currentPhaseIndex = phaseSteps.findIndex(p =>
+    p.status === pack.status || (pack.status === "installing" && p.status === "installing")
+  )
+
+  const statusColors: Record<string, string> = {
+    forming: "bg-yellow-100 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-400",
+    installing: "bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400",
+    testing: "bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400",
+    completed: "bg-purple-100 dark:bg-purple-950/30 text-purple-700 dark:text-purple-400",
+  }
+
+  const statusLabels: Record<string, string> = {
+    forming: "Oluşuyor",
+    installing: "Yükleme Aşaması",
+    testing: "Test Aşaması",
+    completed: "Tamamlandı",
+  }
 
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
@@ -70,21 +154,21 @@ export default function PackDetailPage() {
         <ArrowLeft size={16} /> Panele Dön
       </Link>
 
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <h1 className="text-2xl font-bold">{pack.name}</h1>
-            <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${
-              pack.status === "active" ? "bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400" :
-              pack.status === "completed" ? "bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400" :
-              "bg-yellow-100 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-400"
-            }`}>
-              {pack.status === "forming" ? "Oluşuyor" : pack.status === "active" ? "Aktif" : "Tamamlandı"}
+            <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${statusColors[pack.status] || ""}`}>
+              {statusLabels[pack.status]}
             </span>
+            {isPremium && (
+              <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400">Premium</span>
+            )}
           </div>
         </div>
         <div className="flex gap-2">
-          {isMember && (
+          {isMember && pack.status === "forming" && (
             <Button onClick={handleLeave} disabled={actionLoading} variant="destructive" className="gap-2">
               <LogOut size={16} /> Ayrıl
             </Button>
@@ -92,13 +176,35 @@ export default function PackDetailPage() {
         </div>
       </div>
 
-      {/* Progress */}
+      {/* 4-Phase Timeline */}
+      <Card className="border-0 shadow-sm mb-8">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            {phaseSteps.map((phase, i) => (
+              <div key={phase.status} className="flex flex-col items-center flex-1">
+                <div className={`flex h-10 w-10 items-center justify-center rounded-full mb-2 ${
+                  i < currentPhaseIndex ? "bg-green-100 dark:bg-green-950/30 text-green-600" :
+                  i === currentPhaseIndex ? "bg-blue-100 dark:bg-blue-950/30 text-blue-600 ring-2 ring-blue-400" :
+                  "bg-zinc-100 dark:bg-zinc-800 text-zinc-400"
+                }`}>
+                  {i < currentPhaseIndex ? <CheckCircle2 className="h-5 w-5" /> : <phase.icon className="h-5 w-5" />}
+                </div>
+                <span className={`text-xs font-medium ${
+                  i <= currentPhaseIndex ? "text-zinc-900 dark:text-white" : "text-zinc-400"
+                }`}>{phase.label}</span>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
           { icon: Users, label: "Üyeler", value: `${pack.members.length}/${pack.maxMembers}` },
-          { icon: Calendar, label: "Durum", value: pack.status === "forming" ? "Bekliyor" : `${pack.currentDay}/${pack.totalDays} Gün` },
+          { icon: Calendar, label: "Durum", value: pack.status === "forming" ? "Bekliyor" : `${pack.currentDay || 0}/${pack.totalDays} Gün` },
           { icon: Clock, label: "İlerleme", value: pack.status === "forming" ? "-" : `${daysCompleted}/${pack.totalDays}` },
-          { icon: CheckCircle2, label: "Test Edilen", value: `${apps.length} uygulama` },
+          { icon: CheckCircle2, label: "Uygulamalar", value: `${apps.length}` },
         ].map((s) => (
           <Card key={s.label} className="border-0 shadow-sm">
             <CardContent className="p-5 flex items-center gap-4">
@@ -114,6 +220,74 @@ export default function PackDetailPage() {
         ))}
       </div>
 
+      {/* Installation Phase */}
+      {pack.status === "installing" && !isPremium && (
+        <Card className="border-0 shadow-sm mb-8 border-l-4 border-l-blue-500">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Hourglass className="h-5 w-5 text-blue-600" />
+              <h2 className="font-semibold text-lg">Yükleme Aşaması</h2>
+            </div>
+
+            <div className="mb-4">
+              <p className="text-sm text-muted mb-1">Kalan süre</p>
+              <p className={`text-2xl font-bold font-mono ${installTimeLeft === "Süre doldu" ? "text-red-600" : "text-blue-600"}`}>
+                {installTimeLeft || "Hesaplanıyor..."}
+              </p>
+            </div>
+
+            <p className="text-sm text-muted mb-4">
+              Aşağıdaki tüm uygulamaları telefonuna yükle. Hepsi yüklendikten sonra "Hepsi Yüklendi" butonuna bas.
+            </p>
+
+            {apps.length === 0 ? (
+              <div className="text-center py-6 text-zinc-400">
+                <p className="text-sm">Henüz uygulama yüklenmemiş. Diğer üyeler uygulamalarını ekledikçe burada görünecek.</p>
+              </div>
+            ) : (
+              <div className="space-y-3 mb-6">
+                {apps.map((app) => {
+                  const isMyApp = app.uid === user?.uid
+                  return (
+                    <div key={app.id} className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800">
+                      <div className="h-8 w-8 rounded-lg bg-blue-100 dark:bg-blue-950/30 flex items-center justify-center text-blue-600 text-xs font-bold shrink-0">
+                        {app.appName[0]?.toUpperCase() || "?"}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{app.appName}{isMyApp ? " (senin)" : ""}</p>
+                        <p className="text-xs text-zinc-500 truncate">{app.packageName}</p>
+                      </div>
+                      <a href={app.googlePlayLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 shrink-0">
+                        <ExternalLink size={16} />
+                      </a>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+
+            {apps.length > 0 && (
+              <Button onClick={handleConfirmInstall} disabled={actionLoading} className="gap-2 w-full sm:w-auto">
+                {actionLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 size={16} />}
+                Hepsi Yüklendi
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {pack.status === "installing" && isPremium && (
+        <Card className="border-0 shadow-sm mb-8 border-l-4 border-l-amber-500">
+          <CardContent className="p-6">
+            <h2 className="font-semibold text-lg mb-2">Premium Üye</h2>
+            <p className="text-sm text-muted">
+              Premium üye olduğun için yükleme yapmana gerek yok. Diğer üyeler uygulamaları yüklerken bekle.
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Content Grid */}
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Members */}
         <Card className="border-0 shadow-sm">
@@ -126,9 +300,19 @@ export default function PackDetailPage() {
                     {member.displayName[0]?.toUpperCase() || "?"}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{member.displayName}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium truncate">{member.displayName}</p>
+                      {member.type === "premium" && (
+                        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400">Premium</span>
+                      )}
+                      {member.uid === pack.createdBy && (
+                        <span className="text-[10px] text-zinc-500">Kurucu</span>
+                      )}
+                    </div>
                     <p className="text-xs text-zinc-500">
-                      {member.uid === pack.createdBy ? "Kurucu" : "Üye"}
+                      {pack.status === "installing" && !member.installConfirmed && member.type === "free" ? "Yüklemedi" :
+                       pack.status === "installing" && member.installConfirmed ? "Yükledi ✓" :
+                       member.type === "premium" ? "Premium" : "Üye"}
                     </p>
                   </div>
                 </div>
@@ -142,7 +326,7 @@ export default function PackDetailPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-semibold text-lg">Uygulamalar ({apps.length})</h2>
-              {isMember && pack.status === "active" && (
+              {pack.status === "testing" && !isPremium && (
                 <Link href="/dashboard/apps/new">
                   <Button size="sm">Uygulama Ekle</Button>
                 </Link>

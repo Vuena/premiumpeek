@@ -5,12 +5,12 @@ export function Footer() {
     <footer className="border-t border-cardborder bg-subtle">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          <div className="col-span-2 md:col-span-1">
+          <div className="col-span-2 md:col-span-1 sm:col-span-2">
             <Link href="/" className="flex items-center gap-2 font-bold text-lg mb-3">
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-xs font-bold">P</div>
               PremiumPeek
             </Link>
-            <p className="text-sm text-muted max-w-xs">
+            <p className="text-sm text-muted max-w-xs sm:max-w-none">
               Geliştiricilerin Google Play yayın şartlarını kolayca karşılaması için kurulmuş test topluluğu.
             </p>
           </div>

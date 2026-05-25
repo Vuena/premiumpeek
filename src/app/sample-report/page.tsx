@@ -17,7 +17,7 @@ export default function SampleReportPage() {
       <p className="text-zinc-600 dark:text-zinc-400 mb-8">Profesyonel test hizmetimizde aldığınız raporun bir örneği.</p>
 
       <div className="border border-zinc-200 dark:border-zinc-700 rounded-2xl overflow-hidden shadow-sm">
-        <div className="bg-zinc-50 dark:bg-zinc-900 px-6 py-4 border-b border-zinc-200 dark:border-zinc-700 flex items-center justify-between">
+        <div className="bg-zinc-50 dark:bg-zinc-900 px-6 py-4 border-b border-zinc-200 dark:border-zinc-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
           <div>
             <h2 className="font-semibold">Test Raporu - Örnek Uygulama</h2>
             <p className="text-xs text-muted">Tarih: 25 Mayıs 2026 | Paket: com.example.app</p>
@@ -26,6 +26,7 @@ export default function SampleReportPage() {
         </div>
 
         <div className="p-6">
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-zinc-100 dark:bg-zinc-800">
@@ -50,11 +51,12 @@ export default function SampleReportPage() {
               ))}
             </tbody>
           </table>
+          </div>
 
           <div className="mt-6 pt-4 border-t border-zinc-200 dark:border-zinc-700">
             <h3 className="font-semibold text-sm mb-2">Google Play Başvuru Formu Yanıtları</h3>
             <div className="space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
-              <p><strong>Test süreci:</strong> 25 testçi, 16 gün, günlük aktif katılım</p>
+              <p><strong>Test süreci:</strong> 18 testçi, 16 gün, günlük aktif katılım</p>
               <p><strong>Geri bildirim:</strong> 5 hata raporu, 3 UI/UX iyileştirmesi, 2 öneri</p>
               <p><strong>Testçi yorumları:</strong> Olumlu geri bildirimler, uygulama başarıyla test edildi</p>
               <p><strong>Sonuç:</strong> Google Play yayın şartları fazlasıyla karşılandı</p>

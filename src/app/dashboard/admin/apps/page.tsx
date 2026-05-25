@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { collection, getDocs, query, orderBy, doc, deleteDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
-import { Loader2, ArrowLeft, Trash2, ExternalLink, Clock, CheckCircle2, AlertCircle } from "lucide-react"
+import { Loader2, ArrowLeft, Trash2, ExternalLink, Clock, CheckCircle2, Hourglass } from "lucide-react"
 import Link from "next/link"
 
 export default function AdminAppsPage() {
@@ -41,7 +41,8 @@ export default function AdminAppsPage() {
     switch (s) {
       case "testing": return <Clock className="h-4 w-4 text-green-600" />
       case "completed": return <CheckCircle2 className="h-4 w-4 text-blue-600" />
-      default: return <AlertCircle className="h-4 w-4 text-yellow-600" />
+      case "pending": return <Hourglass className="h-4 w-4 text-yellow-600" />
+      default: return <Hourglass className="h-4 w-4 text-zinc-400" />
     }
   }
 

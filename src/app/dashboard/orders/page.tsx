@@ -72,7 +72,7 @@ export default function OrdersPage() {
             <CreditCard className="h-12 w-12 mx-auto mb-4 text-zinc-300 dark:text-zinc-600" />
             <h2 className="text-lg font-semibold mb-2">Henüz siparişin yok</h2>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">
-              Profesyonel test hizmeti ile 25 testçiyi 6 saat içinde uygulamana atayalım.
+              Profesyonel test hizmeti ile               18 testçiyi pack'ine ekleyelim uygulamana atayalım.
             </p>
             <Link href="/purchase"><Button>Hızlı Test Başlat ($10 USDT)</Button></Link>
           </CardContent>
@@ -80,9 +80,9 @@ export default function OrdersPage() {
       ) : (
         <div className="space-y-4">
           {orders.map((order: any) => (
-            <div key={order.id} className="flex items-stretch gap-2">
-              <Link href={`/dashboard/orders/${order.id}`} className="flex-1">
-                <Card className="border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer h-full">
+            <div key={order.id} className="relative group">
+              <Link href={`/dashboard/orders/${order.id}`}>
+                <Card className="border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
                   <CardContent className="p-5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
@@ -96,19 +96,24 @@ export default function OrdersPage() {
                           <p className="text-xs text-zinc-500">{order.packageName}</p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusColors[order.status] || ""}`}>
-                          {statusLabels[order.status] || order.status}
-                        </span>
-                        <p className="text-xs text-zinc-400 mt-1">{order.amount} {order.currency}</p>
+                      <div className="flex items-center gap-3">
+                        {(order.status === "awaiting_payment" || order.status === "paid") && (
+                          <button onClick={(e) => { e.preventDefault(); handleDelete(order.id, e) }}
+                            className="flex items-center gap-1 text-xs text-zinc-400 hover:text-red-600 transition-colors cursor-pointer" title="Siparişi Sil">
+                            <Trash2 size={14} /> Sil
+                          </button>
+                        )}
+                        <div className="text-right">
+                          <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusColors[order.status] || ""}`}>
+                            {statusLabels[order.status] || order.status}
+                          </span>
+                          <p className="text-xs text-zinc-400 mt-1">{order.amount} {order.currency}</p>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
               </Link>
-              <button onClick={(e) => handleDelete(order.id, e)} className="h-full w-10 flex items-center justify-center rounded-xl border border-zinc-200 dark:border-zinc-700 text-zinc-400 hover:text-red-600 hover:border-red-300 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer shrink-0" title="Siparişi Sil">
-                <Trash2 size={16} />
-              </button>
             </div>
           ))}
         </div>

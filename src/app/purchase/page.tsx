@@ -10,7 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { ShieldCheck, Loader2, ArrowLeft, CheckCircle, Copy } from "lucide-react"
 import Link from "next/link"
 import { auth, db } from "@/lib/firebase"
-import { addDoc, collection, doc, updateDoc, serverTimestamp } from "firebase/firestore"
+import { addDoc, collection, doc, updateDoc, getDoc, serverTimestamp } from "firebase/firestore"
+import { getFormingPacks, joinPack, submitApp } from "@/lib/firestore"
 
 const USDT_WALLET = process.env.NEXT_PUBLIC_USDT_WALLET || ""
 const USDT_PRICE = parseInt(process.env.NEXT_PUBLIC_USDT_PRICE || "10")
@@ -89,6 +90,7 @@ export default function PurchasePage() {
     setLoading(true)
     try {
       if (!auth?.currentUser || !orderData) throw new Error("Giriş yapmalısın")
+      const user = auth.currentUser
 
       const orderRef = doc(db!, "orders", orderData.orderId)
       await updateDoc(orderRef, {
@@ -96,6 +98,34 @@ export default function PurchasePage() {
         status: "paid",
         paidAt: serverTimestamp(),
       })
+
+      // Add to forming pack as premium member
+      const snap = await getDoc(orderRef)
+      const order = snap.data()
+      let packId = ""
+      if (order) {
+        const formingPacks = await getFormingPacks()
+        if (formingPacks.length > 0) {
+          try {
+            await joinPack(formingPacks[0].id, user, "premium")
+            packId = formingPacks[0].id
+            const appId = await submitApp({
+              uid: user.uid,
+              appName: order.appName || form.appName,
+              packageName: order.packageName,
+              description: "",
+              category: "",
+              language: "",
+              googlePlayLink: order.googlePlayLink || form.googlePlayLink,
+              instructions: order.instructions || form.instructions,
+              packId: formingPacks[0].id,
+            })
+            await updateDoc(orderRef, { packId, appId })
+          } catch (err: any) {
+            console.error("Premium pack join error:", err.message)
+          }
+        }
+      }
 
       setStep("success")
     } catch (err: any) {
@@ -109,13 +139,12 @@ export default function PurchasePage() {
   if (!user) { router.push("/login"); return null }
 
   const benefits = [
-    "25 profesyonel testçi",
-    "6 saat içinde başlangıç",
+    "16-18 pack üyesi test eder",
+    "Premium üye, test yapmana gerek yok",
     "16 gün tam test süreci",
     "Detaylı hata raporları",
     "Google Play form yanıtları",
-    "%100 memnuniyet garantisi",
-    "14 gün tam iade garantisi",
+    "Google Play reddinde iade garantisi",
     "7/24 öncelikli destek",
   ]
 
@@ -143,7 +172,7 @@ export default function PurchasePage() {
                   <div className="flex items-center gap-2 bg-white dark:bg-zinc-900 rounded-xl p-3 border border-zinc-300 dark:border-zinc-600">
                     <code className="text-xs font-mono font-bold flex-1 select-all break-all">{orderData.walletAddress}</code>
                     <button onClick={() => { navigator.clipboard.writeText(orderData.walletAddress) }}
-                      className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer">
+                      className="h-11 w-11 flex items-center justify-center rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer">
                       <Copy size={16} className="text-zinc-500" />
                     </button>
                   </div>
@@ -187,10 +216,11 @@ export default function PurchasePage() {
             </div>
             <h2 className="text-xl font-bold mb-2">Ödeme Kaydedildi! 🎉</h2>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6">
-              TX Hash'in kaydedildi. Admin onayından sonra 25 testçin 6 saat içinde atanacak.
+              TX Hash'in kaydedildi. Admin onayından sonra bir pack'e premium üye olarak ekleneceksin.
+              Uygulaman 16-18 pack üyesi tarafından test edilecek.
               Sipariş durumunu panelden takip edebilirsin.
             </p>
-            <div className="flex gap-3 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link href="/dashboard/orders"><Button>Siparişlerim</Button></Link>
               <Link href="/dashboard"><Button variant="outline">Panele Dön</Button></Link>
             </div>
@@ -209,8 +239,8 @@ export default function PurchasePage() {
       <div className="grid md:grid-cols-2 gap-8">
         <Card className="border-0 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-xl">Hızlı Test Satın Al</CardTitle>
-            <CardDescription>25 testçi, 16 gün, $10 USDT</CardDescription>
+            <CardTitle className="text-xl">Premium Pack Satın Al</CardTitle>
+            <CardDescription>16-18 testçi, 16 gün, $10 USDT</CardDescription>
           </CardHeader>
           <CardContent>
             {error && (
@@ -266,11 +296,11 @@ export default function PurchasePage() {
               <h3 className="font-semibold text-lg mb-2">Nasıl Çalışır?</h3>
               <ol className="space-y-3">
                 {[
-                  "Formu doldur, sipariş oluştur",
-                  "$10 USDT gönder (TRC-20)",
-                  "TX Hash'ini yapıştır, onayla",
-                  "25 testçin 6 saat içinde atanır",
-                  "16 gün sonra rapor + form cevapları",
+                    "Formu doldur, sipariş oluştur",
+                    "$10 USDT gönder (TRC-20)",
+                    "TX Hash'ini yapıştır, onayla",
+                    "Premium üye olarak pack'e eklenirsin",
+                    "16-18 kişi uygulamanı 16 gün test eder",
                 ].map((s, i) => (
                   <li key={i} className="flex items-start gap-2 text-sm text-zinc-600 dark:text-zinc-400">
                     <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-950 text-blue-600 text-xs font-bold">{i + 1}</span>

@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     default: "PremiumPeek - Google Play Test Topluluğu",
     template: "%s | PremiumPeek",
   },
-  description: "Google Play yayın şartlarını karşılamak için 25 geliştiriciden oluşan pack'lerle uygulamanızı test edin. Ücretsiz topluluk ve profesyonel test hizmeti.",
+  description: "Google Play yayın şartlarını karşılamak için 18 geliştiriciden oluşan pack'lerle uygulamanızı test edin. Ücretsiz topluluk ve profesyonel test hizmeti.",
   keywords: ["google play testing", "closed testing", "12 testers", "production access", "app testing", "google play test kullanıcısı", "premiumpeek", "google play test topluluğu"],
   authors: [{ name: "PremiumPeek" }],
   metadataBase: new URL(siteUrl),
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "PremiumPeek - Google Play Test Topluluğu",
-    description: "25 geliştiriciden oluşan pack'lerle uygulamanı test et, Google Play'de yayınla.",
+    description: "18 geliştiriciden oluşan pack'lerle uygulamanı test et, Google Play'de yayınla.",
     url: siteUrl,
     siteName: "PremiumPeek",
     locale: "tr_TR",
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "PremiumPeek - Google Play Test Topluluğu",
-    description: "25 geliştiriciden oluşan pack'lerle uygulamanı test et, Google Play'de yayınla.",
+    description: "18 geliştiriciden oluşan pack'lerle uygulamanı test et, Google Play'de yayınla.",
     images: ["/og-image.svg"],
   },
   robots: {
@@ -92,7 +92,7 @@ export default function RootLayout({
             "@type": "WebSite",
             name: "PremiumPeek",
             url: siteUrl,
-            description: "Google Play Test Topluluğu - Uygulamanızı 25 geliştiriciyle test edin, Google Play'de yayınlayın.",
+            description: "Google Play Test Topluluğu - Uygulamanızı 18 geliştiriciyle test edin, Google Play'de yayınlayın.",
             inLanguage: "tr",
             potentialAction: {
               "@type": "SearchAction",

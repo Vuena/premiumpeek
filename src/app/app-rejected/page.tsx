@@ -27,7 +27,7 @@ export default function AppRejectedPage() {
 
       <div className="grid sm:grid-cols-2 gap-6 mb-8">
         {[
-          { title: "25 Gerçek Testçi", desc: "Google'ın istediği 12'den fazla. Garantili katılım." },
+          { title: "18 Gerçek Testçi", desc: "Google'ın istediği 12'den fazla. Garantili katılım." },
           { title: "16 Gün Süreç", desc: "14 gün şartını +2 gün buffer ile karşıla." },
           { title: "Günlük Aktivite", desc: "Testçiler her gün uygulamanı açar." },
           { title: "Rapor Desteği", desc: "Başvuru formu yanıtları hazır." },

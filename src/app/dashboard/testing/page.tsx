@@ -6,7 +6,7 @@ import { useAuth } from "@/context/AuthContext"
 import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { getUserPacks, getPackApps, recordTestingActivity, type Pack, type App } from "@/lib/firestore"
+import { getUserPacks, getPackApps, recordTestingActivity, type Pack, type App, type PackMember } from "@/lib/firestore"
 import { Clock, CheckCircle2, ExternalLink, Loader2, Smartphone } from "lucide-react"
 
 export default function TestingPage() {
@@ -24,19 +24,25 @@ export default function TestingPage() {
     loadTesting()
   }, [user, authLoading])
 
+  const [isPremium, setIsPremium] = useState(false)
+
   const loadTesting = async () => {
     if (!user) return
     const userPacks = await getUserPacks(user.uid)
-    const activePacks = userPacks.filter(p => p.status === "active")
+    const activePacks = userPacks.filter(p => p.status === "testing")
 
     const packMap: Record<string, Pack> = {}
     let allApps: App[] = []
+    let premium = false
     for (const pack of activePacks) {
       packMap[pack.id] = pack
+      const me = pack.members.find(m => m.uid === user.uid)
+      if (me?.type === "premium") premium = true
       const packApps = await getPackApps(pack.id)
       allApps = [...allApps, ...packApps.filter(a => a.uid !== user.uid)]
     }
 
+    setIsPremium(premium)
     setAppsToTest(allApps)
     setPacksMap(packMap)
     setLoading(false)
@@ -54,7 +60,7 @@ export default function TestingPage() {
     if (pack && user) {
       try {
         const fb = feedbacks[appId] || ""
-        await recordTestingActivity(packId, user.uid, pack.currentDay, fb.length)
+        await recordTestingActivity(packId, user.uid, pack.currentDay, fb)
       } catch (err) {
         console.error("Failed to record testing activity:", err)
       }
@@ -72,13 +78,23 @@ export default function TestingPage() {
         </p>
       </div>
 
+      {isPremium && (
+        <Card className="border-0 shadow-sm mb-6 border-l-4 border-l-amber-500">
+          <CardContent className="p-5">
+            <p className="text-sm text-muted">
+              Premium üye olduğun için test yapman gerekmiyor. Uygulaman pack üyeleri tarafından test ediliyor.
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
       {appsToTest.length === 0 ? (
         <Card className="border-0 shadow-sm">
           <CardContent className="p-12 text-center">
             <Clock className="h-12 w-12 mx-auto mb-4 text-zinc-300 dark:text-zinc-600" />
             <h2 className="text-lg font-semibold mb-2">Bugün test edilecek uygulama yok</h2>
             <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              Aktif bir pack'te değilsin veya pack'teki herkes uygulama yüklememiş.
+              {isPremium ? "Pack'te test aşamasında bir uygulama bulunmuyor." : "Aktif bir pack'te değilsin veya pack'teki herkes uygulama yüklememiş."}
             </p>
           </CardContent>
         </Card>

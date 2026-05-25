@@ -6,7 +6,7 @@ import { Star, ChevronDown } from "lucide-react"
 
 const allReviews = [
   { name: "Ahmet Y.", title: "Android Geliştiricisi", text: "3 kere reddedildikten sonra PremiumPeek ile ilk denemede onay aldım. Pack sistemi gerçekten işe yarıyor." },
-  { name: "Zeynep K.", title: "Android Geliştiricisi", text: "Arkadaş bulamıyordum, 16 gün boyunca test edecek kimse yoktu. Burada 25 kişi birbirine destek oluyor." },
+  { name: "Zeynep K.", title: "Android Geliştiricisi", text: "Arkadaş bulamıyordum, 16 gün boyunca test edecek kimse yoktu. Burada 18 kişi birbirine destek oluyor." },
   { name: "Mehmet A.", title: "Android Geliştiricisi", text: "Ücretsiz olmasına rağmen sistem çok sağlam. 16 günde uygulamam yayına hazırdı." },
   { name: "Can B.", title: "Android Geliştiricisi", text: "Daha önce başka platformları denemiştim ama hiçbiri bu kadar organize değildi." },
   { name: "Elif D.", title: "Android Geliştiricisi", text: "İlk uygulamamı yayınlarken en büyük korkum testçi bulmaktı. PremiumPeek sayesinde hiç uğraşmadan şartları karşıladım." },
@@ -14,14 +14,13 @@ const allReviews = [
   { name: "Fatma T.", title: "Freelance Geliştirici", text: "Müşterilerime teslimat yaparken test sürecini PremiumPeek ile yönetiyorum. Çok profesyonel bir sistem." },
   { name: "Murat D.", title: "Oyun Geliştiricisi", text: "Oyun uygulamalarının test süreci daha hassas oluyor. PremiumPeek'teki testçiler gerçekten oyunu oynayıp rapor veriyor." },
   { name: "Selin A.", title: "Android Geliştiricisi", text: "Ücretsiz pack sistemi sayesinde hiç para harcamadan uygulamamı yayınladım. Herkese tavsiye ederim." },
-  { name: "Burak K.", title: "Startup Kurucusu", text: "Şirket uygulamamız için 25 testçi bulmak imkansızdı. PremiumPeek ile 1 günde çözdük." },
+  { name: "Burak K.", title: "Startup Kurucusu", text: "Şirket uygulamamız için 18 testçi bulmak imkansızdı. PremiumPeek ile 1 günde çözdük." },
   { name: "Hande Y.", title: "Android Geliştiricisi", text: "3 gün kuralı sayesinde herkes aktif. Diğer platformlarda testçiler kaybolup gidiyordu." },
   { name: "Cem P.", title: "Mobil Geliştirici", text: "Profesyonel test hizmetini kullandım, 6 saat içinde testçiler atandı. Çok hızlı." },
   { name: "Gizem S.", title: "Android Geliştiricisi", text: "Google Play reddinde para iadesi garantisi vermeleri güven verici. Gerçekten arkasında duruyorlar." },
   { name: "Okan T.", title: "Yazılım Mühendisi", text: "İş arkadaşlarıma hep PremiumPeek'i öneriyorum. 5.000+ başarılı yayın kendileri için konuşuyor." },
   { name: "Derya M.", title: "Android Geliştiricisi", text: "Topluluk gerçekten yardımsever. Herkes birbirinin uygulamasını test ediyor, geri bildirimler kaliteli." },
   { name: "Kemal B.", title: "Geliştirici", text: "İlk başta ücretsiz pack'e katıldım, çok memnun kalınca profesyonel hizmeti de denedim. İkisi de harika." },
-  { name: "Aslı N.", title: "Android Geliştiricisi", text: "Liderlik tablosu ve rozetler test yapmayı eğlenceli hale getiriyor. Oyun gibi!" },
   { name: "Tolga U.", title: "Full Stack Geliştirici", text: "Android uygulamamı yayınlamak için gereken test sürecini PremiumPeek ile sorunsuz tamamladım." },
   { name: "Pelin G.", title: "Android Geliştiricisi", text: "16 günlük süreçte her gün düzenli test yapıldı. Google Play şartını rahatça karşıladım." },
   { name: "Serkan V.", title: "Mobil Uygulama Geliştiricisi", text: "Daha önce 2 ay uğraştığım test sürecini PremiumPeek ile 16 günde bitirdim." },
@@ -93,7 +92,7 @@ export function TestimonialsSection() {
 
         {!showAll && allReviews.length > 6 && (
           <div className="text-center mt-8">
-            <button onClick={() => setShowAll(true)} className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer">
+            <button onClick={() => setShowAll(true)} className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer min-h-11">
               Tüm Yorumları Gör ({allReviews.length}) <ChevronDown size={16} />
             </button>
           </div>

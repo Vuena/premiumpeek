@@ -12,7 +12,7 @@ export default function BlogPage() {
       title: "Google Play Kapalı Test Şartı 2026",
       desc: "Google Play'in kapalı test şartı nedir, nasıl karşılanır? Adım adım rehber.",
       date: "Mayıs 2026",
-      content: "Google Play, Kasım 2023'ten sonra açılan bireysel geliştirici hesapları için yeni uygulama yayınlarken kapalı test şartı getirmiştir. Bu şarta göre, uygulamanızı yayınlamadan önce 12 gerçek kullanıcı tarafından en az 14 ardışık gün boyunca test edilmesi gerekmektedir. PremiumPeek pack sistemi ile 25 gerçek geliştirici ile bu şartı 16 günde fazlasıyla karşılayabilirsiniz. Ayrıca profesyonel test hizmetimizle 6 saat içinde test sürecinize başlayabilirsiniz."
+      content: "Google Play, Kasım 2023'ten sonra açılan bireysel geliştirici hesapları için yeni uygulama yayınlarken kapalı test şartı getirmiştir. Bu şarta göre, uygulamanızı yayınlamadan önce 12 gerçek kullanıcı tarafından en az 14 ardışık gün boyunca test edilmesi gerekmektedir. PremiumPeek pack sistemi ile 18 gerçek geliştirici ile bu şartı 16 günde fazlasıyla karşılayabilirsiniz. Ayrıca profesyonel test hizmetimizle pack'e premium üye olarak katılabilirsiniz."
     },
     {
       title: "12 Testçi Bulma Rehberi",
@@ -22,21 +22,21 @@ export default function BlogPage() {
     },
     {
       title: "Pack Sistemi Nasıl Çalışır?",
-      desc: "25 geliştiriciden oluşan pack'lerle test sürecinizi nasıl hızlandıracağınızı öğrenin.",
+      desc: "18 geliştiriciden oluşan pack'lerle test sürecinizi nasıl hızlandıracağınızı öğrenin.",
       date: "Mart 2026",
-      content: "Pack sistemi, 25 geliştiricinin bir araya gelerek 16 gün boyunca birbirlerinin uygulamalarını test ettiği bir yapıdır. Her pack üyesi, her gün diğer 24 uygulamayı test eder ve geri bildirim sağlar. 3 gün üst üste test yapmayan üyeler pack'ten atılır ve 1 ay boyunca yeni bir pack'e katılamaz. Bu sayede tüm üyelerin aktif kalması garanti altına alınır. Pack'iniz dolduğunda (25 üye) otomatik olarak başlar ve 16 günün sonunda Google Play şartını karşılamış olursunuz."
+      content: "Pack sistemi, 18 geliştiricinin bir araya gelerek 16 gün boyunca birbirlerinin uygulamalarını test ettiği bir yapıdır. Her pack üyesi, her gün diğer 17 uygulamayı test eder ve geri bildirim sağlar. Aksatma halinde üyeler pack'ten atılır ve 1 ay boyunca yeni bir pack'e katılamaz. Bu sayede tüm üyelerin aktif kalması garanti altına alınır. Pack'iniz dolduğunda (18 üye) otomatik olarak başlar ve 16 günün sonunda Google Play şartını karşılamış olursunuz."
     },
     {
       title: "Google Play Reddi Sonrası Ne Yapmalı?",
       desc: "Uygulamanız Google Play'den red yediyse izlemeniz gereken adımlar.",
       date: "Şubat 2026",
-      content: "Google Play'den red yemek can sıkıcı olsa da çoğu durumda çözümü basittir. Red nedenini dikkatlice okuyun: genellikle eksik test süresi, yetersiz testçi sayısı veya politika ihlali sebebiyledir. Test süreniz yetersizse PremiumPeek ile hızlıca 25 testçiye ulaşarak yeniden başvuru yapabilirsiniz. Google Play üretim erişiminiz reddedilirse, profesyonel test hizmetimizde ödediğiniz ücret koşulsuz iade edilir."
+      content: "Google Play'den red yemek can sıkıcı olsa da çoğu durumda çözümü basittir. Red nedenini dikkatlice okuyun: genellikle eksik test süresi, yetersiz testçi sayısı veya politika ihlali sebebiyledir. Test süreniz yetersizse PremiumPeek ile hızlıca 18 testçiye ulaşarak yeniden başvuru yapabilirsiniz. Google Play üretim erişiminiz reddedilirse, profesyonel test hizmetimizde ödediğiniz ücret koşulsuz iade edilir."
     },
     {
       title: "Ücretsiz vs Profesyonel Test: Hangisi Sana Uygun?",
       desc: "Bütçene ve zamanına göre doğru test yöntemini seç.",
       date: "Ocak 2026",
-      content: "PremiumPeek'te iki seçenek sunuyoruz. Ücretsiz topluluk pack'leri: 25 kişilik gruplarda karşılıklı test yaparsınız, ücretsizdir ancak sıra beklemeniz gerekebilir. Profesyonel test hizmeti ($10 USDT): 6 saat içinde 25 profesyonel testçi atanır, 16 gün boyunca test edilirsiniz, üstelik Google Play reddinde koşulsuz iade garantisi. Acelesi olanlar için profesyonel, zamanı olanlar için ücretsiz pack idealdir."
+      content: "PremiumPeek'te iki seçenek sunuyoruz. Ücretsiz topluluk pack'leri: 18 kişilik gruplarda karşılıklı test yaparsınız, ücretsizdir ancak sıra beklemeniz gerekebilir. Profesyonel test hizmeti ($10 USDT): pack'e premium üye olarak katılır, 16 gün boyunca test edilirsiniz, üstelik Google Play reddinde koşulsuz iade garantisi. Acelesi olanlar için profesyonel, zamanı olanlar için ücretsiz pack idealdir."
     },
     {
       title: "Kapalı Test Sürecinde Sık Yapılan Hatalar",
@@ -48,7 +48,7 @@ export default function BlogPage() {
       title: "Google Play Testçi Bulma Siteleri Karşılaştırması",
       desc: "En popüler test platformlarının karşılaştırmalı analizi.",
       date: "Kasım 2025",
-      content: "Piyasada birçok test platformu bulunuyor. Bazıları ücretli testçi kiralama hizmeti sunarken, bazıları karşılıklı test sistemine dayanır. PremiumPeek'in farkı: tamamen ücretsiz pack sistemi, 25 gerçek geliştirici (Google'ın istediğinin 2 katı), 3 gün kuralı ile aktif katılım garantisi, detaylı geri bildirim ve hata raporları. Profesyonel hizmetimizde ise $10 USDT ile 6 saat içinde başlangıç ve Google Play reddinde iade garantisi sunuyoruz."
+      content: "Piyasada birçok test platformu bulunuyor. Bazıları ücretli testçi kiralama hizmeti sunarken, bazıları karşılıklı test sistemine dayanır. PremiumPeek'in farkı: tamamen ücretsiz pack sistemi, 18 gerçek geliştirici, aksatma halinde atılma kuralı ile aktif katılım garantisi, detaylı geri bildirim ve hata raporları. Profesyonel hizmetimizde ise $10 USDT ile pack'e premium üyelik ve Google Play reddinde iade garantisi sunuyoruz."
     },
     {
       title: "Uygulamanızı Google Play'e Yüklemeye Hazır mı?",

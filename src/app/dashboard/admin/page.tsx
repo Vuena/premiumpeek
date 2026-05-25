@@ -36,7 +36,7 @@ export default function AdminPage() {
       users: usersSnap.size,
       packs: packsSnap.size,
       apps: appsSnap.size,
-      activePacks: activePacksSnap.docs.filter(d => d.data().status === "active").length,
+      activePacks: activePacksSnap.docs.filter(d => d.data().status === "testing" || d.data().status === "installing").length,
     })
     setLoading(false)
   }

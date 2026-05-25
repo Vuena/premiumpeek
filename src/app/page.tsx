@@ -9,37 +9,36 @@ import type { ReactNode } from "react"
 export default function Home() {
   const stats = [
     { value: "5.000+", label: "Uygulama Yayınlandı" },
-    { value: "%99", label: "Başarı Oranı" },
+    { value: "%95+", label: "Başarı Oranı" },
     { value: "50.000+", label: "Topluluk Üyesi" },
     { value: "180+", label: "Ülke" },
   ]
 
   const steps = [
-    { icon: Users, title: "Pack'e Katıl", desc: "25 geliştiriciden oluşan bir pack'e katıl veya yeni bir pack oluştur." },
+    { icon: Users, title: "Pack'e Katıl", desc: "18 geliştiriciden oluşan bir pack'e katıl. Kaydolunca sana otomatik bir pack atanır." },
     { icon: Smartphone, title: "Uygulamanı Yükle", desc: "Google Play test linkini gir, talimatlarını ekle. Pack'teki herkes senin uygulamanı test etmeye başlasın." },
-    { icon: Clock, title: "16 Gün Boyunca Test Et", desc: "Her gün pack'teki diğer 24 uygulamayı test et. 3 gün aksatırsan pack'ten atılırsın." },
-    { icon: ShieldCheck, title: "Google Play'de Yayınla", desc: "24+ gerçek testçi, 16+ gün aktivite ile Google Play şartını karşıla. Yayına hazırsın!" },
+    { icon: Clock, title: "16 Gün Boyunca Test Et", desc: "Her gün pack'teki diğer uygulamaları test et. Aksatma halinde pack'ten atılırsın." },
+    { icon: ShieldCheck, title: "Google Play'de Yayınla", desc: "18 gerçek testçi, 16+ gün aktivite ile Google Play şartını karşıla. Yayına hazırsın!" },
   ]
 
   const features = [
-    { icon: Users, title: "25 Gerçek Testçi", desc: "Google'ın istediği 12'den iki kat fazla. Herkes gerçek bir geliştirici." },
+    { icon: Users, title: "18 Gerçek Testçi", desc: "Google'ın istediği 12'den fazla. Herkes gerçek bir geliştirici." },
     { icon: Calendar, title: "16 Gün Süreç", desc: "Google Play'in 14 günlük test şartını fazlasıyla karşıla. +2 gün garanti." },
     { icon: Clock, title: "Günlük Aktivite", desc: "Pack üyeleri her gün uygulamanı açar. Pasif yükleme değil, gerçek kullanım." },
     { icon: FileText, title: "Geri Bildirim", desc: "Her testçi yorum yapar, hataları raporlar. Uygulamanı iyileştir." },
-    { icon: ShieldCheck, title: "Sorumluluk", desc: "3 gün aksatınca atılma + 1 ay pack yasağı. Herkes taahhüdünü yerine getirir." },
-    { icon: Sparkles, title: "Oyunlaştırma", desc: "Rozetler ve başarılarla test etmek eğlenceli." },
+    { icon: ShieldCheck, title: "Sorumluluk", desc: "Aksatma halinde atılma + 1 ay pack yasağı. Herkes taahhüdünü yerine getirir." },
   ]
 
   const faqs: { q: string; a: string | ReactNode }[] = [
-    { q: "Pack sistemi nedir?", a: "Pack, 25 geliştiriciden oluşan ve 16 gün boyunca birbirlerinin uygulamalarını test etmeyi taahhüt eden gruptur. Her üye diğer 24 uygulamayı her gün açar ve geri bildirim verir. Google, 12 testçi ve 14 gün istiyor — biz 25 testçi ve 16 gün ile garantili hizmet sunuyoruz." },
+    { q: "Pack sistemi nedir?", a: "Pack, 18 geliştiriciden oluşan ve 16 gün boyunca birbirlerinin uygulamalarını test etmeyi taahhüt eden gruptur. Her üye diğer 17 uygulamayı her gün açar ve geri bildirim verir. Google, 12 testçi ve 14 gün istiyor — biz 18 testçi ve 16 gün ile garantili hizmet sunuyoruz." },
     { q: "Google Play'in şartı ne?", a: "Yeni hesaplar, yayın öncesinde 12 gerçek kullanıcı tarafından 14 ardışık gün test edilmelidir." },
-    { q: "Kaç kişi bir pack'te yer alır?", a: "Her pack 25 geliştiriciden oluşur. 16 gün boyunca birbirinizin uygulamalarını test eder ve Google Play şartını karşılarsınız. Biri test etmezse bile 24 testçiniz olur — Google'ın istediği 12'den hala fazla." },
+    { q: "Kaç kişi bir pack'te yer alır?", a: "Her pack 18 geliştiriciden oluşur. 16 gün boyunca birbirinizin uygulamalarını test eder ve Google Play şartını karşılarsınız. Biri test etmezse bile 17 testçiniz olur — Google'ın istediği 12'den hala fazla." },
     { q: "Ya birisi test etmezse?", a: "3 gün üst üste test etmeyen pack'ten atılır ve 1 ay boyunca yeni bir pack'e katılamaz. Bu sayede herkesin aktif kalması sağlanır." },
-    { q: "Ücretli ve ücretsiz test arasındaki fark nedir?", a: "Ücretsiz pack'te 25 geliştirici karşılıklı test yapar, sıra beklemeniz gerekebilir. Profesyonel test ($10 USDT) ile 6 saat içinde 25 testçi atanır, 16 gün test edilirsiniz ve Google Play reddinde koşulsuz iade garantisi sunarız." },
-    { q: "Ödeme sonrası test ne zaman başlar?", a: "Profesyonel test hizmetimizde ödeme onaylandıktan sonra 6 saat içinde 25 testçi uygulamanızı test etmeye başlar. Ücretsiz pack'te ise pack dolduğunda (25 üye) otomatik başlar." },
+    { q: "Ücretli ve ücretsiz test arasındaki fark nedir?", a: "Ücretsiz pack'te 18 geliştirici karşılıklı test yapar, sıra beklemeniz gerekebilir. Profesyonel test ($10 USDT) ile pack'e premium üye olarak eklenirsin, 16 gün test edilirsin ve Google Play reddinde koşulsuz iade garantisi sunarız." },
+    { q: "Ödeme sonrası test ne zaman başlar?", a: "Profesyonel test hizmetimizde ödeme onaylandıktan sonra pack'e premium üye olarak eklenirsin. Ücretsiz pack'te ise pack dolduğunda (18 üye) otomatik başlar." },
     { q: "Testçiler uygulamamı kaldırırsa ne olur?", a: "Google politikasına göre, bir testçi uygulamanızı yükledikten sonra kaldırsa bile 14 gün boyunca 'test ediyor' olarak sayılır. Bu nedenle endişelenmenize gerek yok." },
     { q: "Her uygulama için ayrı test gerekli mi?", a: "Evet, Google Play'de yayınlamak istediğiniz her yeni uygulama için ayrı bir kapalı test süreci tamamlamanız gerekir. Bir uygulama için test yapmak diğer uygulamaları kapsamaz." },
-    { q: "Ücretli hizmet ne kadar?", a: "Profesyonel test hizmetimiz $10 USDT (TRC-20). 25 testçiniz olur, 16 gün boyunca test edilirsiniz, üstelik Google Play reddinde koşulsuz iade garantisi." },
+    { q: "Ücretli hizmet ne kadar?", a: "Profesyonel test hizmetimiz $10 USDT (TRC-20). 18 pack üyesi uygulamanızı test eder, üstelik Google Play reddinde koşulsuz iade garantisi." },
     { q: "Uygulamam her dilde test edilebilir mi?", a: "Evet. Tüm dillerdeki uygulamalar desteklenir. Geri bildirimler Türkçe veya İngilizce verilir." },
     { q: "Organizasyon hesabım var, gerekli mi?", a: "Google Play'in 12 testçi / 14 gün şartı, Kasım 2023 sonrası açılan bireysel hesaplar için geçerlidir. Organizasyon hesapları bu şarta tabi değildir." },
   ]
@@ -67,11 +66,11 @@ export default function Home() {
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Testçi Bulma Derdine Son</span>
             </h1>
             <p className="mt-6 text-lg sm:text-xl text-muted max-w-2xl mx-auto">
-              25 geliştiriciden oluşan pack&apos;lerle uygulamanı 16 günde test et, 
+              18 geliştiriciden oluşan pack&apos;lerle uygulamanı 16 günde test et, 
               Google Play yayın şartlarını karşıla ve yayına geç. Ücretsiz başla.
             </p>
             <div className="mt-10 flex flex-col items-center gap-6">
-              <div className="flex flex-col sm:flex-row items-center gap-4">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <CtaButton>
                   <Button size="lg" className="text-base gap-2 w-full sm:w-auto shadow-lg shadow-blue-600/20">
                     Ücretsiz Başla <ArrowRight size={18} />
@@ -83,9 +82,10 @@ export default function Home() {
                   </Button>
                 </Link>
               </div>
+              <div className="text-sm text-zinc-400 dark:text-zinc-500">ya da</div>
               <Link href="/purchase" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-medium px-5 py-3 text-sm shadow-lg shadow-green-500/30 transition-all hover:scale-105">
                 <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-[10px] font-bold">$</span>
-                $10 USDT ile hemen 25 profesyonel testçi bul
+                $10 USDT ile pack'e premium üye ol
                 <ArrowRight size={16} />
               </Link>
               <Link href="/#pricing" className="text-sm text-muted hover:text-foreground underline underline-offset-2 pt-1">
@@ -162,10 +162,9 @@ export default function Home() {
                 <p className="text-4xl font-bold mb-6">₺0</p>
                 <ul className="space-y-3 mb-8">
                   {[
-                    "25 kişilik pack sistemi",
+                    "18 kişilik pack sistemi",
                     "Günlük test takibi",
-                    "16 gün süreç",
-                    "Hata raporları"
+                    "16 gün süreç"
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-2 text-sm">
                       <CheckCircle className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
@@ -184,7 +183,7 @@ export default function Home() {
                 <p className="text-4xl font-bold mb-1">$10</p>
                 <p className="text-sm text-muted mb-6">USDT (TRC-20) · tek seferlik</p>
                 <ul className="space-y-3 mb-8">
-                   {["25 profesyonel testçi", "6 saat içinde başlangıç", "16 gün tam test süreci", "Detaylı hata raporları", "Google Play form yanıtları", "%100 garanti", "İade garantisi", "7/24 öncelikli destek"].map((item) => (
+                   {["18 pack üyesi test eder", "Premium üye, test yapmana gerek yok", "16 gün tam test süreci", "Detaylı hata raporları", "Google Play form yanıtları", "Google Play reddinde iade", "7/24 öncelikli destek"].map((item) => (
                     <li key={item} className="flex items-start gap-2 text-sm">
                       <CheckCircle className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
                       <span>{item}</span>
@@ -261,8 +260,8 @@ export default function Home() {
                 <div className="space-y-6">
                   {[
                     { label: "Başlama Süresi", value: "Hemen / 6 Saat", good: true },
-                    { label: "Testçi Sayısı", value: "25 Garantili", good: true },
-                    { label: "Test Garantisi", value: "3 Gün Kuralı", good: true },
+                    { label: "Testçi Sayısı", value: "18 Garantili", good: true },
+                    { label: "Test Garantisi", value: "İade Garantisi", good: true },
                     { label: "Raporlama", value: "Detaylı Geri Bildirim", good: true },
                     { label: "Maliyet", value: "Ücretsiz / $10", good: true },
                   ].map(item => (

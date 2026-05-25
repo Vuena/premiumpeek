@@ -63,7 +63,7 @@ export function Navbar() {
 
           {user ? (
             <div className="relative" ref={dropdownRef}>
-              <button onClick={() => setDropdown(!dropdown)} className="flex items-center gap-2 h-9 px-3 rounded-xl hover:bg-subtle transition-colors cursor-pointer">
+              <button onClick={() => setDropdown(!dropdown)} className="flex items-center gap-2 h-11 px-3 rounded-xl hover:bg-subtle transition-colors cursor-pointer">
                 <div className="h-6 w-6 rounded-full bg-zinc-300 dark:bg-zinc-600 flex items-center justify-center text-xs font-medium text-white">
                   {user.displayName?.[0] || user.email?.[0] || "?"}
                 </div>
@@ -84,7 +84,7 @@ export function Navbar() {
             </Link>
           )}
 
-          <button onClick={() => setOpen(!open)} className="md:hidden h-9 w-9 flex items-center justify-center rounded-xl hover:bg-subtle cursor-pointer">
+          <button onClick={() => setOpen(!open)} className="md:hidden h-11 w-11 flex items-center justify-center rounded-xl hover:bg-subtle cursor-pointer">
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
@@ -97,7 +97,7 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
-          <button onClick={toggleTheme} className="flex items-center gap-2 text-sm text-muted cursor-pointer">
+          <button onClick={toggleTheme} className="flex items-center gap-2 text-sm text-muted cursor-pointer min-h-11">
             {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
             {theme === "dark" ? "Açık Tema" : "Koyu Tema"}
           </button>

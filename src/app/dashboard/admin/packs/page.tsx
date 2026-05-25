@@ -39,8 +39,9 @@ export default function AdminPacksPage() {
 
   const statusIcon = (s: string) => {
     switch (s) {
-      case "active": return <Clock className="h-4 w-4 text-green-600" />
+      case "testing": return <Clock className="h-4 w-4 text-green-600" />
       case "completed": return <CheckCircle2 className="h-4 w-4 text-blue-600" />
+      case "installing": return <Clock className="h-4 w-4 text-blue-600" />
       default: return <AlertCircle className="h-4 w-4 text-yellow-600" />
     }
   }
@@ -48,7 +49,8 @@ export default function AdminPacksPage() {
   const statusLabel = (s: string) => {
     switch (s) {
       case "forming": return "Oluşuyor"
-      case "active": return "Aktif"
+      case "installing": return "Yükleme"
+      case "testing": return "Test"
       case "completed": return "Tamamlandı"
       default: return s
     }
@@ -69,14 +71,15 @@ export default function AdminPacksPage() {
             <CardContent className="p-4 flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${
-                  p.status === "active" ? "bg-green-50 dark:bg-green-950/30" :
-                  p.status === "completed" ? "bg-blue-50 dark:bg-blue-950/30" : "bg-yellow-50 dark:bg-yellow-950/30"
+                  p.status === "testing" ? "bg-green-50 dark:bg-green-950/30" :
+                  p.status === "installing" ? "bg-blue-50 dark:bg-blue-950/30" :
+                  p.status === "completed" ? "bg-purple-50 dark:bg-purple-950/30" : "bg-yellow-50 dark:bg-yellow-950/30"
                 }`}>{statusIcon(p.status)}</div>
                 <div>
                   <p className="font-medium">{p.name}</p>
                   <p className="text-xs text-zinc-500">
-                    {statusLabel(p.status)} · {p.members?.length || 0}/{p.maxMembers || 16} üye · Kod: {p.code}
-                    {p.status === "active" && ` · Gün ${p.currentDay}/${p.totalDays}`}
+                    {statusLabel(p.status)} · {p.members?.length || 0}/{p.maxMembers || 18} üye
+                    {(p.status === "testing" || p.status === "installing") && ` · Gün ${p.currentDay}/${p.totalDays}`}
                   </p>
                 </div>
               </div>

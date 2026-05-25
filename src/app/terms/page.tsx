@@ -41,7 +41,7 @@ export default function TermsPage() {
         <section>
           <h2 className="text-xl font-semibold mb-3">3. Pack Kuralları</h2>
           <ul className="list-disc list-inside space-y-2 text-muted text-sm">
-            <li>Her pack en fazla 25 üyeden oluşur.</li>
+            <li>Her pack en fazla 18 üyeden oluşur.</li>
             <li>Pack kurallarına uymayan kullanıcılar pack'ten çıkarılabilir.</li>
             <li>Pack yönetimi ve test süreci, platform tarafından belirlenen kurallar çerçevesinde yürütülür.</li>
             <li>Kötüye kullanım (bot, sahte hesap, hile) tespit edilirse hesap kalıcı olarak askıya alınır.</li>
@@ -52,7 +52,7 @@ export default function TermsPage() {
         <section>
           <h2 className="text-xl font-semibold mb-3">4. Kripto Ödeme ve Hızlı Test Hizmeti</h2>
           <ul className="list-disc list-inside space-y-2 text-muted text-sm">
-            <li>Hızlı Test hizmeti $10 USDT (TRC-20) karşılığında 25 testçi ve 16 gün test sürecini kapsar.</li>
+            <li>Hızlı Test hizmeti $10 USDT (TRC-20) karşılığında pack'e premium üyelik ve 16 gün test sürecini kapsar.</li>
             <li>Ödeme, belirtilen USDT cüzdan adresine yapılır. TX Hash kaydı kullanıcı tarafından sağlanır.</li>
             <li>Ödeme onaylandıktan sonra 6 saat içinde testçiler atanır. Test süreci 16 gün sürer.</li>
             <li>TX Hash doğrulaması admin tarafından yapılır. Yanlış/geçersiz TX Hash durumunda sipariş iptal edilebilir.</li>

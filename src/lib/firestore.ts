@@ -26,21 +26,25 @@ import type { User } from "firebase/auth"
 export interface Pack {
   id: string
   name: string
-  status: "forming" | "active" | "completed"
+  status: "forming" | "installing" | "testing" | "completed"
   startDate?: Timestamp
   endDate?: Timestamp
   currentDay: number
   maxMembers: number
   totalDays: number
   members: PackMember[]
+  memberUids: string[]
   createdBy: string
   createdAt: Timestamp
+  installDeadline?: Timestamp
 }
 
 export interface PackMember {
   uid: string
   displayName: string
   photoURL?: string
+  type: "free" | "premium"
+  installConfirmed: boolean
   joinedAt: Timestamp
 }
 
@@ -60,18 +64,6 @@ export interface App {
   createdAt: Timestamp
 }
 
-export interface DailyActivity {
-  id: string
-  packId: string
-  uid: string
-  appId: string
-  day: number
-  status: "pending" | "done"
-  feedback?: string
-  bugsFound?: string[]
-  completedAt?: Timestamp
-}
-
 // ==================== PACK FUNCTIONS ====================
 
 export async function createPack(name: string, user: User) {
@@ -80,35 +72,59 @@ export async function createPack(name: string, user: User) {
     name,
     status: "forming",
     currentDay: 0,
-    maxMembers: 25,
+    maxMembers: 18,
     totalDays: 16,
     members: [
       {
         uid: user.uid,
         displayName: user.displayName || user.email || "İsimsiz",
         photoURL: user.photoURL || "",
+        type: "free",
+        installConfirmed: false,
         joinedAt: new Date(),
       },
     ],
     memberUids: [user.uid],
     createdBy: user.uid,
     createdAt: serverTimestamp(),
+    installDeadline: null,
   }
   const packRef = await addDoc(collection(d, "packs"), data)
   return { id: packRef.id }
 }
 
-export async function joinPack(packId: string, user: User) {
+export async function joinPack(packId: string, user: User, memberType: "free" | "premium" = "free") {
   const d = db!
   const snap = await getDoc(doc(d, "packs", packId))
   if (!snap.exists()) throw new Error("Pack bulunamadı.")
-  return doJoinPack(d, packId, snap.data(), user)
+  return doJoinPack(d, packId, snap.data(), user, memberType)
 }
 
-async function doJoinPack(d: any, packId: string, packData: any, user: User) {
+async function doJoinPack(d: any, packId: string, packData: any, user: User, memberType: "free" | "premium" = "free") {
   if (packData.status !== "forming") throw new Error("Bu pack artık yeni üye kabul etmiyor.")
-  if (packData.members.length >= packData.maxMembers) throw new Error("Bu pack dolu (25/25).")
-  if (packData.members.some((m: any) => m.uid === user.uid)) throw new Error("Zaten bu pack'in üyesisin.")
+  if (packData.members.length >= packData.maxMembers) throw new Error(`Bu pack dolu (${packData.maxMembers}/${packData.maxMembers}).`)
+  const existingMember = packData.members.find((m: any) => m.uid === user.uid)
+  if (existingMember) {
+    if (existingMember.type === "premium") throw new Error("Zaten premium üyesin.")
+    await runTransaction(d, async (transaction) => {
+      const ref = doc(d, "packs", packId)
+      const snap = await transaction.get(ref)
+      if (!snap.exists()) throw new Error("Pack bulunamadı.")
+      const current = snap.data()
+      const premiumCount = current.members.filter((m: any) => m.type === "premium").length
+      if (premiumCount >= 2) throw new Error("Premium kontenjanı dolu (max 2).")
+      const updatedMembers = current.members.map((m: any) =>
+        m.uid === user.uid ? { ...m, type: "premium" } : m
+      )
+      transaction.update(ref, { members: updatedMembers })
+    })
+    return { packId, packName: packData.name, started: false, upgraded: true }
+  }
+  // Premium slot check
+  if (memberType === "premium") {
+    const currentPremium = packData.members.filter((m: any) => m.type === "premium").length
+    if (currentPremium >= 2) throw new Error("Premium kontenjanı dolu (max 2).")
+  }
 
   let started = false
   await runTransaction(d, async (transaction) => {
@@ -119,11 +135,17 @@ async function doJoinPack(d: any, packId: string, packData: any, user: User) {
     if (current.status !== "forming") throw new Error("Bu pack artık yeni üye kabul etmiyor.")
     if (current.members.length >= current.maxMembers) throw new Error("Pack doldu.")
     if (current.members.some((m: any) => m.uid === user.uid)) throw new Error("Zaten üyesin.")
+    if (memberType === "premium") {
+      const premiumCount = current.members.filter((m: any) => m.type === "premium").length
+      if (premiumCount >= 2) throw new Error("Premium kontenjanı dolu (max 2).")
+    }
 
     const newMember = {
       uid: user.uid,
       displayName: user.displayName || user.email || "İsimsiz",
       photoURL: user.photoURL || "",
+      type: memberType,
+      installConfirmed: false,
       joinedAt: new Date(),
     }
 
@@ -132,9 +154,9 @@ async function doJoinPack(d: any, packId: string, packData: any, user: User) {
       transaction.update(ref, {
         members: arrayUnion(newMember),
         memberUids: arrayUnion(user.uid),
-        status: "active",
-        startDate: new Date(),
-        currentDay: 1,
+        status: "installing",
+        installDeadline: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        currentDay: 0,
       })
       started = true
     } else {
@@ -153,17 +175,18 @@ async function doJoinPack(d: any, packId: string, packData: any, user: User) {
         name: `PremiumPeek Pack (${dateStr})`,
         status: "forming",
         currentDay: 0,
-        maxMembers: 25,
+        maxMembers: 18,
         totalDays: 16,
         members: [],
         memberUids: [],
         createdBy: "",
         createdAt: serverTimestamp(),
+        installDeadline: null,
       })
     }
   }
 
-  return { packId, packName: packData.name, started }
+  return { packId, packName: packData.name, started, upgraded: false }
 }
 
 export async function leavePack(packId: string, uid: string) {
@@ -174,6 +197,7 @@ export async function leavePack(packId: string, uid: string) {
     const snap = await transaction.get(packRef)
     if (!snap.exists()) throw new Error("Pack bulunamadı.")
     const data = snap.data()
+    if (data.status !== "forming") throw new Error("Sadece oluşma aşamasındaki pack'lerden ayrılabilirsin.")
     const member = data.members.find((m: PackMember) => m.uid === uid)
     if (!member) throw new Error("Bu pack'in üyesi değilsin.")
 
@@ -212,12 +236,13 @@ export async function getFormingPacks() {
       name: `PremiumPeek Pack (${dateStr})`,
       status: "forming",
       currentDay: 0,
-      maxMembers: 25,
+      maxMembers: 18,
       totalDays: 16,
       members: [],
       memberUids: [],
       createdBy: "",
       createdAt: serverTimestamp(),
+      installDeadline: null,
     })
     const snap2 = await getDocs(q)
     packs = snap2.docs.map(doc => ({ id: doc.id, ...doc.data() } as Pack))
@@ -234,22 +259,57 @@ export async function getPackById(packId: string) {
   return { id: snap.id, ...snap.data() } as Pack
 }
 
-export async function startPack(packId: string, uid: string) {
+export async function confirmInstall(packId: string, uid: string) {
   const d = db!
-  const packRef = doc(d, "packs", packId)
   await runTransaction(d, async (transaction) => {
-    const snap = await transaction.get(packRef)
+    const ref = doc(d, "packs", packId)
+    const snap = await transaction.get(ref)
     if (!snap.exists()) throw new Error("Pack bulunamadı.")
     const data = snap.data()
-    if (data.createdBy !== uid) throw new Error("Sadece pack sahibi başlatabilir.")
-    if (data.status !== "forming") throw new Error("Pack zaten başlatılmış.")
-    if (data.members.length < 2) throw new Error("En az 2 üye gerekli.")
+    if (data.status !== "installing") throw new Error("Yükleme aşamasında değil.")
 
-    transaction.update(packRef, {
-      status: "active",
-      startDate: new Date(),
-      currentDay: 1,
-    })
+    const member = data.members.find((m: PackMember) => m.uid === uid)
+    if (!member) throw new Error("Bu pack'in üyesi değilsin.")
+    if (member.type === "premium") throw new Error("Premium üyelerin yükleme yapması gerekmez.")
+    if (member.installConfirmed) throw new Error("Zaten onayladın.")
+
+    const updatedMembers = data.members.map((m: PackMember) =>
+      m.uid === uid ? { ...m, installConfirmed: true } : m
+    )
+    const allConfirmed = updatedMembers.every((m: PackMember) => m.type === "premium" || m.installConfirmed)
+
+    if (allConfirmed) {
+      transaction.update(ref, {
+        members: updatedMembers,
+        status: "testing",
+        startDate: new Date(),
+        currentDay: 1,
+      })
+    } else {
+      transaction.update(ref, { members: updatedMembers })
+    }
+  })
+}
+
+export async function transitionInstallingToTesting(packId: string) {
+  const d = db!
+  await runTransaction(d, async (transaction) => {
+    const ref = doc(d, "packs", packId)
+    const snap = await transaction.get(ref)
+    if (!snap.exists()) throw new Error("Pack bulunamadı.")
+    const data = snap.data()
+    if (data.status !== "installing") return
+
+    const allConfirmed = data.members.every((m: PackMember) => m.type === "premium" || m.installConfirmed)
+    const deadlinePassed = data.installDeadline?.toMillis() < Date.now()
+
+    if (allConfirmed || deadlinePassed) {
+      transaction.update(ref, {
+        status: "testing",
+        startDate: new Date(),
+        currentDay: 1,
+      })
+    }
   })
 }
 
@@ -305,29 +365,7 @@ export async function getPackApps(packId: string) {
 
 // ==================== ACTIVITY FUNCTIONS ====================
 
-export async function markTestingDone(activityId: string, feedback?: string, bugsFound?: string[]) {
-  const d = db!
-  await updateDoc(doc(d, "testingActivity", activityId), {
-    status: "done",
-    feedback: feedback || "",
-    bugsFound: bugsFound || [],
-    completedAt: serverTimestamp(),
-  })
-}
-
-export async function getTodayActivities(packId: string, uid: string, day: number) {
-  const d = db!
-  const q = query(
-    collection(d, "testingActivity"),
-    where("packId", "==", packId),
-    where("uid", "==", uid),
-    where("day", "==", day)
-  )
-  const snapshot = await getDocs(q)
-  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as DailyActivity))
-}
-
-export async function recordTestingActivity(packId: string, uid: string, day: number, feedbackLength = 0) {
+export async function recordTestingActivity(packId: string, uid: string, day: number, feedback = "") {
   const d = db!
   const activityId = `${packId}_${uid}_${day}`
   const ref = doc(d, "testingActivity", activityId)
@@ -340,6 +378,7 @@ export async function recordTestingActivity(packId: string, uid: string, day: nu
       transaction.set(ref, {
         packId, uid, day,
         status: "done",
+        feedback,
         completedAt: serverTimestamp(),
       })
 
@@ -398,7 +437,7 @@ export async function getAvailableTesters() {
   return snap.docs.map(doc => ({ uid: doc.id, ...doc.data() }))
 }
 
-export async function assignTestersToOrder(orderId: string, count: number = 25) {
+export async function assignTestersToOrder(orderId: string, count: number = 18) {
   const d = db!
   const testers = await getAvailableTesters()
   const selected = testers.slice(0, count)

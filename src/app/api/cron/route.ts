@@ -11,7 +11,7 @@ export async function GET() {
 
     const d = adminDb
     const now = new Date()
-    const packsSnap = await d.collection("packs").where("status", "==", "active").get()
+    const packsSnap = await d.collection("packs").where("status", "==", "testing").get()
     let processed = 0
 
     for (const packDoc of packsSnap.docs) {
@@ -19,13 +19,14 @@ export async function GET() {
       const packId = packDoc.id
       const currentDay = pack.currentDay || 1
 
-      if (currentDay > pack.totalDays) {
+      if (currentDay >= pack.totalDays) {
         await packDoc.ref.update({ status: "completed", endDate: now })
         processed++
         continue
       }
 
       for (const member of pack.members || []) {
+        if (member.type === "premium") continue
         const uid = member.uid
         const activityRef = d.collection("testingActivity")
         const activitySnap = await activityRef

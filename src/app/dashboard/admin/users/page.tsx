@@ -6,9 +6,9 @@ import { useAuth } from "@/context/AuthContext"
 import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { collection, getDocs, query, orderBy, doc, updateDoc, deleteDoc } from "firebase/firestore"
+import { collection, getDocs, query, orderBy, doc, updateDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
-import { Loader2, ArrowLeft, Ban, Trash2, Search } from "lucide-react"
+import { Loader2, ArrowLeft, Ban, Search } from "lucide-react"
 import Link from "next/link"
 
 export default function AdminUsersPage() {
@@ -34,13 +34,6 @@ export default function AdminUsersPage() {
   const toggleBan = async (uid: string, currentRole: string) => {
     const d = db!
     await updateDoc(doc(d, "users", uid), { role: currentRole === "banned" ? "user" : "banned" })
-    loadUsers()
-  }
-
-  const deleteUser = async (uid: string) => {
-    if (!confirm("Bu kullanıcıyı silmek istediğine emin misin?")) return
-    const d = db!
-    await deleteDoc(doc(d, "users", uid))
     loadUsers()
   }
 
@@ -108,9 +101,7 @@ export default function AdminUsersPage() {
                       <Button variant="ghost" size="sm" onClick={() => toggleBan(u.id, u.role)} title={u.role === "banned" ? "Banı kaldır" : "Banla"}>
                         <Ban size={14} className={u.role === "banned" ? "text-green-600" : "text-red-600"} />
                       </Button>
-                      <Button variant="ghost" size="sm" onClick={() => deleteUser(u.id)} title="Sil">
-                        <Trash2 size={14} className="text-red-600" />
-                      </Button>
+
                     </div>
                   </td>
                 </tr>

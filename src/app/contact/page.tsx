@@ -83,7 +83,7 @@ export default function ContactPage() {
             <textarea value={form.message} onChange={e => setForm({...form, message: e.target.value})} rows={4} required
               className="flex min-h-[100px] w-full rounded-xl border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-400" placeholder="Mesajın..." />
           </div>
-          <Button type="submit" disabled={sending} className="gap-2">
+          <Button type="submit" disabled={sending} className="w-full gap-2">
             {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
             {sending ? "Gönderiliyor..." : "Gönder"}
           </Button>

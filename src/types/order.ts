@@ -28,5 +28,5 @@ export interface Order {
 
 export const ORDER_PRICE_USDT = 10
 export const ORDER_CURRENCY = "USDT"
-export const ORDER_TESTER_COUNT = 25
+export const ORDER_TESTER_COUNT = 18
 export const ORDER_TOTAL_DAYS = 16

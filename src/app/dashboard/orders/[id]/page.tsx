@@ -85,7 +85,7 @@ export default function OrderDetailPage() {
               </div>
               <div>
                 <span className="text-zinc-500">Testçi</span>
-                <p className="font-medium">{order.testerCount || 0} / 25</p>
+                <p className="font-medium">{order.testerCount || 0} / 18</p>
               </div>
               {order.txHash && (
                 <div className="col-span-2">
