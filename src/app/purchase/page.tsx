@@ -9,7 +9,11 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { ShieldCheck, Loader2, ArrowLeft, CheckCircle, Copy, Clock, Smartphone, FileText, Star, MessageSquare } from "lucide-react"
 import Link from "next/link"
-import { auth } from "@/lib/firebase"
+import { auth, db } from "@/lib/firebase"
+import { addDoc, collection, doc, updateDoc, serverTimestamp } from "firebase/firestore"
+
+const USDT_WALLET = process.env.NEXT_PUBLIC_USDT_WALLET || ""
+const USDT_PRICE = parseInt(process.env.NEXT_PUBLIC_USDT_PRICE || "10")
 
 export default function PurchasePage() {
   const { user, loading: authLoading } = useAuth()
@@ -30,22 +34,37 @@ export default function PurchasePage() {
     setLoading(true)
 
     try {
-      const token = await auth?.currentUser?.getIdToken()
-      if (!token) throw new Error("Giriş yapmalısın")
+      if (!auth?.currentUser) throw new Error("Giriş yapmalısın")
 
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify(form),
+      const orderRef = await addDoc(collection(db!, "orders"), {
+        uid: auth.currentUser.uid,
+        userEmail: auth.currentUser.email || "",
+        userName: auth.currentUser.displayName || "",
+        appName: form.appName,
+        packageName: form.packageName,
+        googlePlayLink: form.googlePlayLink,
+        instructions: form.instructions || "",
+        amount: USDT_PRICE,
+        currency: "USDT",
+        status: "awaiting_payment",
+        walletAddress: USDT_WALLET,
+        txHash: "",
+        testers: [],
+        testerCount: 0,
+        currentDay: 0,
+        totalDays: 16,
+        reportIds: [],
+        createdAt: serverTimestamp(),
       })
 
-      const data = await res.json()
-      if (data.success) {
-        setOrderData(data)
-        setStep("payment")
-      } else {
-        setError(data.error || "Bir hata oluştu")
-      }
+      setOrderData({
+        orderId: orderRef.id,
+        walletAddress: USDT_WALLET,
+        amount: USDT_PRICE,
+        currency: "USDT",
+        network: "TRC-20",
+      })
+      setStep("payment")
     } catch (err: any) {
       setError(err.message || "Bir hata oluştu")
     } finally {
@@ -58,23 +77,18 @@ export default function PurchasePage() {
     setError("")
     setLoading(true)
     try {
-      const token = await auth?.currentUser?.getIdToken()
-      if (!token) throw new Error("Giriş yapmalısın")
+      if (!auth?.currentUser || !orderData) throw new Error("Giriş yapmalısın")
 
-      const res = await fetch("/api/verify-payment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ orderId: orderData?.orderId, txHash: txHash.trim() }),
+      const orderRef = doc(db!, "orders", orderData.orderId)
+      await updateDoc(orderRef, {
+        txHash: txHash.trim(),
+        status: "paid",
+        paidAt: serverTimestamp(),
       })
 
-      const data = await res.json()
-      if (data.success) {
-        setStep("success")
-      } else {
-        setError(data.error || "Doğrulama başarısız")
-      }
+      setStep("success")
     } catch (err: any) {
-      setError(err.message || "Bir hata oluştu")
+      setError(err.message || "Doğrulama başarısız")
     } finally {
       setLoading(false)
     }

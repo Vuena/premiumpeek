@@ -60,14 +60,14 @@ export default function Home() {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-blue-50/40 to-white dark:from-blue-950/10 dark:to-zinc-950" />
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 py-20 sm:py-32">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 py-12 sm:py-16">
           <div className="mx-auto max-w-3xl text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30 px-4 py-1.5 text-sm text-blue-700 dark:text-blue-400 mb-6">
               <Star className="h-4 w-4 fill-blue-500 text-blue-500" />
               <span>5.000+ uygulama başarıyla yayınlandı</span>
             </div>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-[1.1]">
-              Google Play&apos;de Yayınla
+              Google Play&apos;de Yayınlarken
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Testçi Bulma Derdine Son</span>
             </h1>
             <p className="mt-6 text-lg sm:text-xl text-muted max-w-2xl mx-auto">
@@ -83,6 +83,13 @@ export default function Home() {
               <Link href="/#how-it-works">
                 <Button variant="outline" size="lg" className="text-base w-full sm:w-auto border-zinc-300 dark:border-zinc-600">
                   Nasıl Çalışır?
+                </Button>
+              </Link>
+            </div>
+            <div className="mt-4">
+              <Link href="/purchase">
+                <Button variant="ghost" size="sm" className="text-sm text-blue-600 dark:text-blue-400 hover:underline gap-1">
+                  $10 ile hemen profesyonel testçi bul <ArrowRight size={14} />
                 </Button>
               </Link>
             </div>
