@@ -80,8 +80,10 @@ export default function NewAppPage() {
   const loadData = async () => {
     if (!user) return
     const userPacks = await getUserPacks(user.uid)
-    const activePacks = userPacks.filter(p => p.status === "active")
-    setPacks(activePacks)
+    setPacks(userPacks)
+    if (userPacks.length > 0 && !form.packId) {
+      setForm(f => ({ ...f, packId: userPacks[0].id }))
+    }
   }
 
   const handleIconUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -353,7 +355,6 @@ export default function NewAppPage() {
                   <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> Diğer uygulamaları her gün test etmen gerekir</li>
                   <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 16 gün sonra yayına hazır</li>
                 </ul>
-                {packs.length === 0 && <p className="text-xs text-amber-600">Aktif bir pack'in yok. Yeni bir pack oluşturulacak.</p>}
               </div>
 
               {/* Ücretli */}
@@ -367,7 +368,7 @@ export default function NewAppPage() {
                   <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 25 profesyonel testçi</li>
                   <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> Diğer uygulamaları test etmene gerek yok</li>
                   <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 6 saat içinde başlangıç, 16 gün bekle</li>
-                  <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 16 gün iade garantisi</li>
+                  <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> İade garantisi</li>
                 </ul>
               </div>
             </div>
