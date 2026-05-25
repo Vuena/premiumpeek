@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Bu siparişi silme yetkin yok" }, { status: 403 })
     }
 
-    if (order.status !== "awaiting_payment" && order.status !== "paid") {
+    if (order.status !== "awaiting_payment" && order.status !== "awaiting_confirmation" && order.status !== "paid") {
       return NextResponse.json({ error: "Bu sipariş silinemez" }, { status: 400 })
     }
 

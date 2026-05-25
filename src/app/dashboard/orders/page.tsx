@@ -42,14 +42,19 @@ export default function OrdersPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
-    loadOrders()
+    loadOrders().catch(() => setLoading(false))
   }, [user, authLoading])
 
   const loadOrders = async () => {
-    if (!user) return
-    const data = await getUserOrders(user.uid)
-    setOrders(data as any[])
-    setLoading(false)
+    try {
+      if (!user) return
+      const data = await getUserOrders(user.uid)
+      setOrders(data as any[])
+    } catch {
+      setOrders([])
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleDelete = async (orderId: string) => {
@@ -119,7 +124,7 @@ export default function OrdersPage() {
                           </span>
                           <p className="text-xs text-zinc-400 mt-1">{order.amount} {order.currency}</p>
                         </div>
-                        {(order.status === "awaiting_payment" || order.status === "paid") && (
+                        {(order.status === "awaiting_payment" || order.status === "awaiting_confirmation" || order.status === "paid") && (
                           <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleDelete(order.id) }}
                             className="flex h-11 w-11 items-center justify-center rounded-full bg-white dark:bg-zinc-800 shadow-sm border border-zinc-200 dark:border-zinc-700 text-zinc-400 hover:text-red-600 hover:border-red-300 transition-all shrink-0 cursor-pointer" title="Siparişi Sil">
                             <Trash2 size={13} />
