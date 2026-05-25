@@ -184,7 +184,7 @@ export default function Home() {
                 <p className="text-4xl font-bold mb-1">$10</p>
                 <p className="text-sm text-muted mb-6">USDT (TRC-20) · tek seferlik</p>
                 <ul className="space-y-3 mb-8">
-                  {["25 profesyonel testçi", "6 saat içinde başlangıç", "16 gün tam test süreci", "Detaylı hata raporları", "Google Play form yanıtları", "%100 garanti", "14 gün iade garantisi", "7/24 öncelikli destek"].map((item) => (
+                   {["25 profesyonel testçi", "6 saat içinde başlangıç", "16 gün tam test süreci", "Detaylı hata raporları", "Google Play form yanıtları", "%100 garanti", "İade garantisi", "7/24 öncelikli destek"].map((item) => (
                     <li key={item} className="flex items-start gap-2 text-sm">
                       <CheckCircle className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
                       <span>{item}</span>
