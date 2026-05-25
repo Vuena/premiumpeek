@@ -7,8 +7,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { STRIPE_PUBLISHABLE_KEY } from "@/lib/stripe"
-import { ShieldCheck, Loader2, CreditCard, ArrowLeft, CheckCircle } from "lucide-react"
+import { ShieldCheck, Loader2, ArrowLeft, CheckCircle, Copy, Building2, ClipboardList } from "lucide-react"
 import Link from "next/link"
 import { auth } from "@/lib/firebase"
 
@@ -18,6 +17,7 @@ export default function PurchasePage() {
   const [form, setForm] = useState({ appName: "", packageName: "", googlePlayLink: "", instructions: "" })
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const [result, setResult] = useState<{ orderId: string; bank: { name: string; branch: string; iban: string; holder: string; amount: string } } | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -38,8 +38,8 @@ export default function PurchasePage() {
       })
 
       const data = await res.json()
-      if (data.url) {
-        window.location.href = data.url
+      if (data.success) {
+        setResult(data)
       } else {
         setError(data.error || "Bir hata oluştu")
       }
@@ -61,6 +61,70 @@ export default function PurchasePage() {
     "%100 para iadesi garantisi",
     "7/24 öncelikli destek",
   ]
+
+  if (result) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 sm:px-6 py-16">
+        <Card className="border-0 shadow-sm text-center">
+          <CardContent className="p-8">
+            <div className="flex justify-center mb-4">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-950/30">
+                <ClipboardList className="h-8 w-8 text-green-600" />
+              </div>
+            </div>
+            <h2 className="text-xl font-bold mb-2">Sipariş Oluşturuldu!</h2>
+            <p className="text-sm text-muted mb-6">
+              Sipariş No: <span className="font-mono font-bold">{result.orderId.slice(0, 8)}</span>
+            </p>
+
+            <div className="rounded-2xl bg-zinc-100 dark:bg-[#121212] p-6 mb-6 text-left">
+              <h3 className="font-semibold flex items-center gap-2 mb-4">
+                <Building2 className="h-5 w-5 text-blue-600" />
+                Havale / EFT Bilgileri
+              </h3>
+              <div className="space-y-3 text-sm">
+                {[
+                  { label: "Banka", value: result.bank.name },
+                  { label: "Şube", value: result.bank.branch },
+                  { label: "Alıcı Adı", value: result.bank.holder },
+                  { label: "Tutar", value: result.bank.amount },
+                ].map(item => (
+                  <div key={item.label} className="flex justify-between py-2 border-b border-zinc-200 dark:border-zinc-700">
+                    <span className="text-muted">{item.label}</span>
+                    <span className="font-medium">{item.value}</span>
+                  </div>
+                ))}
+                <div className="pt-2">
+                  <label className="text-muted text-xs mb-1 block">IBAN</label>
+                  <div className="flex items-center gap-2 bg-white dark:bg-zinc-900 rounded-xl p-3 border border-zinc-300 dark:border-zinc-600">
+                    <code className="text-sm font-mono font-bold flex-1 select-all">{result.bank.iban}</code>
+                    <button onClick={() => { navigator.clipboard.writeText(result.bank.iban) }}
+                      className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer">
+                      <Copy size={16} className="text-muted" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-xl bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-800 p-4 mb-6 text-sm text-yellow-700 dark:text-yellow-400 text-left">
+              <strong>Ödeme sonrası:</strong> Dekontu <strong>info@premiumpeek.com</strong> adresine gönder veya admin tarafından onaylanmasını bekle. 
+              Ödeme onaylanınca test sürecin başlayacak.
+            </div>
+
+            <div className="flex gap-3 justify-center">
+              <Link href="/dashboard/orders">
+                <Button>Siparişlerim</Button>
+              </Link>
+              <Link href="/dashboard">
+                <Button variant="outline">Panele Dön</Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
@@ -100,11 +164,11 @@ export default function PurchasePage() {
                 />
               </div>
               <Button type="submit" disabled={loading} className="w-full gap-2 text-base py-6">
-                {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <CreditCard size={20} />}
-                ₺499 ile Satın Al
+                {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : null}
+                {loading ? "İşleniyor..." : "₺499 ile Sipariş Ver"}
               </Button>
               <p className="text-xs text-center text-zinc-400">
-                Ödeme Stripe tarafından güvenli şekilde işlenir. Kart bilgilerin bizde saklanmaz.
+                Havale/EFT ile ödeme. Ödeme onaylandıktan sonra test süreci başlar.
               </p>
             </form>
           </CardContent>

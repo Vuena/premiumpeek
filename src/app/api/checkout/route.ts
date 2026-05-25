@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { stripe, PRICE_AMOUNT, PRICE_CURRENCY } from "@/lib/stripe"
-import { adminAuth } from "@/lib/firebase-admin"
-import { cookies } from "next/headers"
+import { adminAuth, adminDb } from "@/lib/firebase-admin"
 
 export async function POST(req: NextRequest) {
   try {
@@ -22,44 +20,54 @@ export async function POST(req: NextRequest) {
     const { appName, packageName, googlePlayLink, instructions } = body
 
     if (!appName || !packageName || !googlePlayLink) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+      return NextResponse.json({ error: "Eksik alanlar" }, { status: 400 })
     }
 
-    const origin = req.headers.get("origin") || "http://localhost:3000"
+    const userEmail = decoded.email || decoded.firebase?.identities?.email?.[0] || ""
 
-    const customerEmail = decoded.email || decoded.firebase?.identities?.email?.[0] || ""
+    const orderData = {
+      uid: decoded.uid,
+      userEmail,
+      userName: decoded.name || "",
+      appName,
+      packageName,
+      googlePlayLink,
+      instructions: instructions || "",
+      amount: 49900, // 499.00 TL (kuruş)
+      currency: "try",
+      status: "awaiting_payment",
+      testers: [],
+      testerCount: 0,
+      currentDay: 0,
+      totalDays: 16,
+      reportIds: [],
+      createdAt: new Date(),
+    }
 
-    const session = await stripe!.checkout.sessions.create({
-      payment_method_types: ["card"],
-      line_items: [
-        {
-          price_data: {
-            currency: PRICE_CURRENCY,
-            product_data: {
-              name: `Profesyonel Test - ${appName}`,
-              description: `25 testçi, 16 gün, para iadesi garantili Google Play test hizmeti`,
-            },
-            unit_amount: PRICE_AMOUNT,
-          },
-          quantity: 1,
-        },
-      ],
-      mode: "payment",
-      success_url: `${origin}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/payment/cancel`,
-      ...(customerEmail ? { customer_email: customerEmail } : {}),
-      metadata: {
-        uid: decoded.uid,
-        appName,
-        packageName,
-        googlePlayLink,
-        instructions: instructions || "",
+    const d = adminDb!
+    const orderRef = await d.collection("orders").add(orderData)
+
+    const userSnap = await d.collection("users").doc(decoded.uid).get()
+    if (userSnap.exists) {
+      const userData = userSnap.data()
+      await d.collection("users").doc(decoded.uid).update({
+        totalPosted: (userData?.totalPosted || 0) + 1,
+      })
+    }
+
+    return NextResponse.json({
+      success: true,
+      orderId: orderRef.id,
+      bank: {
+        name: "Ziraat Bankası",
+        branch: "İstanbul Kurumsal",
+        iban: "TR12 0006 7010 0000 0090 1234 56",
+        holder: "PremiumPeek Teknoloji",
+        amount: "499,00 TL",
       },
     })
-
-    return NextResponse.json({ url: session.url })
   } catch (error: any) {
-    console.error("Stripe checkout error:", error)
+    console.error("Checkout error:", error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

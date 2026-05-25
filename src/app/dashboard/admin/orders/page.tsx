@@ -38,11 +38,19 @@ export default function AdminOrdersPage() {
   }
 
   const statusColors: Record<string, string> = {
-    pending: "bg-yellow-100 dark:bg-yellow-950/30 text-yellow-700",
+    awaiting_payment: "bg-yellow-100 dark:bg-yellow-950/30 text-yellow-700",
     paid: "bg-blue-100 dark:bg-blue-950/30 text-blue-700",
     testing: "bg-green-100 dark:bg-green-950/30 text-green-700",
     completed: "bg-green-100 dark:bg-green-950/30 text-green-700",
     refunded: "bg-red-100 dark:bg-red-950/30 text-red-700",
+  }
+
+  const statusLabels: Record<string, string> = {
+    awaiting_payment: "Ödeme Bekliyor",
+    paid: "Ödendi",
+    testing: "Test Ediliyor",
+    completed: "Tamamlandı",
+    refunded: "İade Edildi",
   }
 
   const filtered = orders.filter(o =>
@@ -87,10 +95,11 @@ export default function AdminOrdersPage() {
                 <td className="px-4 py-3 text-zinc-500 text-xs">{o.userEmail || o.uid?.slice(0, 8)}</td>
                 <td className="px-4 py-3 text-center font-medium">₺{(o.amount / 100).toFixed(0)}</td>
                 <td className="px-4 py-3 text-center">
-                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusColors[o.status] || ""}`}>{o.status}</span>
+                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusColors[o.status] || ""}`}>{statusLabels[o.status] || o.status}</span>
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center justify-center gap-1">
+                    {o.status === "awaiting_payment" && <Button variant="ghost" size="sm" onClick={() => updateStatus(o.id, "paid")} title="Ödeme Alındı"><CreditCard size={14} className="text-blue-600" /></Button>}
                     {o.status === "paid" && <Button variant="ghost" size="sm" onClick={() => updateStatus(o.id, "testing")} title="Teste Başlat"><Clock size={14} className="text-green-600" /></Button>}
                     {o.status === "testing" && <Button variant="ghost" size="sm" onClick={() => updateStatus(o.id, "completed")} title="Tamamla"><CheckCircle2 size={14} className="text-green-600" /></Button>}
                     {o.status !== "refunded" && <Button variant="ghost" size="sm" onClick={() => { if (confirm("İade et?")) updateStatus(o.id, "refunded") }} title="İade Et"><Ban size={14} className="text-red-600" /></Button>}
