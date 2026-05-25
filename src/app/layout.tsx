@@ -31,6 +31,9 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   alternates: {
     canonical: siteUrl,
+    languages: {
+      "tr": siteUrl,
+    },
   },
   icons: {
     icon: "/favicon.svg",
