@@ -49,6 +49,8 @@ export default function AdminPage() {
       getCountFromServer(collection(d, "users")).then(s => s.data().count),
       getCountFromServer(collection(d, "packs")).then(s => s.data().count),
       getCountFromServer(collection(d, "apps")).then(s => s.data().count),
+      // Note: This query requires a composite Firestore index on packs collection with fields: status ASC, updatedAt DESC
+      // Create it in Firebase Console: Firestore > Indexes > Add composite index
       getDocs(query(collection(d, "packs"), where("status", "in", ["testing", "installing"]), limit(1000))),
     ])
     setStats({

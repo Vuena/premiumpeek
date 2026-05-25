@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Firebase Admin not configured" }, { status: 500 })
     }
 
-    const d = adminDb
+    const d = adminDb!
     const now = new Date()
     const packsSnap = await d.collection("packs").where("status", "==", "testing").get()
     let processed = 0

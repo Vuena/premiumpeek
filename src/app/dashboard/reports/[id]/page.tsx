@@ -28,13 +28,20 @@ export default function ReportDetailPage() {
 
   const loadReport = async () => {
     if (!db) { return }
-    const snap = await getDoc(doc(db, "reports", params.id as string))
+    const d = db
+    const snap = await getDoc(doc(d, "reports", params.id as string))
     if (!snap.exists() || snap.data().uid !== user!.uid) {
       router.push("/dashboard/reports")
       return
     }
     setReport({ id: snap.id, ...snap.data() })
     setLoading(false)
+  }
+
+  const escapeHtml = (text: string) => {
+    const div = document.createElement("div")
+    div.textContent = text
+    return div.innerHTML
   }
 
   const handleDownload = () => {
@@ -56,7 +63,7 @@ export default function ReportDetailPage() {
     report.items.forEach((item: any, i: number) => {
       const cls = item.type === "bug" ? "b" : item.type === "uiux" ? "u" : item.type === "feature" ? "f" : ""
       const lbl = item.type === "bug" ? "Hata" : item.type === "uiux" ? "UI/UX" : item.type === "feature" ? "Öneri" : "Diğer"
-      html += `<tr><td>${i+1}</td><td class="${cls}">${lbl}</td><td>${item.description}</td></tr>`
+      html += `<tr><td>${i+1}</td><td class="${cls}">${lbl}</td><td>${escapeHtml(item.description)}</td></tr>`
     })
     html += `</tbody></table><div class="footer">PremiumPeek - Test Raporu</div></body></html>`
     const blob = new Blob([html], { type: "text/html" })
@@ -67,7 +74,7 @@ export default function ReportDetailPage() {
   }
 
   if (loading) return <div className="flex items-center justify-center min-h-[40vh]"><Loader2 className="h-8 w-8 animate-spin text-zinc-400" /></div>
-  if (!report) return null
+  if (!report) return <div className="text-center py-20 text-zinc-500">Rapor bulunamadı.</div>
 
   const typeLabels: Record<string, string> = { bug: "Hata", uiux: "UI/UX", feature: "Öneri", other: "Diğer" }
   const typeColors: Record<string, string> = { bug: "text-red-600 bg-red-50 dark:bg-red-950/30", uiux: "text-blue-600 bg-blue-50 dark:bg-blue-950/30", feature: "text-green-600 bg-green-50 dark:bg-green-950/30", other: "text-zinc-600 bg-zinc-50 dark:bg-zinc-800" }

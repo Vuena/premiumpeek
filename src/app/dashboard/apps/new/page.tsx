@@ -180,7 +180,7 @@ export default function NewAppPage() {
 
   const gosterilecekAdimlar = ADIMLAR.filter(a => a.key !== "done" || step === "done")
 
-  if (authLoading) return null
+  if (authLoading) return <div className="flex items-center justify-center min-h-[40vh]"><Loader2 className="h-8 w-8 animate-spin text-zinc-400" /></div>
   if (!user) return null
 
   return (

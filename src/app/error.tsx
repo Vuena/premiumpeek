@@ -10,6 +10,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
         <div className="text-6xl font-bold text-red-300 dark:text-red-800 mb-4">!</div>
         <h1 className="text-2xl font-bold mb-2">Bir Hata Oluştu</h1>
         <p className="text-muted text-sm mb-6">Beklenmedik bir hata ile karşılaştık. Lütfen tekrar dene.</p>
+        {process.env.NODE_ENV === "development" && <details className="text-xs text-left text-zinc-400 mb-4 max-w-md mx-auto"><summary>Hata detayı</summary><pre className="mt-2 whitespace-pre-wrap">{error.message}</pre></details>}
         <button onClick={reset} aria-label="Tekrar dene" className="inline-flex h-11 items-center justify-center rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 px-6 text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors cursor-pointer">Tekrar Dene</button>
       </div>
     </div>

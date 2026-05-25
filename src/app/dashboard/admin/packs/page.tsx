@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore"
 import { db, auth } from "@/lib/firebase"
-import { Loader2, ArrowLeft, Trash2, Clock, CheckCircle2, AlertCircle, Settings, ChevronUp, Plus, X } from "lucide-react"
+import { Loader2, ArrowLeft, Trash2, Clock, CheckCircle2, AlertCircle, Settings, Plus, X } from "lucide-react"
 import Link from "next/link"
 import { usePageMeta } from "@/lib/usePageMeta"
 

@@ -12,6 +12,7 @@ import { auth } from "@/lib/firebase"
 import { useToast } from "@/context/ToastContext"
 import { Loader2, Clock, CheckCircle2, CreditCard, Trash2 } from "lucide-react"
 import { usePageMeta } from "@/lib/usePageMeta"
+import type { Order } from "@/types/order"
 
 const statusLabels: Record<string, string> = {
   awaiting_payment: "Ödeme Bekliyor",
@@ -36,7 +37,7 @@ export default function OrdersPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const { toast: addToast } = useToast()
-  const [orders, setOrders] = useState<any[]>([])
+  const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -49,7 +50,7 @@ export default function OrdersPage() {
     try {
       if (!user) return
       const data = await getUserOrders(user.uid)
-      setOrders(data as any[])
+      setOrders(data as Order[])
     } catch {
       setOrders([])
     } finally {
@@ -100,7 +101,7 @@ export default function OrdersPage() {
         </Card>
       ) : (
         <div className="space-y-4">
-          {orders.map((order: any) => (
+          {orders.map((order: Order) => (
             <div key={order.id}>
               <Link href={`/dashboard/orders/${order.id}`}>
                 <Card className="border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer">

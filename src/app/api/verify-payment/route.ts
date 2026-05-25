@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { adminAuth, adminDb } from "@/lib/firebase-admin"
+import type { DecodedIdToken } from "firebase-admin/auth"
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,7 +16,7 @@ export async function POST(req: NextRequest) {
     }
 
     const token = authHeader.split("Bearer ")[1]
-    let decoded: any
+    let decoded: DecodedIdToken
     try {
       decoded = await adminAuth!.verifyIdToken(token)
     } catch {

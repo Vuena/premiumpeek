@@ -68,20 +68,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const createUserDocument = async (user: User, name?: string) => {
-    const d = getFirestoreDb()
-    const userRef = doc(d, "users", user.uid)
-    const userSnap = await getDoc(userRef)
-    if (!userSnap.exists()) {
-      await setDoc(userRef, {
-        email: user.email,
-        displayName: name || user.displayName || "",
-        photoURL: user.photoURL || "",
-        totalTested: 0,
-        totalPosted: 0,
-        isTester: false,
-        role: "user",
-        createdAt: serverTimestamp(),
-      })
+    try {
+      const d = getFirestoreDb()
+      const userRef = doc(d, "users", user.uid)
+      const userSnap = await getDoc(userRef)
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          email: user.email,
+          displayName: name || user.displayName || "",
+          photoURL: user.photoURL || "",
+          totalTested: 0,
+          totalPosted: 0,
+          isTester: false,
+          role: "user",
+          createdAt: serverTimestamp(),
+        })
+      }
+    } catch (err) {
+      console.error("createUserDocument error:", err)
     }
   }
 
@@ -91,22 +95,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signInWithGoogle = async () => {
-    const provider = new GoogleAuthProvider()
-    const result = await signInWithPopup(getFirebaseAuth(), provider)
-    await createUserDocument(result.user)
+    try {
+      const provider = new GoogleAuthProvider()
+      const result = await signInWithPopup(getFirebaseAuth(), provider)
+      await createUserDocument(result.user)
+    } catch (err) {
+      console.error("signInWithGoogle error:", err)
+    }
   }
 
   const signInWithEmail = async (email: string, password: string) => {
-    await signInWithEmailAndPassword(getFirebaseAuth(), email, password)
+    try {
+      await signInWithEmailAndPassword(getFirebaseAuth(), email, password)
+    } catch (err) {
+      console.error("signInWithEmail error:", err)
+    }
   }
 
   const signUpWithEmail = async (email: string, password: string, name: string) => {
-    const result = await createUserWithEmailAndPassword(getFirebaseAuth(), email, password)
-    await createUserDocument(result.user, name)
+    try {
+      const result = await createUserWithEmailAndPassword(getFirebaseAuth(), email, password)
+      await createUserDocument(result.user, name)
+    } catch (err) {
+      console.error("signUpWithEmail error:", err)
+    }
   }
 
   const logout = async () => {
-    await signOut(getFirebaseAuth())
+    try {
+      await signOut(getFirebaseAuth())
+    } catch (err) {
+      console.error("logout error:", err)
+    }
   }
 
   return (

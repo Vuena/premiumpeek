@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { getComplaints, resolveComplaint, type Complaint } from "@/lib/firestore"
 import { logAudit } from "@/lib/useAuditLog"
-import { Loader2, Shield, CheckCircle2, XCircle, AlertTriangle, ExternalLink } from "lucide-react"
+import { Loader2, Shield, CheckCircle2, XCircle, AlertTriangle } from "lucide-react"
 import Link from "next/link"
 import { usePageMeta } from "@/lib/usePageMeta"
 

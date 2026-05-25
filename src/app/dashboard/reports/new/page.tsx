@@ -50,6 +50,12 @@ export default function NewReportPage() {
   }
   const removeItem = (i: number) => setItems(items.filter((_, idx) => idx !== i))
 
+  const escapeHtml = (text: string) => {
+    const div = document.createElement("div")
+    div.textContent = text
+    return div.innerHTML
+  }
+
   const handleDownload = () => {
     if (!selectedApp || items.length === 0) return
     const app = apps.find(a => a.id === selectedApp)
@@ -70,7 +76,7 @@ export default function NewReportPage() {
     items.forEach((item, i) => {
       const cls = item.type === "bug" ? "b" : item.type === "uiux" ? "u" : item.type === "feature" ? "f" : ""
       const lbl = item.type === "bug" ? "Hata" : item.type === "uiux" ? "UI/UX" : item.type === "feature" ? "Öneri" : "Diğer"
-      html += `<tr><td>${i+1}</td><td class="${cls}">${lbl}</td><td>${item.description}</td></tr>`
+      html += `<tr><td>${i+1}</td><td class="${cls}">${lbl}</td><td>${escapeHtml(item.description)}</td></tr>`
     })
     html += `</tbody></table><div class="footer">PremiumPeek - Test Raporu</div></body></html>`
     const blob = new Blob([html], { type: "text/html" })
@@ -85,7 +91,8 @@ export default function NewReportPage() {
     setSaving(true)
     try {
       if (!db) { addToast("error", "Veritabanı bağlantısı kurulamadı"); return }
-      await addDoc(collection(db, "reports"), {
+      const d = db
+      await addDoc(collection(d, "reports"), {
         appId: selectedApp, uid: user!.uid, items, createdAt: serverTimestamp(),
       })
       setItems([])

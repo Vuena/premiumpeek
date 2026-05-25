@@ -178,8 +178,12 @@ export default function PurchaseClient() {
     }
   }
 
+  useEffect(() => {
+    if (!user) router.push("/login")
+  }, [user, router])
+
   if (authLoading) return null
-  if (!user) { setRedirectTo("/login"); return null }
+  if (!user) return null
 
   const benefits = [
     "16-18 pack üyesi test eder",

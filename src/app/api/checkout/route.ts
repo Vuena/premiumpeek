@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
 import { adminAuth, adminDb } from "@/lib/firebase-admin"
+import type { DecodedIdToken } from "firebase-admin/auth"
 
 const USDT_WALLET = process.env.NEXT_PUBLIC_USDT_WALLET || ""
-const USDT_PRICE = parseInt(process.env.USDT_PRICE || "10")
+const USDT_PRICE = parseInt(process.env.NEXT_PUBLIC_USDT_PRICE || "10")
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,7 +19,7 @@ export async function POST(req: NextRequest) {
     }
 
     const token = authHeader.split("Bearer ")[1]
-    let decoded: any
+    let decoded: DecodedIdToken
     try {
       decoded = await adminAuth!.verifyIdToken(token)
     } catch {

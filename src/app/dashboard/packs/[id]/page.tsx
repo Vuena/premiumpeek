@@ -10,7 +10,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import { getPackById, getUserApps, getPackApps, leavePack, confirmInstall, transitionInstallingToTesting, recordScreenshot, type Pack, type App } from "@/lib/firestore"
 import { storage } from "@/lib/firebase"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
-import type { Timestamp } from "firebase/firestore"
 import { useToast } from "@/context/ToastContext"
 import { ArrowLeft, Users, Clock, Calendar, CheckCircle2, Loader2, LogOut, ExternalLink, Smartphone, Hourglass, Trophy } from "lucide-react"
 import Link from "next/link"
@@ -139,8 +138,13 @@ export default function PackDetailPage() {
   if (loading) return <div className="flex items-center justify-center min-h-[40vh]"><Loader2 className="h-8 w-8 animate-spin text-zinc-400" /></div>
   if (!pack) return <div className="text-center py-16 text-zinc-500">Pack bulunamadı.</div>
 
-  if (!isMember) { setRedirectTo("/dashboard"); return null }
-  if (myApps.length === 0 && !isPremium && pack.status === "testing") { setRedirectTo("/dashboard/apps/new"); return null }
+  useEffect(() => {
+    if (!isMember) router.push("/dashboard")
+    else if (myApps.length === 0 && !isPremium && pack.status === "testing") router.push("/dashboard/apps/new")
+  }, [isMember, myApps.length, isPremium, pack?.status, router])
+
+  if (!isMember) return null
+  if (myApps.length === 0 && !isPremium && pack.status === "testing") return null
 
   const daysCompleted = pack.status === "testing" ? Math.max(0, pack.currentDay - 1) : pack.status === "completed" ? pack.totalDays : 0
 

@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { getOrderById } from "@/lib/firestore"
 import { Loader2, ArrowLeft, Clock, CheckCircle2, CreditCard } from "lucide-react"
 import { usePageMeta } from "@/lib/usePageMeta"
+import type { Order } from "@/types/order"
 
 const statusLabels: Record<string, string> = {
   awaiting_payment: "Ödeme Bekliyor",
@@ -25,7 +26,7 @@ export default function OrderDetailPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const params = useParams()
-  const [order, setOrder] = useState<any>(null)
+  const [order, setOrder] = useState<Order | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -37,16 +38,16 @@ export default function OrderDetailPage() {
   const loadOrder = async () => {
     if (!user || !params.id) return
     const data = await getOrderById(params.id as string)
-    if (!data || (data as any).uid !== user.uid) {
+    if (!data || (data as Order).uid !== user.uid) {
       router.push("/dashboard/orders")
       return
     }
-    setOrder(data)
+    setOrder(data as Order)
     setLoading(false)
   }
 
   if (loading) return <div className="flex items-center justify-center min-h-[40vh]"><Loader2 className="h-8 w-8 animate-spin text-zinc-400" /></div>
-  if (!order) return null
+  if (!order) return <div className="text-center py-20 text-zinc-500">Sipariş bulunamadı.</div>
 
   const progress = order.totalDays > 0 ? Math.round((order.currentDay / order.totalDays) * 100) : 0
 

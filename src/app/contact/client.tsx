@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Mail, MessageSquare, Clock, Loader2, CheckCircle2 } from "lucide-react"
 import { usePageMeta } from "@/lib/usePageMeta"

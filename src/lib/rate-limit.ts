@@ -12,11 +12,18 @@ export function rateLimit(ip: string, maxRequests: number, windowMs: number): bo
   return true
 }
 
-if (typeof setInterval !== "undefined") {
-  setInterval(() => {
+let cleanupInterval: ReturnType<typeof setInterval> | null = null
+
+export function initRateLimitCleanup() {
+  if (cleanupInterval) return
+  cleanupInterval = setInterval(() => {
     const now = Date.now()
     for (const [key, val] of ipMap) {
       if (now > val.resetAt) ipMap.delete(key)
     }
   }, 5 * 60 * 1000)
+}
+
+if (typeof setInterval !== "undefined") {
+  initRateLimitCleanup()
 }
