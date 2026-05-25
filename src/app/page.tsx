@@ -82,7 +82,6 @@ export default function Home() {
                   </Button>
                 </Link>
               </div>
-              <div className="text-sm text-zinc-400 dark:text-zinc-500">ya da</div>
               <Link href="/purchase" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-medium px-5 py-3 text-sm shadow-lg shadow-green-500/30 transition-all hover:scale-105">
                 <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-[10px] font-bold">$</span>
                 $10 USDT ile pack'e premium üye ol
