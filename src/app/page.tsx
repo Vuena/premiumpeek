@@ -3,8 +3,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { CtaButton } from "@/components/ui/cta-button"
 import { Users, Calendar, ShieldCheck, Clock, FileText, Star, ArrowRight, Sparkles, Smartphone, CheckCircle } from "lucide-react"
-import { CREDIT_COST_POST, CREDIT_EARN_PER_TEST, CREDIT_EARN_BONUS_FEEDBACK, CREDIT_SIGNUP_BONUS } from "@/lib/firestore"
-import { CreditIcon } from "@/components/ui/credit-icon"
 import type { ReactNode } from "react"
 
 export default function Home() {
@@ -16,36 +14,37 @@ export default function Home() {
   ]
 
   const steps = [
-    { icon: Users, title: "Pack'e Katıl", desc: "16 geliştiriciden oluşan bir pack'e katıl veya yeni bir pack oluştur." },
+    { icon: Users, title: "Pack'e Katıl", desc: "25 geliştiriciden oluşan bir pack'e katıl veya yeni bir pack oluştur." },
     { icon: Smartphone, title: "Uygulamanı Yükle", desc: "Google Play test linkini gir, talimatlarını ekle. Pack'teki herkes senin uygulamanı test etmeye başlasın." },
-    { icon: Clock, title: "14 Gün Boyunca Test Et", desc: "Her gün pack'teki diğer 15 uygulamayı test et, kredi kazan. 3 gün aksatırsan pack'ten atılırsın." },
-    { icon: ShieldCheck, title: "Google Play'de Yayınla", desc: "15+ gerçek testçi, 14+ gün aktivite ile Google Play şartını karşıla. Yayına hazırsın!" },
+    { icon: Clock, title: "16 Gün Boyunca Test Et", desc: "Her gün pack'teki diğer 24 uygulamayı test et. 3 gün aksatırsan pack'ten atılırsın." },
+    { icon: ShieldCheck, title: "Google Play'de Yayınla", desc: "24+ gerçek testçi, 16+ gün aktivite ile Google Play şartını karşıla. Yayına hazırsın!" },
   ]
 
   const features = [
-    { icon: Users, title: "16 Gerçek Testçi", desc: "Google'ın istediği 12'den fazla. Herkes gerçek bir geliştirici." },
-    { icon: Calendar, title: "14 Gün Süreç", desc: "Google Play'in 14 günlük test şartını karşıla. Tam süre." },
+    { icon: Users, title: "25 Gerçek Testçi", desc: "Google'ın istediği 12'den iki kat fazla. Herkes gerçek bir geliştirici." },
+    { icon: Calendar, title: "16 Gün Süreç", desc: "Google Play'in 14 günlük test şartını fazlasıyla karşıla. +2 gün garanti." },
     { icon: Clock, title: "Günlük Aktivite", desc: "Pack üyeleri her gün uygulamanı açar. Pasif yükleme değil, gerçek kullanım." },
     { icon: FileText, title: "Geri Bildirim", desc: "Her testçi yorum yapar, hataları raporlar. Uygulamanı iyileştir." },
-    { icon: ShieldCheck, title: "Sorumluluk", desc: "3 gün aksatınca atılma. Herkes taahhüdünü yerine getirir." },
-    { icon: Sparkles, title: "Oyunlaştırma", desc: "Rozetler, liderlik tablosu, kredi sistemi. Test etmek eğlenceli." },
+    { icon: ShieldCheck, title: "Sorumluluk", desc: "3 gün aksatınca atılma + 1 ay pack yasağı. Herkes taahhüdünü yerine getirir." },
+    { icon: Sparkles, title: "Oyunlaştırma", desc: "Rozetler, liderlik tablosu. Test etmek eğlenceli." },
   ]
 
   const testimonials = [
     { name: "Ahmet Y.", title: "Android Geliştiricisi", text: "3 kere reddedildikten sonra PremiumPeek ile ilk denemede onay aldım. Pack sistemi gerçekten işe yarıyor." },
-    { name: "Zeynep K.", title: "Android Geliştiricisi", text: "Arkadaş bulamıyordum, 14 gün boyunca test edecek kimse yoktu. Burada 16 kişi birbirine destek oluyor." },
-    { name: "Mehmet A.", title: "Android Geliştiricisi", text: "Ücretsiz olmasına rağmen sistem çok sağlam. 14 günde uygulamam yayına hazırdı." },
-    { name: "Can B.", title: "Android Geliştiricisi", text: "Daha önce başka platformları denemiştim ama hiçbiri bu kadar organize değildi. 14 günün sonunda uygulamam yayındaydı." },
-    { name: "Elif D.", title: "Android Geliştiricisi", text: "İlk uygulamamı yayınlarken en büyük korkum testçi bulmaktı. PremiumPeek sayesinde hiç uğraşmadan 14 günde şartları karşıladım." },
+    { name: "Zeynep K.", title: "Android Geliştiricisi", text: "Arkadaş bulamıyordum, 16 gün boyunca test edecek kimse yoktu. Burada 25 kişi birbirine destek oluyor." },
+    { name: "Mehmet A.", title: "Android Geliştiricisi", text: "Ücretsiz olmasına rağmen sistem çok sağlam. 16 günde uygulamam yayına hazırdı." },
+    { name: "Can B.", title: "Android Geliştiricisi", text: "Daha önce başka platformları denemiştim ama hiçbiri bu kadar organize değildi. 16 günün sonunda uygulamam yayındaydı." },
+    { name: "Elif D.", title: "Android Geliştiricisi", text: "İlk uygulamamı yayınlarken en büyük korkum testçi bulmaktı. PremiumPeek sayesinde hiç uğraşmadan 16 günde şartları karşıladım." },
   ]
 
   const faqs: { q: string; a: string | ReactNode }[] = [
-    { q: "Pack sistemi nedir?", a: "Pack, 16 geliştiriciden oluşan ve 14 gün boyunca birbirlerinin uygulamalarını test etmeyi taahhüt eden gruptur. Her üye diğer 15 uygulamayı her gün açar ve geri bildirim verir." },
+    { q: "Pack sistemi nedir?", a: "Pack, 25 geliştiriciden oluşan ve 16 gün boyunca birbirlerinin uygulamalarını test etmeyi taahhüt eden gruptur. Her üye diğer 24 uygulamayı her gün açar ve geri bildirim verir. Google, 12 testçi ve 14 gün istiyor — biz 25 testçi ve 16 gün ile garantili hizmet sunuyoruz." },
     { q: "Google Play'in şartı ne?", a: "Yeni hesaplar, yayın öncesinde 12 gerçek kullanıcı tarafından 14 ardışık gün test edilmelidir." },
-    { q: "Kaç kişi bir pack'te yer alır?", a: "Her pack 16 geliştiriciden oluşur. 14 gün boyunca birbirinizin uygulamalarını test eder ve Google Play şartını karşılarsınız." },
-    { q: "Ya birisi test etmezse?", a: "3 gün üst üste test etmeyen pack'ten atılır. Bu sayede herkesin aktif kalması sağlanır." },
-    { q: "Kaç kredi kazanabilirim?", a: <>Her test ettiğin uygulama için +{CREDIT_EARN_PER_TEST}<CreditIcon /> kazanırsın. Detaylı yorum yazarsan +{CREDIT_EARN_BONUS_FEEDBACK}<CreditIcon /> bonus. Günde 15 uygulama ile 75<CreditIcon />, 14 günde 1.050<CreditIcon />'a kadar kazanç.</> },
+    { q: "Kaç kişi bir pack'te yer alır?", a: "Her pack 25 geliştiriciden oluşur. 16 gün boyunca birbirinizin uygulamalarını test eder ve Google Play şartını karşılarsınız. Biri test etmezse bile 24 testçiniz olur — Google'ın istediği 12'den hala fazla." },
+    { q: "Ya birisi test etmezse?", a: "3 gün üst üste test etmeyen pack'ten atılır ve 1 ay boyunca yeni bir pack'e katılamaz. Bu sayede herkesin aktif kalması sağlanır." },
+    { q: "Ücretli hizmet ne kadar?", a: "Profesyonel test hizmetimiz $10 USDT (TRC-20). 25 testçiniz olur, 16 gün boyunca test edilirsiniz, üstelik Google Play reddinde koşulsuz iade garantisi." },
     { q: "Uygulamam her dilde test edilebilir mi?", a: "Evet. Tüm dillerdeki uygulamalar desteklenir. Geri bildirimler Türkçe veya İngilizce verilir." },
+    { q: "Organizasyon hesabım var, gerekli mi?", a: "Google Play'in 12 testçi / 14 gün şartı, Kasım 2023 sonrası açılan bireysel hesaplar için geçerlidir. Organizasyon hesapları bu şarta tabi değildir." },
   ]
 
   const SectionTitle = ({ title, desc }: { title: string; desc?: string }) => (
@@ -71,7 +70,7 @@ export default function Home() {
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Testçi Bulma Derdine Son</span>
             </h1>
             <p className="mt-6 text-lg sm:text-xl text-muted max-w-2xl mx-auto">
-              16 geliştiriciden oluşan pack&apos;lerle uygulamanı 14 günde test et, 
+              25 geliştiriciden oluşan pack&apos;lerle uygulamanı 16 günde test et, 
               Google Play yayın şartlarını karşıla ve yayına geç. Ücretsiz başla.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -158,10 +157,10 @@ export default function Home() {
                 <p className="text-4xl font-bold mb-6">₺0</p>
                 <ul className="space-y-3 mb-8">
                   {[
-                    "16 kişilik pack sistemi",
+                    "25 kişilik pack sistemi",
                     "Günlük test takibi",
-                    `${CREDIT_SIGNUP_BONUS} kredi kayıt bonusu`,
-                    `Test başına +${CREDIT_EARN_PER_TEST} kredi`,
+                    "16 gün süreç",
+                    "Hata raporları",
                     "Liderlik tablosu"
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-2 text-sm">
@@ -269,7 +268,7 @@ export default function Home() {
                 name: faq.q,
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: typeof faq.a === "string" ? faq.a : "PremiumPeek kredi sistemi hakkında bilgi.",
+                  text: typeof faq.a === "string" ? faq.a : "",
                 },
               })),
             }),

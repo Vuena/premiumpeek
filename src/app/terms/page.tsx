@@ -1,7 +1,6 @@
-import { CREDIT_EARN_PER_TEST, CREDIT_COST_POST, CREDIT_SIGNUP_BONUS } from "@/lib/firestore"
 export const metadata = {
   title: "Kullanım Şartları",
-  description: "PremiumPeek kullanım şartları - hesap, kredi sistemi, pack kuralları ve sorumluluk reddi.",
+  description: "PremiumPeek kullanım şartları - hesap, pack kuralları ve sorumluluk reddi.",
   openGraph: {
     title: "Kullanım Şartları | PremiumPeek",
     description: "PremiumPeek platformu kullanım şartları ve kuralları.",
@@ -41,14 +40,13 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold mb-3">3. Kredi Sistemi</h2>
+          <h2 className="text-xl font-semibold mb-3">3. Pack Kuralları</h2>
           <ul className="list-disc list-inside space-y-2 text-muted text-sm">
-            <li>Krediler yalnızca platform içi kullanım içindir, nakte çevrilemez veya devredilemez.</li>
-            <li>Her test edilen uygulama için +{CREDIT_EARN_PER_TEST} kredi kazanılır.</li>
-            <li>Uygulama yayınlama maliyeti {CREDIT_COST_POST} kredidir.</li>
-            <li>Yeni kullanıcılara kayıt bonusu olarak {CREDIT_SIGNUP_BONUS} kredi hediye edilir.</li>
-            <li>Kredi kötüye kullanımı (bot, sahte hesap, hile) tespit edilirse hesap kalıcı olarak askıya alınır.</li>
-            <li>Platform yönetimi, gerekli gördüğü durumlarda kredi bakiyelerinde düzeltme yapma hakkını saklı tutar.</li>
+            <li>Her pack en fazla 25 üyeden oluşur.</li>
+            <li>Pack kurallarına uymayan kullanıcılar pack'ten çıkarılabilir.</li>
+            <li>Pack yönetimi ve test süreci, platform tarafından belirlenen kurallar çerçevesinde yürütülür.</li>
+            <li>Kötüye kullanım (bot, sahte hesap, hile) tespit edilirse hesap kalıcı olarak askıya alınır.</li>
+            <li>Platform yönetimi, gerekli gördüğü durumlarda pack düzenlemeleri yapma hakkını saklı tutar.</li>
           </ul>
         </section>
 

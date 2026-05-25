@@ -17,7 +17,7 @@ export default function NewPackPage() {
   const [name, setName] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState<{ id: string; code: string } | null>(null)
+  const [result, setResult] = useState<{ id: string } | null>(null)
 
   if (authLoading) return null
   if (!user) { router.push("/login"); return null }
@@ -48,14 +48,8 @@ export default function NewPackPage() {
               </div>
             </div>
             <h2 className="text-xl font-bold mb-2">Pack Oluşturuldu!</h2>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">
-              Davet kodunu diğer geliştiricilerle paylaş:
-            </p>
-            <div className="text-3xl font-mono font-bold tracking-wider text-blue-600 mb-6 bg-zinc-50 dark:bg-zinc-800 py-4 rounded-xl">
-              {result.code}
-            </div>
-            <p className="text-xs text-zinc-400 mb-6">
-              16 kişi toplanınca pack otomatik başlayacak. Dilersen sen de başlatabilirsin.
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6">
+              25 kişi toplanınca pack otomatik başlayacak.
             </p>
             <div className="flex gap-3 justify-center">
               <Link href={`/dashboard/packs/${result.id}`}>
@@ -82,7 +76,7 @@ export default function NewPackPage() {
           </div>
           <CardTitle className="text-xl">Yeni Pack Oluştur</CardTitle>
           <CardDescription>
-            16 geliştiricilik bir grup oluştur ve 14 gün boyunca birbirinizi test edin.
+            25 geliştiricilik bir grup oluştur ve 16 gün boyunca birbirinizi test edin.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -107,7 +101,7 @@ export default function NewPackPage() {
           </form>
           <p className="mt-4 text-center text-sm text-zinc-500">
             Davet kodun mu var?{" "}
-            <Link href="/dashboard/packs/join" className="text-blue-600 hover:underline font-medium">Pack&apos;e Katıl</Link>
+            <Link href="/dashboard/packs/join" className="text-blue-600 hover:underline font-medium">Aktif Pack'lere Katıl</Link>
           </p>
         </CardContent>
       </Card>

@@ -7,8 +7,8 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { submitApp, getUserPacks, CREDIT_COST_POST, type Pack } from "@/lib/firestore"
-import { FileText, Loader2, ArrowLeft, Coins, CheckCircle, Smartphone, Globe, Users, Clock, ShieldCheck, Play } from "lucide-react"
+import { submitApp, getUserPacks, type Pack } from "@/lib/firestore"
+import { FileText, Loader2, ArrowLeft, CheckCircle, Smartphone, Globe, Users, Clock, ShieldCheck } from "lucide-react"
 import Link from "next/link"
 
 type Step = "setup" | "details" | "review" | "done"
@@ -19,7 +19,7 @@ const SETUP_ADIMLARI = [
   { num: "01", baslik: "Testçi Grubunu Ekle", aciklama: "Google Play Console'da uygulamanın closed test bölümüne testçi grubumuzu ekle", detay: "Uygulamanın test bölümüne gidip testçilerimizin uygulamana erişebilmesi için Google Group'umuzu ekle.", grup: "premiumpeek@googlegroups.com" },
   { num: "02", baslik: "Global Testi Aktifleştir", aciklama: "Tüm ülkeleri seçerek testçilerimizin uygulamana erişmesini sağla", detay: "Uygulamanın test bölümünde tüm ülkeleri seç. Böylece uluslararası testçilerimiz uygulamanı test edebilir." },
   { num: "03", baslik: "İncelemeye Gönder", aciklama: "Değişiklikleri Google Play incelemesine gönder - genelde 30-60 dk içinde onaylanır", detay: "Test ayarlarını yaptıktan sonra değişiklikleri Google Play'e gönder. Bu işlem genelde çok hızlıdır." },
-  { num: "04", baslik: "Testi Başlat", aciklama: "Onaylandıktan sonra değişiklikleri yayınla ve test sürecini başlat", detay: "Google onayından sonra değişiklikleri yayınla ve 14 günlük test sürecini testçilerimizle başlat." },
+  { num: "04", baslik: "Testi Başlat", aciklama: "Onaylandıktan sonra değişiklikleri yayınla ve test sürecini başlat", detay: "Google onayından sonra değişiklikleri yayınla ve 16 günlük test sürecini testçilerimizle başlat." },
 ]
 
 const ADIMLAR = [
@@ -50,7 +50,6 @@ export default function NewAppPage() {
   const [appIcon, setAppIcon] = useState<string | null>(null)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
-  const [userCredits, setUserCredits] = useState(0)
   const [selectedOption, setSelectedOption] = useState<"free" | "paid" | null>(null)
   const [setupAccepted, setSetupAccepted] = useState(false)
 
@@ -65,8 +64,6 @@ export default function NewAppPage() {
     const userPacks = await getUserPacks(user.uid)
     const activePacks = userPacks.filter(p => p.status === "active")
     setPacks(activePacks)
-    const credits = (user as any).credits ?? 0
-    setUserCredits(credits)
   }
 
   const handleIconUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -150,20 +147,16 @@ export default function NewAppPage() {
             <CardDescription>Test sürecini başlatmak için önce Google Play Console'da aşağıdaki adımları tamamla.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="rounded-xl bg-zinc-100 dark:bg-zinc-800 aspect-video flex items-center justify-center text-sm text-zinc-400 mb-6">
-              <Play className="h-8 w-8 mr-2" /> Kurulum videosu
-            </div>
-
             <div className="space-y-0 mb-8">
               {SETUP_ADIMLARI.map((s) => (
-                <details key={s.num} className="group border-b border-zinc-100 dark:border-zinc-800 last:border-0">
-                  <summary className="flex items-start gap-3 py-4 cursor-pointer list-none">
+                <div key={s.num} className="border-b border-zinc-100 dark:border-zinc-800 last:border-0">
+                  <div className="flex items-start gap-3 py-4">
                     <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-950 text-blue-600 text-sm font-bold mt-0.5">{s.num}</span>
                     <div className="flex-1">
                       <p className="text-sm font-medium">{s.baslik}</p>
                       <p className="text-xs text-zinc-500 mt-0.5">{s.aciklama}</p>
                     </div>
-                  </summary>
+                  </div>
                   <div className="pb-4 pl-10">
                     <p className="text-xs text-zinc-500 leading-relaxed mb-2">{s.detay}</p>
                     {s.grup && (
@@ -173,7 +166,7 @@ export default function NewAppPage() {
                       </div>
                     )}
                   </div>
-                </details>
+                </div>
               ))}
             </div>
 
@@ -297,10 +290,8 @@ export default function NewAppPage() {
                   <h3 className="font-semibold">Ücretsiz - Pack'e Katıl</h3>
                 </div>
                 <ul className="space-y-1.5 text-xs text-zinc-500 mb-4">
-                  <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 16 geliştirici birbirinin uygulamasını test eder</li>
-                  <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 14 gün boyunca günlük test</li>
-                  <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> Başkalarını test ederek kredi kazan</li>
-                  <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> {CREDIT_COST_POST} kredi ile yayınla</li>
+                  <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 25 geliştirici birbirinin uygulamasını test eder</li>
+                  <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 16 gün boyunca günlük test</li>
                 </ul>
                 {packs.length === 0 && <p className="text-xs text-amber-600">Aktif bir pack'in yok. Önce pack oluştur.</p>}
               </div>
@@ -316,7 +307,7 @@ export default function NewAppPage() {
                   <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 25 profesyonel testçi</li>
                   <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 16 gün test süreci</li>
                   <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 6 saat içinde başlangıç</li>
-                  <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 14 gün iade garantisi</li>
+                  <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 16 gün iade garantisi</li>
                 </ul>
               </div>
             </div>
@@ -324,7 +315,7 @@ export default function NewAppPage() {
             <div className="flex justify-between pt-4 border-t border-zinc-100 dark:border-zinc-800">
               <Button variant="ghost" onClick={() => setStep("details")}>Geri</Button>
               {selectedOption === "free" ? (
-                <Button onClick={handleSubmitFree} disabled={loading || userCredits < CREDIT_COST_POST || packs.length === 0} className="gap-2">
+                <Button onClick={handleSubmitFree} disabled={loading || packs.length === 0} className="gap-2">
                   {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText size={16} />}
                   Pack'e Gönder
                 </Button>
@@ -352,7 +343,7 @@ export default function NewAppPage() {
             <h2 className="text-xl font-bold mb-2">Uygulaman Gönderildi! 🎉</h2>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6 max-w-md mx-auto">
               Uygulaman pack'ine eklendi. Diğer üyeler 24 saat içinde test etmeye başlayacak.
-              Kredi kazanmak ve pack'ini aktif tutmak için her gün diğer uygulamaları test etmeyi unutma.
+              Pack'ini aktif tutmak için her gün diğer uygulamaları test etmeyi unutma.
             </p>
             <div className="flex gap-3 justify-center">
               <Link href="/dashboard/testing"><Button>Test Etmeye Başla</Button></Link>

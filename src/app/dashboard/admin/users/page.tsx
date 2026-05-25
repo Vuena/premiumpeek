@@ -80,7 +80,6 @@ export default function AdminUsersPage() {
               <tr>
                 <th className="text-left px-4 py-3 font-medium">Kullanıcı</th>
                 <th className="text-left px-4 py-3 font-medium">E-posta</th>
-                <th className="text-center px-4 py-3 font-medium">Kredi</th>
                 <th className="text-center px-4 py-3 font-medium">Rol</th>
                 <th className="text-right px-4 py-3 font-medium">İşlem</th>
               </tr>
@@ -97,7 +96,6 @@ export default function AdminUsersPage() {
                     </div>
                   </td>
                   <td className="px-4 py-3 text-zinc-500">{u.email}</td>
-                  <td className="px-4 py-3 text-center font-bold">{u.credits ?? 0}</td>
                   <td className="px-4 py-3 text-center">
                     <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
                       u.role === "admin" ? "bg-purple-100 dark:bg-purple-950/30 text-purple-700 dark:text-purple-400" :

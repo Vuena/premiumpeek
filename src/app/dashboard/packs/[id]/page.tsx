@@ -94,7 +94,6 @@ export default function PackDetailPage() {
               {pack.status === "forming" ? "Oluşuyor" : pack.status === "active" ? "Aktif" : "Tamamlandı"}
             </span>
           </div>
-          <p className="text-sm text-zinc-500 mt-1">Kod: <span className="font-mono font-bold tracking-wider">{pack.code}</span></p>
         </div>
         <div className="flex gap-2">
           {isOwner && pack.status === "forming" && (
@@ -153,21 +152,6 @@ export default function PackDetailPage() {
                 </div>
               ))}
             </div>
-
-            {pack.status === "forming" && pack.members.length < pack.maxMembers && (
-              <div className="mt-6 p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800 border border-dashed border-zinc-300 dark:border-zinc-600">
-                <p className="text-sm font-medium mb-1">Davet Et</p>
-                <p className="text-xs text-zinc-500 mb-2">Pack kodunu paylaşarak yeni üyeler ekleyebilirsin:</p>
-                <div className="flex items-center gap-2">
-                  <code className="flex-1 text-center text-lg font-mono font-bold tracking-widest bg-white dark:bg-zinc-900 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700">
-                    {pack.code}
-                  </code>
-                  <Button variant="outline" size="sm" onClick={() => { navigator.clipboard.writeText(pack.code) }}>
-                    Kopyala
-                  </Button>
-                </div>
-              </div>
-            )}
           </CardContent>
         </Card>
 

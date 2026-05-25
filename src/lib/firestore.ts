@@ -21,21 +21,11 @@ import {
 } from "firebase/firestore"
 import type { User } from "firebase/auth"
 
-// ==================== CONSTANTS ====================
-
-export const CREDIT_COST_POST = 60
-export const CREDIT_EARN_PER_TEST = 5
-export const CREDIT_EARN_BONUS_FEEDBACK = 2
-export const CREDIT_EARN_REFERRAL = 30
-export const CREDIT_EARN_ORDER_TESTER_DAY = 50
-export const CREDIT_SIGNUP_BONUS = 30
-
-// ==================== TYPES ====================
+// ==================== PACK FUNCTIONS ====================
 
 export interface Pack {
   id: string
   name: string
-  code: string
   status: "forming" | "active" | "completed"
   startDate?: Timestamp
   endDate?: Timestamp
@@ -107,13 +97,12 @@ function generatePackCode(): string {
 
 export async function createPack(name: string, user: User) {
   const d = db!
-  const code = generatePackCode()
   const data = {
-    name, code,
+    name,
     status: "forming",
     currentDay: 0,
-    maxMembers: 16,
-    totalDays: 14,
+    maxMembers: 25,
+    totalDays: 16,
     members: [
       {
         uid: user.uid,
@@ -127,7 +116,7 @@ export async function createPack(name: string, user: User) {
     createdAt: serverTimestamp(),
   }
   const packRef = await addDoc(collection(d, "packs"), data)
-  return { id: packRef.id, code }
+  return { id: packRef.id }
 }
 
 export async function joinPackByCode(code: string, user: User) {
@@ -153,7 +142,7 @@ export async function joinPack(packId: string, user: User) {
 
 async function doJoinPack(d: any, packId: string, packData: any, user: User) {
   if (packData.status !== "forming") throw new Error("Bu pack artık yeni üye kabul etmiyor.")
-  if (packData.members.length >= packData.maxMembers) throw new Error("Bu pack dolu (16/16).")
+  if (packData.members.length >= packData.maxMembers) throw new Error("Bu pack dolu (25/25).")
   if (packData.members.some((m: any) => m.uid === user.uid)) throw new Error("Zaten bu pack'in üyesisin.")
 
   let started = false
@@ -276,39 +265,14 @@ export async function submitApp(data: {
 }) {
   const d = db!
 
-  const appRef = await runTransaction(d, async (transaction) => {
-    const userRef = doc(d, "users", data.uid)
-    const userSnap = await transaction.get(userRef)
-    if (!userSnap.exists()) throw new Error("Kullanıcı bulunamadı.")
-    const userData = userSnap.data()
-    const credits = userData.credits ?? 0
-    if (credits < CREDIT_COST_POST) {
-      throw new Error(`Yetersiz kredi. ${CREDIT_COST_POST} kredi gerekiyor, mevcut: ${credits} kredi`)
-    }
-
-    const ref = await addDoc(collection(d, "apps"), {
-      ...data,
-      status: "pending",
-      screenshots: [],
-      createdAt: serverTimestamp(),
-    })
-
-    transaction.update(userRef, { credits: increment(-CREDIT_COST_POST) })
-
-    await addDoc(collection(d, "transactions"), {
-      uid: data.uid,
-      amount: -CREDIT_COST_POST,
-      type: "spent",
-      reason: "post",
-      referenceId: ref.id,
-      note: `"${data.appName}" yayınlandı`,
-      createdAt: serverTimestamp(),
-    })
-
-    return ref
+  const ref = await addDoc(collection(d, "apps"), {
+    ...data,
+    status: "pending",
+    screenshots: [],
+    createdAt: serverTimestamp(),
   })
 
-  return appRef.id
+  return ref.id
 }
 
 export async function getUserApps(uid: string) {
@@ -323,21 +287,6 @@ export async function getPackApps(packId: string) {
   const q = query(collection(d, "apps"), where("packId", "==", packId))
   const snapshot = await getDocs(q)
   return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as App))
-}
-
-// ==================== CREDIT FUNCTIONS ====================
-
-export async function getUserCredits(uid: string): Promise<number> {
-  const d = db!
-  const snap = await getDoc(doc(d, "users", uid))
-  return snap.data()?.credits ?? 0
-}
-
-export async function getCreditHistory(uid: string) {
-  const d = db!
-  const q = query(collection(d, "transactions"), where("uid", "==", uid), orderBy("createdAt", "desc"), limit(50))
-  const snapshot = await getDocs(q)
-  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as CreditTransaction))
 }
 
 // ==================== ACTIVITY FUNCTIONS ====================
@@ -382,32 +331,8 @@ export async function recordTestingActivity(packId: string, uid: string, day: nu
 
       const userRef = doc(d, "users", uid)
       transaction.update(userRef, {
-        credits: increment(CREDIT_EARN_PER_TEST),
         totalTested: increment(1),
       })
-
-      transaction.set(doc(collection(d, "transactions")), {
-        uid,
-        amount: CREDIT_EARN_PER_TEST,
-        type: "earned",
-        reason: "test",
-        note: `Gün ${day} testi tamamlandı`,
-        createdAt: serverTimestamp(),
-      })
-
-      if (feedbackLength >= 20) {
-        transaction.update(userRef, {
-          credits: increment(CREDIT_EARN_BONUS_FEEDBACK),
-        })
-        transaction.set(doc(collection(d, "transactions")), {
-          uid,
-          amount: CREDIT_EARN_BONUS_FEEDBACK,
-          type: "earned",
-          reason: "test",
-          note: "Detaylı yorum bonusu",
-          createdAt: serverTimestamp(),
-        })
-      }
     })
   }
 }
@@ -428,21 +353,6 @@ export async function recordOrderTesterActivity(orderId: string, testerUid: stri
         date: today,
         tested: true,
         feedback: "",
-        createdAt: serverTimestamp(),
-      })
-
-      const userRef = doc(d, "users", testerUid)
-      transaction.update(userRef, {
-        credits: increment(CREDIT_EARN_ORDER_TESTER_DAY),
-      })
-
-      transaction.set(doc(collection(d, "transactions")), {
-        uid: testerUid,
-        amount: CREDIT_EARN_ORDER_TESTER_DAY,
-        type: "earned",
-        reason: "test",
-        referenceId: orderId,
-        note: `Ücretli test (${today}) - ${orderId.slice(0, 8)}`,
         createdAt: serverTimestamp(),
       })
     })

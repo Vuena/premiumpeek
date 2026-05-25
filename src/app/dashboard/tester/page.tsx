@@ -7,8 +7,8 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { getTesterTasks, recordOrderTesterActivity, CREDIT_EARN_ORDER_TESTER_DAY } from "@/lib/firestore"
-import { Loader2, Clock, CheckCircle2, ExternalLink, Smartphone, Coins } from "lucide-react"
+import { getTesterTasks, recordOrderTesterActivity } from "@/lib/firestore"
+import { Loader2, Clock, CheckCircle2, ExternalLink, Smartphone } from "lucide-react"
 
 export default function TesterPage() {
   const { user, loading: authLoading } = useAuth()
@@ -53,9 +53,6 @@ export default function TesterPage() {
         <h1 className="text-2xl font-bold">Testçi Paneli</h1>
         <p className="text-sm text-zinc-500 mt-1">
           {new Date().toLocaleDateString("tr-TR", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
-        </p>
-        <p className="text-xs text-zinc-400 mt-2 flex items-center gap-1">
-          <Coins size={14} /> Her test günü: +{CREDIT_EARN_ORDER_TESTER_DAY}🪙
         </p>
       </div>
 

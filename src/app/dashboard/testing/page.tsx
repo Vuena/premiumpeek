@@ -6,8 +6,8 @@ import { useAuth } from "@/context/AuthContext"
 import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { getUserPacks, getPackApps, recordTestingActivity, CREDIT_EARN_PER_TEST, CREDIT_EARN_BONUS_FEEDBACK, type Pack, type App } from "@/lib/firestore"
-import { Clock, CheckCircle2, ExternalLink, Loader2, Smartphone, Coins, MessageSquare } from "lucide-react"
+import { getUserPacks, getPackApps, recordTestingActivity, type Pack, type App } from "@/lib/firestore"
+import { Clock, CheckCircle2, ExternalLink, Loader2, Smartphone, MessageSquare } from "lucide-react"
 
 export default function TestingPage() {
   const { user, loading: authLoading } = useAuth()
@@ -70,10 +70,6 @@ export default function TestingPage() {
         <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
           {new Date().toLocaleDateString("tr-TR", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
         </p>
-        <div className="flex items-center gap-4 mt-3 text-xs text-zinc-500">
-          <span className="flex items-center gap-1"><Coins size={14} /> Her test: +{CREDIT_EARN_PER_TEST} Kredi</span>
-          <span className="flex items-center gap-1"><MessageSquare size={14} /> Detaylı yorum: +{CREDIT_EARN_BONUS_FEEDBACK} Kredi</span>
-        </div>
       </div>
 
       {appsToTest.length === 0 ? (
@@ -130,7 +126,7 @@ export default function TestingPage() {
                       <textarea
                         value={feedbacks[app.id] || ""}
                         onChange={(e) => setFeedbacks({ ...feedbacks, [app.id]: e.target.value })}
-                        placeholder={`Yorum yap (+${CREDIT_EARN_BONUS_FEEDBACK} Kredi bonus)...`}
+                        placeholder="Yorum yap..."
                         className="w-full rounded-xl border border-zinc-300 dark:border-zinc-600 bg-transparent px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-zinc-400"
                         rows={2}
                       />
