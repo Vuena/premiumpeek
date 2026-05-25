@@ -58,9 +58,14 @@ export default function OrdersPage() {
     }
   }
 
-  const handleDelete = async (orderId: string) => {
+  const handleDelete = async (orderId: string, e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
     if (!confirm("Siparişi silmek istediğine emin misin?")) return
-    if (!auth?.currentUser) return
+    if (!auth?.currentUser) {
+      addToast("error", "Oturum bulunamadı. Lütfen sayfayı yenile.")
+      return
+    }
     try {
       const token = await auth.currentUser.getIdToken()
       const res = await fetch("/api/delete-order", {
@@ -69,10 +74,11 @@ export default function OrdersPage() {
         body: JSON.stringify({ orderId }),
       })
       if (!res.ok) {
-        const data = await res.json()
+        const data = await res.json().catch(() => ({ error: "Sunucu hatası" }))
         throw new Error(data.error || "Silinirken hata oluştu")
       }
       setOrders(prev => prev.filter(o => o.id !== orderId))
+      addToast("success", "Sipariş silindi.")
     } catch (err: any) {
       addToast("error", err.message || "Silinirken hata oluştu")
     }
@@ -126,7 +132,7 @@ export default function OrdersPage() {
                           <p className="text-xs text-zinc-400 mt-1">{order.amount} {order.currency}</p>
                         </div>
                         {(order.status === "awaiting_payment" || order.status === "awaiting_confirmation" || order.status === "paid") && (
-                          <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleDelete(order.id) }}
+                          <button onClick={(e) => handleDelete(order.id, e)}
                             className="flex h-11 w-11 items-center justify-center rounded-full bg-white dark:bg-zinc-800 shadow-sm border border-zinc-200 dark:border-zinc-700 text-zinc-400 hover:text-red-600 hover:border-red-300 transition-all shrink-0 cursor-pointer" title="Siparişi Sil">
                             <Trash2 size={13} />
                           </button>
