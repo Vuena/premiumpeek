@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { collection, getDocs, query, orderBy, doc, deleteDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
+import { logAudit } from "@/lib/useAuditLog"
 import { Loader2, ArrowLeft, Trash2, ExternalLink, Clock, CheckCircle2, Hourglass } from "lucide-react"
 import Link from "next/link"
 
@@ -35,7 +36,9 @@ export default function AdminAppsPage() {
   const deleteApp = async (id: string) => {
     if (!confirm("Uygulamayı silmek istediğine emin misin?")) return
     const d = db!
+    const app = apps.find(a => a.id === id)
     await deleteDoc(doc(d, "apps", id))
+    await logAudit("app_delete", { appId: id, appName: app?.appName || "" })
     loadApps()
   }
 

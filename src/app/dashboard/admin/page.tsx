@@ -8,14 +8,28 @@ import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore"
-import { db } from "@/lib/firebase"
-import { Users, Layers, FileText, Loader2, ArrowRight, Shield, CreditCard, UserCheck, AlertTriangle } from "lucide-react"
+import { db, auth } from "@/lib/firebase"
+import { Users, Layers, FileText, Loader2, ArrowRight, Shield, CreditCard, UserCheck, AlertTriangle, Mail, History } from "lucide-react"
+
+const actionLabels: Record<string, string> = {
+  user_ban_toggle: "Ban/Unban",
+  order_status_update: "Sipariş",
+  order_assign_testers: "Testçi Ata",
+  pack_delete: "Pack Sil",
+  pack_change_status: "Pack Durum",
+  pack_add_member: "Üye Ekle",
+  pack_remove_member: "Üye Çıkar",
+  app_delete: "Uygulama Sil",
+  complaint_resolve: "Şikayet",
+  send_email: "E-posta",
+}
 
 export default function AdminPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const [stats, setStats] = useState({ users: 0, packs: 0, apps: 0, activePacks: 0 })
   const [loading, setLoading] = useState(true)
+  const [recentLogs, setRecentLogs] = useState<any[]>([])
 
   useEffect(() => { document.title = "Admin Paneli | PremiumPeek" }, [])
 
@@ -24,6 +38,7 @@ export default function AdminPage() {
     if (!user) { router.push("/login"); return }
     if ((user as any).role !== "admin") { router.push("/dashboard"); return }
     loadStats()
+    loadRecentLogs()
   }, [user, authLoading])
 
   const loadStats = async () => {
@@ -41,6 +56,17 @@ export default function AdminPage() {
       activePacks: activePacksSnap.docs.filter(d => d.data().status === "testing" || d.data().status === "installing").length,
     })
     setLoading(false)
+  }
+
+  const loadRecentLogs = async () => {
+    try {
+      const token = await auth!.currentUser!.getIdToken()
+      const res = await fetch("/api/admin/audit-log?limit=10", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const data = await res.json()
+      setRecentLogs(data.logs || [])
+    } catch {}
   }
 
   if (loading) return <div className="flex items-center justify-center min-h-[40vh]"><Loader2 className="h-8 w-8 animate-spin text-zinc-400" /></div>
@@ -82,14 +108,16 @@ export default function AdminPage() {
         ))}
       </div>
 
-      <div className="grid sm:grid-cols-3 gap-4">
+      <div className="grid sm:grid-cols-3 gap-4 mb-8">
         {[
           { icon: Users, label: "Kullanıcıları Yönet", desc: "Listele, düzenle, banla", href: "/dashboard/admin/users" },
           { icon: Layers, label: "Pack'leri Yönet", desc: "Tüm pack'ler, müdahale", href: "/dashboard/admin/packs" },
           { icon: FileText, label: "Uygulamaları Yönet", desc: "Onayla, reddet", href: "/dashboard/admin/apps" },
           { icon: CreditCard, label: "Siparişleri Yönet", desc: "Ödemeler, iadeler", href: "/dashboard/admin/orders" },
           { icon: UserCheck, label: "Testçi Havuzu", desc: "Testçileri görüntüle", href: "/dashboard/admin/testers" },
-          { icon: AlertTriangle, label: "Şikayetler", desc: "Uygulama şikayetlerini yönet", href: "/dashboard/admin/complaints" },
+          { icon: AlertTriangle, label: "Şikayetler", desc: "Şikayetleri yönet", href: "/dashboard/admin/complaints" },
+          { icon: History, label: "Denetim Kaydı", desc: "Tüm admin işlemleri", href: "/dashboard/admin/audit" },
+          { icon: Mail, label: "E-posta Gönder", desc: "Toplu e-posta bildirimi", href: "/dashboard/admin/email" },
         ].map(item => (
           <Link key={item.label} href={item.href}>
             <Card className="border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
@@ -109,6 +137,28 @@ export default function AdminPage() {
           </Link>
         ))}
       </div>
+
+      {/* Recent Audit Logs */}
+      {recentLogs.length > 0 && (
+        <Card className="border-0 shadow-sm">
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-semibold text-sm">Son İşlemler</h2>
+              <Link href="/dashboard/admin/audit" className="text-xs text-blue-600 hover:underline">Tümünü Gör</Link>
+            </div>
+            <div className="space-y-2">
+              {recentLogs.map((l: any) => (
+                <div key={l.id} className="flex items-center justify-between text-xs py-1.5 border-b border-zinc-100 dark:border-zinc-800 last:border-0">
+                  <span className="font-medium px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800">
+                    {actionLabels[l.action] || l.action}
+                  </span>
+                  <span className="text-zinc-400">{l.createdAt ? new Date(l.createdAt).toLocaleString("tr-TR") : "-"}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

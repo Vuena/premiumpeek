@@ -102,5 +102,11 @@ service cloud.firestore {
       allow create: if isAuth();
       allow delete: if isAdmin();
     }
+
+    // Audit logs collection (server-side only via Admin SDK)
+    match /auditLogs/{logId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
   }
 }

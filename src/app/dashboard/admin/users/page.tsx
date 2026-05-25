@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { collection, getDocs, query, orderBy, doc, updateDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { Loader2, ArrowLeft, Ban, Search } from "lucide-react"
+import { logAudit } from "@/lib/useAuditLog"
 import Link from "next/link"
 
 export default function AdminUsersPage() {
@@ -36,6 +37,7 @@ export default function AdminUsersPage() {
   const toggleBan = async (uid: string, currentRole: string) => {
     const d = db!
     await updateDoc(doc(d, "users", uid), { role: currentRole === "banned" ? "user" : "banned" })
+    await logAudit("user_ban_toggle", { targetUid: uid, newRole: currentRole === "banned" ? "user" : "banned" })
     loadUsers()
   }
 

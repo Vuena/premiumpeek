@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { getComplaints, resolveComplaint, type Complaint } from "@/lib/firestore"
+import { logAudit } from "@/lib/useAuditLog"
 import { Loader2, Shield, CheckCircle2, XCircle, AlertTriangle, ExternalLink } from "lucide-react"
 import Link from "next/link"
 
@@ -40,7 +41,9 @@ export default function AdminComplaintsPage() {
   const handleResolve = async (complaintId: string, action: "resolved" | "dismissed") => {
     setProcessing(complaintId)
     try {
+      const complaint = complaints.find(c => c.id === complaintId)
       await resolveComplaint(complaintId, action)
+      await logAudit("complaint_resolve", { complaintId, action, appName: complaint?.appName || "" })
       setComplaints(prev => prev.map(c => c.id === complaintId ? { ...c, status: action } : c))
     } catch (err) {
       console.error("Failed to resolve complaint:", err)

@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { getAllOrdersAdmin, updateOrderStatus, assignTestersToOrder } from "@/lib/firestore"
+import { logAudit } from "@/lib/useAuditLog"
 import { Loader2, ArrowLeft, CreditCard, CheckCircle2, Ban, Search, Users, ExternalLink } from "lucide-react"
 import Link from "next/link"
 
@@ -33,11 +34,13 @@ export default function AdminOrdersPage() {
 
   const updateStatus = async (id: string, status: string) => {
     await updateOrderStatus(id, status)
+    await logAudit("order_status_update", { orderId: id, newStatus: status })
     loadOrders()
   }
 
   const handleAssignTesters = async (id: string) => {
     const uids = await assignTestersToOrder(id, 18)
+    await logAudit("order_assign_testers", { orderId: id })
     loadOrders()
   }
 
