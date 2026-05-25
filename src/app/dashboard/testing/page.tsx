@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { getUserPacks, getPackApps, recordTestingActivity, type Pack, type App } from "@/lib/firestore"
-import { Clock, CheckCircle2, ExternalLink, Loader2, Smartphone, MessageSquare } from "lucide-react"
+import { Clock, CheckCircle2, ExternalLink, Loader2, Smartphone } from "lucide-react"
 
 export default function TestingPage() {
   const { user, loading: authLoading } = useAuth()
@@ -64,7 +64,7 @@ export default function TestingPage() {
   if (loading) return <div className="flex items-center justify-center min-h-[40vh]"><Loader2 className="h-8 w-8 animate-spin text-zinc-400" /></div>
 
   return (
-    <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
+    <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
       <div className="mb-8">
         <h1 className="text-2xl font-bold">Bugünkü Testler</h1>
         <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">

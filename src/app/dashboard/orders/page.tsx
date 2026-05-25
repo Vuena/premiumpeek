@@ -8,7 +8,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { getUserOrders } from "@/lib/firestore"
-import { Loader2, Clock, CheckCircle2, ExternalLink, CreditCard, Ban } from "lucide-react"
+import { Loader2, Clock, CheckCircle2, CreditCard } from "lucide-react"
 
 const statusLabels: Record<string, string> = {
   awaiting_payment: "Ödeme Bekliyor",

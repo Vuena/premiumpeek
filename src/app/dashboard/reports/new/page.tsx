@@ -19,6 +19,7 @@ export default function NewReportPage() {
   const [loading, setLoading] = useState(true)
   const [items, setItems] = useState<{ type: string; description: string }[]>([])
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState("")
 
   useEffect(() => {
     if (authLoading) return
@@ -34,7 +35,11 @@ export default function NewReportPage() {
     setLoading(false)
   }
 
-  const addItem = () => setItems([...items, { type: "bug", description: "" }])
+  const addItem = () => {
+    if (!selectedApp) { setError("Önce bir uygulama seçmelisin."); return }
+    setError("")
+    setItems([...items, { type: "bug", description: "" }])
+  }
   const updateItem = (i: number, field: "type" | "description", value: string) => {
     const copy = [...items]; copy[i][field] = value; setItems(copy)
   }
@@ -87,27 +92,29 @@ export default function NewReportPage() {
   if (loading) return <div className="flex items-center justify-center min-h-[40vh]"><Loader2 className="h-8 w-8 animate-spin text-zinc-400" /></div>
 
   return (
-    <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
+    <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
       <Link href="/dashboard/reports" className="inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white mb-6">
         <ArrowLeft size={16} /> Raporlarım
       </Link>
       <h1 className="text-2xl font-bold mb-6">Rapor Oluştur</h1>
 
       <div className="space-y-4">
-        <select value={selectedApp} onChange={e => setSelectedApp(e.target.value)}
+        <select value={selectedApp} onChange={e => { setSelectedApp(e.target.value); setError("") }}
           className="flex h-11 w-full rounded-xl border border-zinc-300 dark:border-zinc-600 bg-transparent px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-400">
           <option value="">Uygulama seç</option>
           {apps.map(a => <option key={a.id} value={a.id}>{a.appName}</option>)}
         </select>
 
+        {error && <p className="text-sm text-red-500">{error}</p>}
+
         {items.map((item, i) => (
           <div key={i} className="flex items-start gap-2">
             <select value={item.type} onChange={e => updateItem(i, "type", e.target.value)}
               className="h-11 w-28 shrink-0 rounded-xl border border-zinc-300 dark:border-zinc-600 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-400">
-              <option value="bug">🐛 Hata</option>
-              <option value="uiux">🎨 UI/UX</option>
-              <option value="feature">💡 Öneri</option>
-              <option value="other">📋 Diğer</option>
+              <option value="bug">Hata</option>
+              <option value="uiux">UI/UX</option>
+              <option value="feature">Öneri</option>
+              <option value="other">Diğer</option>
             </select>
             <input value={item.description} onChange={e => updateItem(i, "description", e.target.value)}
               placeholder="Açıklama..." className="flex-1 h-11 rounded-xl border border-zinc-300 dark:border-zinc-600 bg-transparent px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-400" />

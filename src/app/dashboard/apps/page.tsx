@@ -8,7 +8,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { getUserApps, type App } from "@/lib/firestore"
-import { Plus, FileText, ExternalLink, Clock, CheckCircle2, AlertCircle, Loader2 } from "lucide-react"
+import { ArrowLeft, Plus, FileText, ExternalLink, Clock, CheckCircle2, AlertCircle, Loader2 } from "lucide-react"
 
 export default function AppsPage() {
   const { user, loading: authLoading } = useAuth()
@@ -41,6 +41,9 @@ export default function AppsPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
+      <Link href="/dashboard" className="inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white mb-6">
+        <ArrowLeft size={16} /> Panel
+      </Link>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold">Uygulamalarım</h1>

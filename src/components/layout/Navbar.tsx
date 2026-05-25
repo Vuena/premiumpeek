@@ -4,7 +4,7 @@ import Link from "next/link"
 import { useAuth } from "@/context/AuthContext"
 import { Button } from "@/components/ui/button"
 import { Menu, X, Moon, Sun, ChevronDown } from "lucide-react"
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import { useTheme } from "./ThemeProvider"
 import { usePathname, useRouter } from "next/navigation"
 
@@ -14,7 +14,19 @@ export function Navbar() {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [dropdown, setDropdown] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdown(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClick)
+    return () => document.removeEventListener("mousedown", handleClick)
+  }, [])
+
   const goHome = useCallback((e: React.MouseEvent) => { e.preventDefault(); router.push("/"); window.scrollTo(0, 0) }, [router])
 
   const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/signup")
@@ -23,6 +35,7 @@ export function Navbar() {
   const links = [
     { href: "/#how-it-works", label: "Nasıl Çalışır" },
     { href: "/#pricing", label: "Fiyatlandırma" },
+    { href: "/blog", label: "Blog" },
     { href: "/#reviews", label: "Yorumlar" },
     { href: "/#faq", label: "SSS" },
   ]
@@ -49,7 +62,7 @@ export function Navbar() {
           </button>
 
           {user ? (
-            <div className="relative">
+            <div className="relative" ref={dropdownRef}>
               <button onClick={() => setDropdown(!dropdown)} className="flex items-center gap-2 h-9 px-3 rounded-xl hover:bg-subtle transition-colors cursor-pointer">
                 <div className="h-6 w-6 rounded-full bg-zinc-300 dark:bg-zinc-600 flex items-center justify-center text-xs font-medium text-white">
                   {user.displayName?.[0] || user.email?.[0] || "?"}

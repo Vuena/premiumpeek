@@ -8,7 +8,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { getOrderById } from "@/lib/firestore"
-import { Loader2, ArrowLeft, Clock, CheckCircle2, CreditCard, Users, ExternalLink, FileText, Ban } from "lucide-react"
+import { Loader2, ArrowLeft, Clock, CheckCircle2, CreditCard } from "lucide-react"
 
 const statusLabels: Record<string, string> = {
   awaiting_payment: "Ödeme Bekliyor",
@@ -48,7 +48,7 @@ export default function OrderDetailPage() {
   const progress = order.totalDays > 0 ? Math.round((order.currentDay / order.totalDays) * 100) : 0
 
   return (
-    <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
+    <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
       <Link href="/dashboard/orders" className="inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white mb-6">
         <ArrowLeft size={16} /> Siparişlerim
       </Link>

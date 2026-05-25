@@ -7,14 +7,14 @@ import { useRouter } from "next/navigation"
 import { useParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { getPackById, getUserApps, getPackApps, startPack, leavePack, type Pack, type App } from "@/lib/firestore"
-import { ArrowLeft, Users, Clock, Calendar, CheckCircle2, Loader2, LogOut, Play, ExternalLink } from "lucide-react"
+import { getPackById, getUserApps, getPackApps, leavePack, type Pack, type App } from "@/lib/firestore"
+import { ArrowLeft, Users, Clock, Calendar, CheckCircle2, Loader2, LogOut, ExternalLink } from "lucide-react"
 import Link from "next/link"
 
 export default function PackDetailPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
-  const params = useParams()
+  const packId = useParams().id as string
   const [pack, setPack] = useState<Pack | null>(null)
   const [apps, setApps] = useState<App[]>([])
   const [myApps, setMyApps] = useState<App[]>([])
@@ -25,37 +25,22 @@ export default function PackDetailPage() {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
     loadData()
-  }, [user, authLoading, params.id])
+  }, [user, authLoading, packId])
 
   const loadData = async () => {
-    if (!user || !params.id) return
+    if (!user || !packId) return
     const [packData, packApps, userApps] = await Promise.all([
-      getPackById(params.id as string),
-      getPackApps(params.id as string),
+      getPackById(packId as string),
+      getPackApps(packId as string),
       getUserApps(user.uid),
     ])
     setPack(packData)
     setApps(packApps)
-    setMyApps(userApps.filter(a => a.packId === params.id))
+    setMyApps(userApps.filter(a => a.packId === packId))
     setLoading(false)
   }
 
-  const isOwner = pack?.createdBy === user?.uid
   const isMember = pack?.members.some(m => m.uid === user?.uid)
-  const me = pack?.members.find(m => m.uid === user?.uid)
-
-  const handleStart = async () => {
-    if (!pack || !user) return
-    setActionLoading(true)
-    try {
-      await startPack(pack.id, user.uid)
-      loadData()
-    } catch (err: any) {
-      alert(err.message)
-    } finally {
-      setActionLoading(false)
-    }
-  }
 
   const handleLeave = async () => {
     if (!pack || !user) return
@@ -96,12 +81,6 @@ export default function PackDetailPage() {
           </div>
         </div>
         <div className="flex gap-2">
-          {isOwner && pack.status === "forming" && (
-            <Button onClick={handleStart} disabled={actionLoading || pack.members.length < 2} className="gap-2">
-              {actionLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play size={16} />}
-              Pack&apos;i Başlat
-            </Button>
-          )}
           {isMember && pack.status === "forming" && (
             <Button onClick={handleLeave} disabled={actionLoading} variant="destructive" className="gap-2">
               <LogOut size={16} /> Ayrıl

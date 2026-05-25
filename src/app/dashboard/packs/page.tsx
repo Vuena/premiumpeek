@@ -5,19 +5,15 @@ import { useState, useEffect } from "react"
 import { useAuth } from "@/context/AuthContext"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { getUserPacks, getFormingPacks, joinPack, type Pack } from "@/lib/firestore"
-import { Plus, Users, ArrowRight, Loader2, Clock, CheckCircle2, AlertCircle } from "lucide-react"
+import { getUserPacks, type Pack } from "@/lib/firestore"
+import { Users, ArrowRight, Loader2, Clock, CheckCircle2, AlertCircle } from "lucide-react"
 
 export default function PacksPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const [packs, setPacks] = useState<Pack[]>([])
-  const [formingPacks, setFormingPacks] = useState<Pack[]>([])
   const [loading, setLoading] = useState(true)
-  const [joining, setJoining] = useState<string | null>(null)
-  const [joinError, setJoinError] = useState("")
 
   useEffect(() => {
     if (authLoading) return
@@ -27,26 +23,9 @@ export default function PacksPage() {
 
   const loadPacks = async () => {
     if (!user) return
-    const [userPacks, allForming] = await Promise.all([
-      getUserPacks(user.uid),
-      getFormingPacks(),
-    ])
+    const userPacks = await getUserPacks(user.uid)
     setPacks(userPacks)
-    setFormingPacks(allForming.filter(p => !p.members.some(m => m.uid === user!.uid)))
     setLoading(false)
-  }
-
-  const handleJoin = async (packId: string) => {
-    if (!user) return
-    setJoinError("")
-    setJoining(packId)
-    try {
-      const result = await joinPack(packId, user)
-      router.push(`/dashboard/packs/${result.packId}`)
-    } catch (err: any) {
-      setJoinError(err.message)
-      setJoining(null)
-    }
   }
 
   const statusIcon = (status: string) => {
@@ -70,40 +49,22 @@ export default function PacksPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold">Pack&apos;lerim</h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            25 geliştirici, 16 gün, sonsuz destek
-          </p>
-        </div>
-        <div className="flex gap-3">
-          <Link href="/dashboard/packs/join">
-            <Button variant="outline" className="gap-2"><Users size={16} /> Katıl</Button>
-          </Link>
-          <Link href="/dashboard/packs/new">
-            <Button className="gap-2"><Plus size={16} /> Yeni Pack</Button>
-          </Link>
-        </div>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold">Pack&apos;lerim</h1>
+        <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+          25 geliştirici, 16 gün, sonsuz destek
+        </p>
       </div>
 
-      {joinError && (
-        <div className="mb-4 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 p-3 text-sm text-red-600 dark:text-red-400">{joinError}</div>
-      )}
-
       {packs.length === 0 ? (
-        <Card className="border-0 shadow-sm mb-6">
+        <Card className="border-0 shadow-sm">
           <CardContent className="p-12 text-center">
             <Users className="h-12 w-12 mx-auto mb-4 text-zinc-300 dark:text-zinc-600" />
             <h2 className="text-lg font-semibold mb-2">Henüz bir pack'in yok</h2>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6">
-              Yeni bir pack oluştur veya aşağıdaki açık pack'lerden birine katıl.
-            </p>
-            <Link href="/dashboard/packs/new"><Button>Pack Oluştur</Button></Link>
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-4 mb-8">
+        <div className="space-y-4">
           {packs.map((pack) => (
             <Link key={pack.id} href={`/dashboard/packs/${pack.id}`}>
               <Card className="border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
@@ -137,41 +98,6 @@ export default function PacksPage() {
             </Link>
           ))}
         </div>
-      )}
-
-      {formingPacks.length > 0 && (
-        <>
-          <h2 className="text-lg font-semibold mb-4">Katılabileceğin Pack'ler</h2>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {formingPacks.map((pack) => (
-              <Card key={pack.id} className="border-0 shadow-sm hover:shadow-md transition-shadow">
-                <CardContent className="p-5">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="font-semibold">{pack.name}</h3>
-                      <p className="text-xs text-zinc-500 mt-0.5">Oluşturan: {pack.members[0]?.displayName || "İsimsiz"}</p>
-                    </div>
-                    <div className="flex items-center gap-1 text-sm font-bold text-blue-600">
-                      <Users size={16} />
-                      {pack.members.length}/{pack.maxMembers}
-                    </div>
-                  </div>
-                  <div className="h-2 rounded-full bg-zinc-200 dark:bg-zinc-700 overflow-hidden mb-3">
-                    <div className="h-full bg-blue-500 transition-all" style={{ width: `${(pack.members.length / pack.maxMembers) * 100}%` }} />
-                  </div>
-                  <Button
-                    onClick={() => handleJoin(pack.id)}
-                    disabled={joining === pack.id}
-                    className="w-full gap-2 text-sm"
-                    size="sm"
-                  >
-                    {joining === pack.id ? <Loader2 className="h-4 w-4 animate-spin" /> : "Katıl"}
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </>
       )}
     </div>
   )

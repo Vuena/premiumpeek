@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { submitApp, getUserPacks, type Pack } from "@/lib/firestore"
-import { FileText, Loader2, ArrowLeft, CheckCircle, Smartphone, Globe, Users, Clock, ShieldCheck } from "lucide-react"
+import { FileText, Loader2, ArrowLeft, CheckCircle, Smartphone, Users, Clock, ShieldCheck } from "lucide-react"
 import Link from "next/link"
 
 type Step = "setup" | "details" | "review" | "done"

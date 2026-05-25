@@ -10,8 +10,7 @@ export const metadata = {
 export default function TermsPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 sm:px-6 py-16">
-      <h1 className="text-3xl font-bold mb-2">Kullanım Şartları</h1>
-      <p className="text-muted text-sm mb-8">Son güncelleme: 25 Mayıs 2026</p>
+      <h1 className="text-3xl font-bold mb-8">Kullanım Şartları</h1>
 
       <div className="space-y-8">
         <section>
@@ -74,7 +73,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold mb-3">5. Fikri Mülkiyet</h2>
+          <h2 className="text-xl font-semibold mb-3">6. Fikri Mülkiyet</h2>
           <p className="text-muted leading-relaxed">
             Platforma yüklediğiniz uygulama ve içeriklerin tüm hakları size aittir. 
             PremiumPeek, test sürecini yürütmek için gerekli olan ölçüde bu içeriklere erişim hakkına sahiptir. 
@@ -83,7 +82,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold mb-3">6. Sorumluluk Reddi</h2>
+          <h2 className="text-xl font-semibold mb-3">7. Sorumluluk Reddi</h2>
           <p className="text-muted leading-relaxed">
             PremiumPeek, Google Play yayın şartlarını karşılamanıza yardımcı olur ancak yayın onayını garanti etmez. 
             Google Play'in yayın politikaları değişebilir; bu değişikliklerden kaynaklanan durumlardan platform sorumlu tutulamaz. 
@@ -93,7 +92,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold mb-3">7. Değişiklikler</h2>
+          <h2 className="text-xl font-semibold mb-3">8. Değişiklikler</h2>
           <p className="text-muted leading-relaxed">
             Bu kullanım şartları önceden bildirim yapılmaksızın değiştirilebilir. 
             Önemli değişiklikler e-posta yoluyla bildirilir. Şartların güncel haline 

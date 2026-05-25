@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { ShieldCheck, Loader2, ArrowLeft, CheckCircle, Copy, Clock, Smartphone, FileText, Star, MessageSquare } from "lucide-react"
+import { ShieldCheck, Loader2, ArrowLeft, CheckCircle, Copy } from "lucide-react"
 import Link from "next/link"
 import { auth, db } from "@/lib/firebase"
 import { addDoc, collection, doc, updateDoc, serverTimestamp } from "firebase/firestore"
@@ -112,7 +112,7 @@ export default function PurchasePage() {
 
   if (step === "payment" && orderData) {
     return (
-      <div className="mx-auto max-w-2xl px-4 sm:px-6 py-16">
+      <div className="mx-auto max-w-2xl px-4 sm:px-6 py-8">
         <Card className="border-0 shadow-sm">
           <CardContent className="p-8">
             <div className="text-center mb-6">
@@ -168,7 +168,7 @@ export default function PurchasePage() {
 
   if (step === "success") {
     return (
-      <div className="mx-auto max-w-2xl px-4 sm:px-6 py-16">
+      <div className="mx-auto max-w-2xl px-4 sm:px-6 py-8">
         <Card className="border-0 shadow-sm text-center">
           <CardContent className="p-8">
             <div className="flex justify-center mb-4">

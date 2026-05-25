@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { collection, getDocs, query, orderBy, doc, updateDoc, deleteDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
-import { Loader2, Shield, ArrowLeft, Ban, Trash2, Search } from "lucide-react"
+import { Loader2, ArrowLeft, Ban, Trash2, Search } from "lucide-react"
 import Link from "next/link"
 
 export default function AdminUsersPage() {

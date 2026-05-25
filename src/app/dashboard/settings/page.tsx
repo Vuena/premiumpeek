@@ -47,7 +47,7 @@ export default function SettingsPage() {
   if (!user) return null
 
   return (
-    <div className="mx-auto max-w-2xl px-4 sm:px-6 py-8">
+    <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
       <div className="flex items-center gap-3 mb-8">
         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-800">
           <Settings className="h-6 w-6" />

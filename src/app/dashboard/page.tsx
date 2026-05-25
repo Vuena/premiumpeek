@@ -7,14 +7,15 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { getUserPacks, getUserApps, type Pack, type App } from "@/lib/firestore"
-import { Users, Clock, FileText, Plus, ArrowRight, Loader2, Smartphone, Settings, TrendingUp, Layers } from "lucide-react"
+import { getUserPacks, getUserApps, getFormingPacks, type Pack, type App } from "@/lib/firestore"
+import { Users, Clock, FileText, Plus, ArrowRight, Loader2, Smartphone, Settings, Layers } from "lucide-react"
 
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const [packs, setPacks] = useState<Pack[]>([])
   const [apps, setApps] = useState<App[]>([])
+  const [formingPacks, setFormingPacks] = useState<Pack[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -25,12 +26,14 @@ export default function DashboardPage() {
 
   const loadData = async () => {
     if (!user) return
-    const [userPacks, userApps] = await Promise.all([
+    const [userPacks, userApps, allForming] = await Promise.all([
       getUserPacks(user.uid),
       getUserApps(user.uid),
+      getFormingPacks(),
     ])
     setPacks(userPacks)
     setApps(userApps)
+    setFormingPacks(allForming.filter(p => !p.members.some(m => m.uid === user!.uid)))
     setLoading(false)
   }
 
@@ -56,10 +59,10 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         {[
           { icon: Layers, label: "Aktif Pack", value: activePacks.length.toString(), href: "/dashboard/packs", color: "text-blue-600 bg-blue-50 dark:bg-blue-950/30" },
-          { icon: Smartphone, label: "Bugün Test", value: `${testedCount}/${activePacks.length > 0 ? "?" : "0"}`, href: "/dashboard/testing", color: "text-green-600 bg-green-50 dark:bg-green-950/30" },
+          { icon: Smartphone, label: "Bugün Test", value: testedCount.toString(), href: "/dashboard/testing", color: "text-green-600 bg-green-50 dark:bg-green-950/30" },
           { icon: FileText, label: "Uygulamalar", value: apps.length.toString(), href: "/dashboard/apps", color: "text-purple-600 bg-purple-50 dark:bg-purple-950/30" },
         ].map((stat) => (
           <Link key={stat.label} href={stat.href}>
@@ -83,17 +86,24 @@ export default function DashboardPage() {
           <Card className="border-cardborder shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="font-semibold text-lg">Aktif Pack&apos;ler</h2>
-                <Link href="/dashboard/packs" className="text-sm text-blue-600 hover:underline">Tümünü Gör</Link>
+                <h2 className="font-semibold text-lg">Aktif Pack</h2>
               </div>
-              {activePacks.length === 0 ? (
-                <div className="text-center py-8 text-muted">
-                  <Users className="h-10 w-10 mx-auto mb-3 opacity-50" />
-                  <p className="text-sm">Henüz aktif pack'in yok</p>
-                  <div className="flex justify-center gap-2 mt-4">
-                    <Link href="/dashboard/packs/new"><Button size="sm">Pack Oluştur</Button></Link>
-                    <Link href="/dashboard/packs/join"><Button size="sm" variant="outline">Pack'lere Göz At</Button></Link>
-                  </div>
+              {activePacks.length === 0 && formingPacks.length === 0 ? null : activePacks.length === 0 && formingPacks.length > 0 ? (
+                <div className="space-y-3">
+                  {formingPacks.slice(0, 2).map(pack => (
+                    <Link key={pack.id} href={`/dashboard/packs/${pack.id}`} className="flex items-center justify-between p-3 rounded-xl hover:bg-subtle transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-50 dark:bg-yellow-950/30 text-yellow-600">
+                          <Users className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium">{pack.name}</p>
+                          <p className="text-xs text-muted">{pack.members.length}/{pack.maxMembers} üye · Oluşuyor</p>
+                        </div>
+                      </div>
+                      <ArrowRight className="h-4 w-4 text-muted" />
+                    </Link>
+                  ))}
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -121,7 +131,6 @@ export default function DashboardPage() {
               <h2 className="font-semibold text-lg mb-4">Hızlı İşlemler</h2>
               <div className="grid sm:grid-cols-2 gap-3">
                 {[
-                  { icon: Plus, label: "Yeni Pack", href: "/dashboard/packs/new", desc: "25 kişilik grup kur", color: "text-blue-600" },
                   { icon: Users, label: "Pack'e Katıl", href: "/dashboard/packs/join", desc: "Aktif pack'leri gör", color: "text-indigo-600" },
                   { icon: FileText, label: "Uygulama Yükle", href: "/dashboard/apps/new", desc: "Pack'ine ekle", color: "text-purple-600" },
                   { icon: Clock, label: "Bugünkü Testler", href: "/dashboard/testing", desc: "Testlerini yap", color: "text-green-600" },
@@ -147,7 +156,7 @@ export default function DashboardPage() {
             <CardContent className="p-6">
               <h2 className="font-semibold text-lg mb-4">Nasıl Çalışır?</h2>
               <ol className="space-y-3">
-                {["Bir pack'e katıl veya yeni pack oluştur","Uygulamanın Google Play linkini yükle","Her gün pack'teki uygulamaları test et","16 gün sonra yayına hazırsın!"].map((step, i) => (
+                {["Bir pack'e katıl","Uygulamanın Google Play linkini yükle","Her gün pack'teki uygulamaları test et","16 gün sonra yayına hazırsın!"].map((step, i) => (
                   <li key={i} className="flex items-start gap-3 text-sm">
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white text-xs font-bold">{i + 1}</span>
                     <span className="text-muted">{step}</span>

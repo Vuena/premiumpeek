@@ -29,6 +29,7 @@ export function Footer() {
             <h4 className="font-medium text-sm mb-3">Şirket</h4>
             <div className="space-y-2">
               <Link href="/about" className="block text-sm text-muted hover:text-foreground">Hakkımızda</Link>
+              <Link href="/app-rejected" className="block text-sm text-muted hover:text-foreground">App Rejected?</Link>
               <Link href="/blog" className="block text-sm text-muted hover:text-foreground">Blog</Link>
               <Link href="/contact" className="block text-sm text-muted hover:text-foreground">İletişim</Link>
             </div>
@@ -46,10 +47,6 @@ export function Footer() {
 
         <div className="mt-10 pt-6 border-t border-cardborder flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-muted">&copy; 2026 PremiumPeek. Tüm hakları saklıdır.</p>
-          <div className="flex gap-4">
-            <span className="text-xs text-muted">Twitter/X</span>
-            <span className="text-xs text-muted">LinkedIn</span>
-          </div>
         </div>
       </div>
     </footer>

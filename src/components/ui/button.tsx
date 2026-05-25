@@ -11,7 +11,7 @@ const Button = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HT
   const sizes: Record<string, string> = {
     sm: "h-9 px-3 text-sm",
     default: "h-11 px-6 text-sm",
-    lg: "h-13 px-8 text-base",
+    lg: "h-12 px-8 text-base",
   }
   return (
     <button

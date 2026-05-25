@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { getFormingPacks, joinPack, type Pack } from "@/lib/firestore"
-import { Users, Loader2, Plus, UserCheck, Clock, ArrowRight } from "lucide-react"
+import { Users, Loader2, UserCheck, ArrowRight } from "lucide-react"
 import Link from "next/link"
 
 export default function JoinPackPage() {
@@ -25,9 +25,14 @@ export default function JoinPackPage() {
   }, [user, authLoading])
 
   const load = async () => {
-    const data = await getFormingPacks()
-    setPacks(data)
-    setLoading(false)
+    try {
+      const data = await getFormingPacks()
+      setPacks(data)
+    } catch (err: any) {
+      setError(err.message || "Pack'ler yüklenirken hata oluştu")
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleJoin = async (packId: string) => {
@@ -57,9 +62,6 @@ export default function JoinPackPage() {
           <h1 className="text-2xl font-bold">Pack'e Katıl</h1>
           <p className="text-sm text-zinc-500 mt-1">Aşağıdaki açık pack'lerden birine katıl, yeterli kişiye ulaşınca testler başlasın.</p>
         </div>
-        <Link href="/dashboard/packs/new">
-          <Button className="gap-2"><Plus size={16} />Pack Oluştur</Button>
-        </Link>
       </div>
 
       {error && (
@@ -74,9 +76,8 @@ export default function JoinPackPage() {
             <Users className="h-12 w-12 mx-auto mb-4 text-zinc-300 dark:text-zinc-600" />
             <h2 className="text-lg font-semibold mb-2">Aktif pack bulunamadı</h2>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">
-              Şu anda katılabileceğin açık bir pack yok. İlk pack'i sen oluştur!
+              Şu anda katılabileceğin açık bir pack yok. Lütfen daha sonra tekrar dene.
             </p>
-            <Link href="/dashboard/packs/new"><Button>Pack Oluştur</Button></Link>
           </CardContent>
         </Card>
       ) : (

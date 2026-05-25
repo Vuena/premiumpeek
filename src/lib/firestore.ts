@@ -145,6 +145,24 @@ async function doJoinPack(d: any, packId: string, packData: any, user: User) {
     }
   })
 
+  if (started) {
+    const existing = await getDocs(query(collection(d, "packs"), where("status", "==", "forming"), limit(1)))
+    if (existing.empty) {
+      const dateStr = new Date().toLocaleDateString("tr-TR")
+      await addDoc(collection(d, "packs"), {
+        name: `PremiumPeek Pack (${dateStr})`,
+        status: "forming",
+        currentDay: 0,
+        maxMembers: 25,
+        totalDays: 16,
+        members: [],
+        memberUids: [],
+        createdBy: "",
+        createdAt: serverTimestamp(),
+      })
+    }
+  }
+
   return { packId, packName: packData.name, started }
 }
 
@@ -171,22 +189,42 @@ export async function getUserPacks(uid: string) {
   const packsRef = collection(d, "packs")
   const q = query(
     packsRef,
-    where("memberUids", "array-contains", uid),
-    orderBy("createdAt", "desc")
+    where("memberUids", "array-contains", uid)
   )
   const snapshot = await getDocs(q)
   return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Pack))
+    .sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0))
 }
 
 export async function getFormingPacks() {
   const d = db!
   const q = query(
     collection(d, "packs"),
-    where("status", "==", "forming"),
-    orderBy("createdAt", "desc")
+    where("status", "==", "forming")
   )
   const snap = await getDocs(q)
-  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Pack))
+  let packs = snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Pack))
+    .sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0))
+
+  if (packs.length === 0) {
+    const dateStr = new Date().toLocaleDateString("tr-TR")
+    await addDoc(collection(d, "packs"), {
+      name: `PremiumPeek Pack (${dateStr})`,
+      status: "forming",
+      currentDay: 0,
+      maxMembers: 25,
+      totalDays: 16,
+      members: [],
+      memberUids: [],
+      createdBy: "",
+      createdAt: serverTimestamp(),
+    })
+    const snap2 = await getDocs(q)
+    packs = snap2.docs.map(doc => ({ id: doc.id, ...doc.data() } as Pack))
+      .sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0))
+  }
+
+  return packs
 }
 
 export async function getPackById(packId: string) {
@@ -242,9 +280,10 @@ export async function submitApp(data: {
 
 export async function getUserApps(uid: string) {
   const d = db!
-  const q = query(collection(d, "apps"), where("uid", "==", uid), orderBy("createdAt", "desc"))
+  const q = query(collection(d, "apps"), where("uid", "==", uid))
   const snapshot = await getDocs(q)
   return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as App))
+    .sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0))
 }
 
 export async function getPackApps(packId: string) {
@@ -368,11 +407,11 @@ export async function getUserOrders(uid: string) {
   const d = db!
   const q = query(
     collection(d, "orders"),
-    where("uid", "==", uid),
-    orderBy("createdAt", "desc")
+    where("uid", "==", uid)
   )
   const snap = await getDocs(q)
   return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+    .sort((a: any, b: any) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0))
 }
 
 export async function getOrderById(orderId: string) {

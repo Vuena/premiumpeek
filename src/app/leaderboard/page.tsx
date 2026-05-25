@@ -6,7 +6,7 @@ import { useAuth } from "@/context/AuthContext"
 import { Card, CardContent } from "@/components/ui/card"
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore"
 import { db } from "@/lib/firebase"
-import { Trophy, Medal, Loader2, TrendingUp } from "lucide-react"
+import { Trophy, Medal, Loader2 } from "lucide-react"
 
 export default function LeaderboardPage() {
   useEffect(() => { document.title = "Liderlik Tablosu | PremiumPeek" }, [])
@@ -30,7 +30,7 @@ export default function LeaderboardPage() {
   if (loading) return <div className="flex items-center justify-center min-h-[40vh]"><Loader2 className="h-8 w-8 animate-spin text-zinc-400" /></div>
 
   return (
-    <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
+    <div className="mx-auto max-w-3xl px-4 sm:px-6 py-16">
       <div className="flex items-center gap-3 mb-8">
         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-yellow-50 dark:bg-yellow-950/30">
           <Trophy className="h-6 w-6 text-yellow-600" />

@@ -45,15 +45,6 @@ export default function AboutPage() {
         </p>
       </div>
 
-      <div className="rounded-2xl bg-zinc-100 dark:bg-[#121212] p-8 mb-8">
-        <h2 className="text-xl font-bold mb-4">Nasıl Başladık?</h2>
-        <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">
-          2024 yılında, Google Play&apos;in kapalı test şartını karşılamakta zorlanan 
-          geliştiriciler için bir çözüm olarak doğdu. Bugün 5.000+ uygulamanın 
-          yayınlanmasına yardımcı olduk.
-        </p>
-      </div>
-
       <div className="text-center">
         <Link href="/signup"><Button size="lg">Hemen Başla</Button></Link>
       </div>

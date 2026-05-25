@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { doc, getDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
-import { ArrowLeft, Loader2, Download, FileText } from "lucide-react"
+import { ArrowLeft, Loader2, Download } from "lucide-react"
 
 export default function ReportDetailPage() {
   const { user, loading: authLoading } = useAuth()

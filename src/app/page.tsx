@@ -2,7 +2,8 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { CtaButton } from "@/components/ui/cta-button"
-import { Users, Calendar, ShieldCheck, Clock, FileText, Star, ArrowRight, Sparkles, Smartphone, CheckCircle } from "lucide-react"
+import { TestimonialsSection } from "@/components/ui/TestimonialsSection"
+import { Users, Calendar, ShieldCheck, Clock, FileText, ArrowRight, Sparkles, Smartphone, CheckCircle, X, Check } from "lucide-react"
 import type { ReactNode } from "react"
 
 export default function Home() {
@@ -26,15 +27,7 @@ export default function Home() {
     { icon: Clock, title: "Günlük Aktivite", desc: "Pack üyeleri her gün uygulamanı açar. Pasif yükleme değil, gerçek kullanım." },
     { icon: FileText, title: "Geri Bildirim", desc: "Her testçi yorum yapar, hataları raporlar. Uygulamanı iyileştir." },
     { icon: ShieldCheck, title: "Sorumluluk", desc: "3 gün aksatınca atılma + 1 ay pack yasağı. Herkes taahhüdünü yerine getirir." },
-    { icon: Sparkles, title: "Oyunlaştırma", desc: "Rozetler, liderlik tablosu. Test etmek eğlenceli." },
-  ]
-
-  const testimonials = [
-    { name: "Ahmet Y.", title: "Android Geliştiricisi", text: "3 kere reddedildikten sonra PremiumPeek ile ilk denemede onay aldım. Pack sistemi gerçekten işe yarıyor." },
-    { name: "Zeynep K.", title: "Android Geliştiricisi", text: "Arkadaş bulamıyordum, 16 gün boyunca test edecek kimse yoktu. Burada 25 kişi birbirine destek oluyor." },
-    { name: "Mehmet A.", title: "Android Geliştiricisi", text: "Ücretsiz olmasına rağmen sistem çok sağlam. 16 günde uygulamam yayına hazırdı." },
-    { name: "Can B.", title: "Android Geliştiricisi", text: "Daha önce başka platformları denemiştim ama hiçbiri bu kadar organize değildi. 16 günün sonunda uygulamam yayındaydı." },
-    { name: "Elif D.", title: "Android Geliştiricisi", text: "İlk uygulamamı yayınlarken en büyük korkum testçi bulmaktı. PremiumPeek sayesinde hiç uğraşmadan 16 günde şartları karşıladım." },
+    { icon: Sparkles, title: "Oyunlaştırma", desc: "Rozetler ve başarılarla test etmek eğlenceli." },
   ]
 
   const faqs: { q: string; a: string | ReactNode }[] = [
@@ -42,6 +35,10 @@ export default function Home() {
     { q: "Google Play'in şartı ne?", a: "Yeni hesaplar, yayın öncesinde 12 gerçek kullanıcı tarafından 14 ardışık gün test edilmelidir." },
     { q: "Kaç kişi bir pack'te yer alır?", a: "Her pack 25 geliştiriciden oluşur. 16 gün boyunca birbirinizin uygulamalarını test eder ve Google Play şartını karşılarsınız. Biri test etmezse bile 24 testçiniz olur — Google'ın istediği 12'den hala fazla." },
     { q: "Ya birisi test etmezse?", a: "3 gün üst üste test etmeyen pack'ten atılır ve 1 ay boyunca yeni bir pack'e katılamaz. Bu sayede herkesin aktif kalması sağlanır." },
+    { q: "Ücretli ve ücretsiz test arasındaki fark nedir?", a: "Ücretsiz pack'te 25 geliştirici karşılıklı test yapar, sıra beklemeniz gerekebilir. Profesyonel test ($10 USDT) ile 6 saat içinde 25 testçi atanır, 16 gün test edilirsiniz ve Google Play reddinde koşulsuz iade garantisi sunarız." },
+    { q: "Ödeme sonrası test ne zaman başlar?", a: "Profesyonel test hizmetimizde ödeme onaylandıktan sonra 6 saat içinde 25 testçi uygulamanızı test etmeye başlar. Ücretsiz pack'te ise pack dolduğunda (25 üye) otomatik başlar." },
+    { q: "Testçiler uygulamamı kaldırırsa ne olur?", a: "Google politikasına göre, bir testçi uygulamanızı yükledikten sonra kaldırsa bile 14 gün boyunca 'test ediyor' olarak sayılır. Bu nedenle endişelenmenize gerek yok." },
+    { q: "Her uygulama için ayrı test gerekli mi?", a: "Evet, Google Play'de yayınlamak istediğiniz her yeni uygulama için ayrı bir kapalı test süreci tamamlamanız gerekir. Bir uygulama için test yapmak diğer uygulamaları kapsamaz." },
     { q: "Ücretli hizmet ne kadar?", a: "Profesyonel test hizmetimiz $10 USDT (TRC-20). 25 testçiniz olur, 16 gün boyunca test edilirsiniz, üstelik Google Play reddinde koşulsuz iade garantisi." },
     { q: "Uygulamam her dilde test edilebilir mi?", a: "Evet. Tüm dillerdeki uygulamalar desteklenir. Geri bildirimler Türkçe veya İngilizce verilir." },
     { q: "Organizasyon hesabım var, gerekli mi?", a: "Google Play'in 12 testçi / 14 gün şartı, Kasım 2023 sonrası açılan bireysel hesaplar için geçerlidir. Organizasyon hesapları bu şarta tabi değildir." },
@@ -61,9 +58,9 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-blue-50/40 to-white dark:from-blue-950/10 dark:to-zinc-950" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 py-12 sm:py-16">
           <div className="mx-auto max-w-3xl text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30 px-4 py-1.5 text-sm text-blue-700 dark:text-blue-400 mb-6">
-              <Star className="h-4 w-4 fill-blue-500 text-blue-500" />
-              <span>5.000+ uygulama başarıyla yayınlandı</span>
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/30 px-3.5 py-1 text-xs font-medium text-green-700 dark:text-green-400 mb-6">
+              <ShieldCheck size={14} />
+              %100 Production Access Garantisi
             </div>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-[1.1]">
               Google Play&apos;de Yayınlarken
@@ -73,42 +70,52 @@ export default function Home() {
               25 geliştiriciden oluşan pack&apos;lerle uygulamanı 16 günde test et, 
               Google Play yayın şartlarını karşıla ve yayına geç. Ücretsiz başla.
             </p>
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <CtaButton>
-                <Button size="lg" className="text-base gap-2 w-full sm:w-auto shadow-lg shadow-blue-600/20">
-                  Ücretsiz Başla <ArrowRight size={18} />
-                </Button>
-              </CtaButton>
-              <Link href="/#how-it-works">
-                <Button variant="outline" size="lg" className="text-base w-full sm:w-auto border-zinc-300 dark:border-zinc-600">
-                  Nasıl Çalışır?
-                </Button>
+            <div className="mt-8 flex flex-col items-center gap-4">
+              <div className="flex flex-col sm:flex-row items-center gap-3">
+                <CtaButton>
+                  <Button size="lg" className="text-base gap-2 w-full sm:w-auto shadow-lg shadow-blue-600/20">
+                    Ücretsiz Başla <ArrowRight size={18} />
+                  </Button>
+                </CtaButton>
+                <Link href="/#how-it-works">
+                  <Button variant="outline" size="lg" className="text-base w-full sm:w-auto border-zinc-300 dark:border-zinc-600">
+                    Nasıl Çalışır?
+                  </Button>
+                </Link>
+              </div>
+              <Link href="/purchase" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-medium px-5 py-2.5 text-sm shadow-lg shadow-green-500/30 transition-all hover:scale-105">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-[10px] font-bold">$</span>
+                $10 USDT ile hemen 25 profesyonel testçi bul
+                <ArrowRight size={16} />
               </Link>
-            </div>
-            <div className="mt-4">
-              <Link href="/purchase">
-                <Button variant="ghost" size="sm" className="text-sm text-blue-600 dark:text-blue-400 hover:underline gap-1">
-                  $10 ile hemen profesyonel testçi bul <ArrowRight size={14} />
-                </Button>
+              <Link href="/#pricing" className="text-sm text-muted hover:text-foreground underline underline-offset-2">
+                Ne Kazanırsın? Detayları Gör →
               </Link>
             </div>
           </div>
 
-          <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             {stats.map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div className="text-2xl sm:text-3xl font-bold">{stat.value}</div>
-                <div className="text-sm text-muted mt-1">{stat.label}</div>
+              <div key={stat.label} className="rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 md:p-7 text-center shadow-sm">
+                <div className="text-3xl sm:text-4xl font-bold">{stat.value}</div>
+                <div className="text-sm text-muted mt-2">{stat.label}</div>
               </div>
             ))}
+          </div>
+
+          <div className="mt-12 text-center">
+            <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 dark:bg-blue-950/30 px-4 py-1.5 text-sm text-blue-700 dark:text-blue-400">
+              <Users size={14} />
+              <span><strong>5.000+</strong> geliştiriciye katıl, Google Play&apos;de yayına geç</span>
+            </div>
           </div>
         </div>
       </section>
 
       {/* How It Works */}
       <section id="how-it-works" className="py-20 sm:py-28 bg-subtle">
-        <SectionTitle title="Nasıl Çalışır?" desc="4 adımda Google Play yayın şartlarını karşıla." />
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <SectionTitle title="Nasıl Çalışır?" desc="4 adımda Google Play yayın şartlarını karşıla." />
           <div className="grid md:grid-cols-4 gap-8">
             {steps.map((step, i) => (
               <div key={step.title} className="relative text-center">
@@ -144,8 +151,6 @@ export default function Home() {
         </div>
       </section>
 
-
-
       {/* Pricing */}
       <section id="pricing" className="py-20 sm:py-28 bg-subtle">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -160,8 +165,7 @@ export default function Home() {
                     "25 kişilik pack sistemi",
                     "Günlük test takibi",
                     "16 gün süreç",
-                    "Hata raporları",
-                    "Liderlik tablosu"
+                    "Hata raporları"
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-2 text-sm">
                       <CheckCircle className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
@@ -188,69 +192,91 @@ export default function Home() {
                   ))}
                 </ul>
                 <Link href="/purchase"><Button className="w-full shadow-lg shadow-blue-600/20">Hemen Başla</Button></Link>
+                <div className="mt-3 text-center">
+                  <Link href="/sample-report" className="text-xs text-blue-600 dark:text-blue-400 hover:underline">Örnek Raporu Gör →</Link>
+                </div>
               </CardContent>
             </Card>
           </div>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section id="reviews" className="py-20 sm:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <SectionTitle title="Geliştiriciler Ne Diyor?" desc="5.000+ geliştirici uygulamasını yayınladı." />
-          <div className="grid md:grid-cols-2 gap-6">
-            {testimonials.map((t) => (
-              <Card key={t.name} className="border-cardborder">
-                <CardContent className="p-6">
-                  <div className="flex gap-1 mb-3">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-yellow-500 text-yellow-500" />
-                    ))}
-                  </div>
-                  <p className="text-sm text-muted mb-4 leading-relaxed italic">&ldquo;{t.text}&rdquo;</p>
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-950/30 flex items-center justify-center text-sm font-medium text-blue-700 dark:text-blue-400">{t.name[0]}</div>
-                    <div>
-                      <p className="text-sm font-medium">{t.name}</p>
-                      <p className="text-xs text-muted">{t.title}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+      <TestimonialsSection />
 
       {/* Comparison */}
       <section className="py-20 sm:py-28 bg-subtle">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <SectionTitle title="Neden Biz?" desc="Diğer yöntemlerle karşılaştırma." />
-          <div className="overflow-x-auto">
-            <table className="w-full max-w-3xl mx-auto text-sm">
-              <thead>
-                <tr className="border-b border-cardborder">
-                  <th className="text-left py-4 px-4 font-medium"></th>
-                  <th className="text-center py-4 px-4 font-medium text-muted">Arkadaşların</th>
-                  <th className="text-center py-4 px-4 font-medium text-blue-600 dark:text-blue-500 bg-blue-50 dark:bg-blue-950/20 rounded-t-xl">PremiumPeek</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  ["Başlama süresi", "Günler/Haftalar", "Hemen / 6 saat"],
-                  ["Testçi sayısı", "? (güvenilmez)", "16-25 garanti"],
-                  ["Test garantisi", "Yok", "3 gün kuralı"],
-                  ["Rapor", "Yok", "Detaylı geri bildirim"],
-                  ["Maliyet", "Zaman + iyilik borcu", "Tamamen ücretsiz"],
-                ].map((row, i) => (
-                  <tr key={i} className="border-b border-cardborder">
-                    <td className="py-3 px-4 font-medium">{row[0]}</td>
-                    <td className="text-center py-3 px-4 text-muted">{row[1]}</td>
-                    <td className="text-center py-3 px-4 text-blue-600 dark:text-blue-500 font-medium bg-blue-50 dark:bg-blue-950/20">{row[2]}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            <Card className="border-cardborder shadow-sm">
+              <CardContent className="p-8 text-center">
+                <div className="text-2xl font-bold text-zinc-400 mb-6">Arkadaşların</div>
+                <div className="space-y-6">
+                  {[
+                    { label: "Başlama Süresi", value: "Günler / Haftalar", good: false },
+                    { label: "Testçi Sayısı", value: "? (güvenilmez)", good: false },
+                    { label: "Test Garantisi", value: "Yok", good: false },
+                    { label: "Raporlama", value: "Yok", good: false },
+                    { label: "Maliyet", value: "Zaman + İyilik Borcu", good: false },
+                  ].map(item => (
+                    <div key={item.label}>
+                      <div className="text-xs text-zinc-400 mb-1">{item.label}</div>
+                      <div className="flex items-center justify-center gap-2">
+                        <X size={14} className="text-red-400 shrink-0" />
+                        <span className="text-sm text-zinc-500">{item.value}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-cardborder shadow-sm">
+              <CardContent className="p-8 text-center">
+                <div className="text-2xl font-bold text-zinc-400 mb-6">Freelance Platformlar</div>
+                <div className="space-y-6">
+                  {[
+                    { label: "Başlama Süresi", value: "1-3 Gün", good: false },
+                    { label: "Testçi Sayısı", value: "Değişken", good: false },
+                    { label: "Test Garantisi", value: "Düşük", good: false },
+                    { label: "Raporlama", value: "Sınırlı", good: false },
+                    { label: "Maliyet", value: "$50 - $200", good: false },
+                  ].map(item => (
+                    <div key={item.label}>
+                      <div className="text-xs text-zinc-400 mb-1">{item.label}</div>
+                      <div className="flex items-center justify-center gap-2">
+                        <X size={14} className="text-red-400 shrink-0" />
+                        <span className="text-sm text-zinc-500">{item.value}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="relative border-2 border-blue-600 dark:border-blue-500 shadow-lg shadow-blue-600/10">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-xs font-medium px-4 py-1 rounded-full">En İyi</div>
+              <CardContent className="p-8 text-center">
+                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-6">PremiumPeek</div>
+                <div className="space-y-6">
+                  {[
+                    { label: "Başlama Süresi", value: "Hemen / 6 Saat", good: true },
+                    { label: "Testçi Sayısı", value: "25 Garantili", good: true },
+                    { label: "Test Garantisi", value: "3 Gün Kuralı", good: true },
+                    { label: "Raporlama", value: "Detaylı Geri Bildirim", good: true },
+                    { label: "Maliyet", value: "Tamamen Ücretsiz", good: true },
+                  ].map(item => (
+                    <div key={item.label}>
+                      <div className="text-xs text-zinc-400 mb-1">{item.label}</div>
+                      <div className="flex items-center justify-center gap-2">
+                        <Check size={14} className="text-green-500 shrink-0" />
+                        <span className="text-sm font-medium text-blue-600 dark:text-blue-400">{item.value}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>

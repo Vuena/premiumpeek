@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Mail, MessageSquare, Clock, Loader2, CheckCircle2 } from "lucide-react"
-import Link from "next/link"
 
 export default function ContactPage() {
   useEffect(() => { document.title = "İletişim | PremiumPeek" }, [])
@@ -42,7 +41,7 @@ export default function ContactPage() {
 
       <div className="grid sm:grid-cols-3 gap-6 mb-12">
         {[
-          { icon: Mail, title: "E-posta", desc: "info@premiumpeek.com", href: "mailto:info@premiumpeek.com" },
+          { icon: Mail, title: "E-posta", desc: "premiumpeektest@gmail.com", href: "mailto:premiumpeektest@gmail.com" },
           { icon: MessageSquare, title: "Destek", desc: "7/24 öncelikli destek" },
           { icon: Clock, title: "Yanıt Süresi", desc: "Ortalama 2 saat" },
         ].map(item => (
@@ -92,7 +91,7 @@ export default function ContactPage() {
       </div>
 
       <p className="text-xs text-muted text-center mt-8">
-        Veya doğrudan <a href="mailto:info@premiumpeek.com" className="text-blue-600 hover:underline">info@premiumpeek.com</a> adresine e-posta gönder.
+        Veya doğrudan <a href="mailto:premiumpeektest@gmail.com" className="text-blue-600 hover:underline">premiumpeektest@gmail.com</a> adresine e-posta gönder.
       </p>
     </div>
   )

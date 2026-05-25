@@ -43,7 +43,7 @@ export default function RefundPage() {
           <div className="space-y-4">
             {[
               { step: "1", title: "Red Bildirimi", desc: "Google Play Console'dan red bildirimini alın." },
-              { step: "2", title: "Talep Oluştur", desc: "Red ekran görüntüsü ve sipariş bilginizle info@premiumpeek.com adresine e-posta gönderin." },
+              { step: "2", title: "Talep Oluştur", desc: "Red ekran görüntüsü ve sipariş bilginizle premiumpeektest@gmail.com adresine e-posta gönderin." },
               { step: "3", title: "Onay ve İade", desc: "Ekibimiz talebinizi 24 saat içinde inceler. USDT iadeniz 1-3 iş günü içinde cüzdanınıza gönderilir." },
             ].map(item => (
               <div key={item.step} className="flex gap-4 p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900">
@@ -60,7 +60,7 @@ export default function RefundPage() {
         <section className="rounded-2xl bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-800 p-6">
           <h2 className="font-semibold mb-2">Önemli Not</h2>
           <p className="text-sm text-yellow-700 dark:text-yellow-400 leading-relaxed">
-            %99.9 başarı oranımızla iade neredeyse hiç talep edilmez.
+            Yüksek başarı oranımızla iade neredeyse hiç talep edilmez.
           </p>
         </section>
       </div>

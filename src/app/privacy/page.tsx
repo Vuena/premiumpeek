@@ -10,8 +10,7 @@ export const metadata = {
 export default function PrivacyPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 sm:px-6 py-16">
-      <h1 className="text-3xl font-bold mb-2">Gizlilik Politikası</h1>
-      <p className="text-muted text-sm mb-8">Son güncelleme: 25 Mayıs 2026</p>
+      <h1 className="text-3xl font-bold mb-8">Gizlilik Politikası</h1>
 
       <div className="space-y-8">
         <section>
@@ -22,7 +21,6 @@ export default function PrivacyPage() {
             <li>Pack yönetimi ve eşleştirme sistemi</li>
             <li>Kredi sistemi işlemleri</li>
             <li>Günlük test takibi ve hatırlatmalar</li>
-            <li>Liderlik tablosu sıralaması</li>
             <li>E-posta bildirimleri (günlük hatırlatma, pack daveti, uyarı)</li>
             <li>Müşteri desteği ve iletişim</li>
           </ul>
@@ -53,7 +51,7 @@ export default function PrivacyPage() {
           <h2 className="text-xl font-semibold mb-3">4. Veri Saklama ve Silme</h2>
           <p className="text-muted leading-relaxed">
             Hesabınız aktif olduğu sürece verileriniz saklanır. Hesabınızı sildiğinizde tüm verileriniz 
-            30 gün içinde kalıcı olarak silinir. Hesap silme talebi için info@premiumpeek.com adresine e-posta gönderebilirsiniz.
+            30 gün içinde kalıcı olarak silinir. Hesap silme talebi için premiumpeektest@gmail.com adresine e-posta gönderebilirsiniz.
           </p>
         </section>
 
@@ -72,7 +70,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-xl font-semibold mb-3">6. İletişim</h2>
           <p className="text-muted leading-relaxed">
-            Gizlilik politikamız hakkında sorularınız için: <a href="mailto:info@premiumpeek.com" className="text-blue-600 hover:underline">info@premiumpeek.com</a>
+            Gizlilik politikamız hakkında sorularınız için: <a href="mailto:premiumpeektest@gmail.com" className="text-blue-600 hover:underline">premiumpeektest@gmail.com</a>
           </p>
         </section>
       </div>

@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { collection, getDocs, query, orderBy, where } from "firebase/firestore"
+import { collection, getDocs, query, where } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { Loader2, FileText, Plus, ArrowRight } from "lucide-react"
 
@@ -25,9 +25,11 @@ export default function ReportsPage() {
 
   const loadReports = async () => {
     const d = db!
-    const q = query(collection(d, "reports"), where("uid", "==", user!.uid), orderBy("createdAt", "desc"))
+    const q = query(collection(d, "reports"), where("uid", "==", user!.uid))
     const snap = await getDocs(q)
-    setReports(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })))
+    const items = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+    items.sort((a: any, b: any) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0))
+    setReports(items)
     setLoading(false)
   }
 
@@ -35,6 +37,9 @@ export default function ReportsPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
+      <Link href="/dashboard" className="inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white mb-6">
+        <ArrowRight size={16} className="rotate-180" /> Panele Dön
+      </Link>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold">Raporlarım</h1>

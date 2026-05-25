@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore"
 import { db } from "@/lib/firebase"
-import { Users, Layers, FileText, TrendingUp, Loader2, ArrowRight, Shield, CreditCard, UserCheck } from "lucide-react"
+import { Users, Layers, FileText, Loader2, ArrowRight, Shield, CreditCard, UserCheck } from "lucide-react"
 
 export default function AdminPage() {
   const { user, loading: authLoading } = useAuth()
