@@ -6,8 +6,8 @@ import { useAuth } from "@/context/AuthContext"
 import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { getUserPacks, getPackApps, recordTestingActivity, type Pack, type App } from "@/lib/firestore"
-import { Clock, CheckCircle2, ExternalLink, Loader2, Smartphone } from "lucide-react"
+import { getUserPacks, getPackApps, recordTestingActivity, CREDIT_EARN_PER_TEST, CREDIT_EARN_BONUS_FEEDBACK, type Pack, type App } from "@/lib/firestore"
+import { Clock, CheckCircle2, ExternalLink, Loader2, Smartphone, Coins, MessageSquare } from "lucide-react"
 
 export default function TestingPage() {
   const { user, loading: authLoading } = useAuth()
@@ -16,6 +16,7 @@ export default function TestingPage() {
   const [packsMap, setPacksMap] = useState<Record<string, Pack>>({})
   const [loading, setLoading] = useState(true)
   const [testedToday, setTestedToday] = useState<string[]>([])
+  const [feedbacks, setFeedbacks] = useState<Record<string, string>>({})
 
   useEffect(() => {
     if (authLoading) return
@@ -52,7 +53,8 @@ export default function TestingPage() {
     const pack = packsMap[packId]
     if (pack && user) {
       try {
-        await recordTestingActivity(packId, user.uid, pack.currentDay)
+        const fb = feedbacks[appId] || ""
+        await recordTestingActivity(packId, user.uid, pack.currentDay, fb.length)
       } catch (err) {
         console.error("Failed to record testing activity:", err)
       }
@@ -68,6 +70,10 @@ export default function TestingPage() {
         <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
           {new Date().toLocaleDateString("tr-TR", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
         </p>
+        <div className="flex items-center gap-4 mt-3 text-xs text-zinc-500">
+          <span className="flex items-center gap-1"><Coins size={14} /> Her test: +{CREDIT_EARN_PER_TEST}🪙</span>
+          <span className="flex items-center gap-1"><MessageSquare size={14} /> Detaylı yorum: +{CREDIT_EARN_BONUS_FEEDBACK}🪙</span>
+        </div>
       </div>
 
       {appsToTest.length === 0 ? (
@@ -95,28 +101,41 @@ export default function TestingPage() {
             const tested = testedToday.includes(app.id)
             return (
               <Card key={app.id} className={`border-0 shadow-sm transition-all ${tested ? "opacity-60" : ""}`}>
-                <CardContent className="p-5 flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${tested ? "bg-green-50 dark:bg-green-950/30" : "bg-zinc-100 dark:bg-zinc-800"}`}>
-                      {tested ? (
-                        <CheckCircle2 className="h-5 w-5 text-green-600" />
-                      ) : (
-                        <Smartphone className="h-5 w-5 text-zinc-500" />
+                <CardContent className="p-5">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${tested ? "bg-green-50 dark:bg-green-950/30" : "bg-zinc-100 dark:bg-zinc-800"}`}>
+                        {tested ? (
+                          <CheckCircle2 className="h-5 w-5 text-green-600" />
+                        ) : (
+                          <Smartphone className="h-5 w-5 text-zinc-500" />
+                        )}
+                      </div>
+                      <div>
+                        <h3 className={`font-medium ${tested ? "line-through text-zinc-400" : ""}`}>{app.appName}</h3>
+                        <p className="text-xs text-zinc-500">{app.description?.slice(0, 80) || app.packageName}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <a href={app.googlePlayLink} target="_blank" rel="noopener noreferrer">
+                        <Button variant="ghost" size="sm"><ExternalLink size={16} /></Button>
+                      </a>
+                      {!tested && (
+                        <Button size="sm" onClick={() => markTested(app.id, app.packId || "")}>Test Edildi</Button>
                       )}
                     </div>
-                    <div>
-                      <h3 className={`font-medium ${tested ? "line-through text-zinc-400" : ""}`}>{app.appName}</h3>
-                      <p className="text-xs text-zinc-500">{app.description?.slice(0, 80) || app.packageName}</p>
+                  </div>
+                  {!tested && (
+                    <div className="mt-3 ml-14">
+                      <textarea
+                        value={feedbacks[app.id] || ""}
+                        onChange={(e) => setFeedbacks({ ...feedbacks, [app.id]: e.target.value })}
+                        placeholder="Yorum yap (+2🪙 bonus)..."
+                        className="w-full rounded-xl border border-zinc-300 dark:border-zinc-600 bg-transparent px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                        rows={2}
+                      />
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <a href={app.googlePlayLink} target="_blank" rel="noopener noreferrer">
-                      <Button variant="ghost" size="sm"><ExternalLink size={16} /></Button>
-                    </a>
-                    {!tested && (
-                      <Button size="sm" onClick={() => markTested(app.id, app.packId || "")}>Test Edildi</Button>
-                    )}
-                  </div>
+                  )}
                 </CardContent>
               </Card>
             )

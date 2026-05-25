@@ -7,8 +7,8 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { updateUserProfile } from "@/lib/firestore"
-import { Settings, Loader2, CheckCircle2 } from "lucide-react"
+import { updateUserProfile, joinTesterPool, leaveTesterPool } from "@/lib/firestore"
+import { Settings, Loader2, CheckCircle2, Users } from "lucide-react"
 
 export default function SettingsPage() {
   const { user, loading: authLoading } = useAuth()
@@ -86,6 +86,27 @@ export default function SettingsPage() {
               {saved ? "Kaydedildi" : "Kaydet"}
             </Button>
           </form>
+        </CardContent>
+      </Card>
+
+      <Card className="border-0 shadow-sm mt-6">
+        <CardHeader>
+          <CardTitle className="text-lg">Testçi Havuzu</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-zinc-500 mb-4">
+            Testçi havuzuna katılarak ücretli test siparişlerinde görev alabilir, 
+            her test günü için 50🪙 kazanabilirsin. Kendi pack testlerinden ayrıca +5🪙 kazanmaya devam edersin.
+          </p>
+          {(user as any).isTester ? (
+            <Button variant="outline" onClick={async () => { await leaveTesterPool(user.uid); window.location.reload() }}>
+              Testçi Havuzundan Ayrıl
+            </Button>
+          ) : (
+            <Button onClick={async () => { await joinTesterPool(user.uid); window.location.reload() }}>
+              <Users className="h-4 w-4 mr-2" /> Testçi Ol
+            </Button>
+          )}
         </CardContent>
       </Card>
 

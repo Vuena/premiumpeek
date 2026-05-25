@@ -19,6 +19,7 @@ export function Footer() {
             <h4 className="font-medium text-sm mb-3">Platform</h4>
             <div className="space-y-2">
               <Link href="/#how-it-works" className="block text-sm text-muted hover:text-foreground">Nasıl Çalışır</Link>
+              <Link href="/#pricing" className="block text-sm text-muted hover:text-foreground">Fiyatlandırma</Link>
               <Link href="/#reviews" className="block text-sm text-muted hover:text-foreground">Yorumlar</Link>
               <Link href="/#faq" className="block text-sm text-muted hover:text-foreground">SSS</Link>
             </div>

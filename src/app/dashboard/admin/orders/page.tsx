@@ -6,9 +6,8 @@ import { useAuth } from "@/context/AuthContext"
 import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { collection, getDocs, query, orderBy, doc, updateDoc } from "firebase/firestore"
-import { db } from "@/lib/firebase"
-import { Loader2, ArrowLeft, CreditCard, Clock, CheckCircle2, Ban, Search } from "lucide-react"
+import { getAllOrdersAdmin, updateOrderStatus, assignTestersToOrder } from "@/lib/firestore"
+import { Loader2, ArrowLeft, CreditCard, Clock, CheckCircle2, Ban, Search, Users, ExternalLink } from "lucide-react"
 import Link from "next/link"
 
 export default function AdminOrdersPage() {
@@ -25,15 +24,18 @@ export default function AdminOrdersPage() {
   }, [user, authLoading])
 
   const loadOrders = async () => {
-    const d = db!
-    const snap = await getDocs(query(collection(d, "orders"), orderBy("createdAt", "desc")))
-    setOrders(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })))
+    const data = await getAllOrdersAdmin()
+    setOrders(data as any[])
     setLoading(false)
   }
 
   const updateStatus = async (id: string, status: string) => {
-    const d = db!
-    await updateDoc(doc(d, "orders", id), { status })
+    await updateOrderStatus(id, status)
+    loadOrders()
+  }
+
+  const handleAssignTesters = async (id: string) => {
+    const uids = await assignTestersToOrder(id, 25)
     loadOrders()
   }
 
@@ -47,7 +49,7 @@ export default function AdminOrdersPage() {
 
   const statusLabels: Record<string, string> = {
     awaiting_payment: "Ödeme Bekliyor",
-    paid: "Ödendi",
+    paid: "Ödendi (Onay Bekliyor)",
     testing: "Test Ediliyor",
     completed: "Tamamlandı",
     refunded: "İade Edildi",
@@ -81,6 +83,7 @@ export default function AdminOrdersPage() {
               <th className="text-left px-4 py-3 font-medium">Uygulama</th>
               <th className="text-left px-4 py-3 font-medium">Kullanıcı</th>
               <th className="text-center px-4 py-3 font-medium">Tutar</th>
+              <th className="text-center px-4 py-3 font-medium">TX Hash</th>
               <th className="text-center px-4 py-3 font-medium">Durum</th>
               <th className="text-center px-4 py-3 font-medium">İşlem</th>
             </tr>
@@ -93,16 +96,42 @@ export default function AdminOrdersPage() {
                   <p className="text-xs text-zinc-500 truncate max-w-[200px]">{o.packageName}</p>
                 </td>
                 <td className="px-4 py-3 text-zinc-500 text-xs">{o.userEmail || o.uid?.slice(0, 8)}</td>
-                <td className="px-4 py-3 text-center font-medium">₺{(o.amount / 100).toFixed(0)}</td>
+                <td className="px-4 py-3 text-center font-medium">${o.amount} {o.currency}</td>
+                <td className="px-4 py-3 text-center">
+                  {o.txHash ? (
+                    <a href={`https://tronscan.org/#/transaction/${o.txHash}`} target="_blank" rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline inline-flex items-center gap-1 text-xs">
+                      {o.txHash.slice(0, 8)}... <ExternalLink size={10} />
+                    </a>
+                  ) : (
+                    <span className="text-zinc-400">-</span>
+                  )}
+                </td>
                 <td className="px-4 py-3 text-center">
                   <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusColors[o.status] || ""}`}>{statusLabels[o.status] || o.status}</span>
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center justify-center gap-1">
-                    {o.status === "awaiting_payment" && <Button variant="ghost" size="sm" onClick={() => updateStatus(o.id, "paid")} title="Ödeme Alındı"><CreditCard size={14} className="text-blue-600" /></Button>}
-                    {o.status === "paid" && <Button variant="ghost" size="sm" onClick={() => updateStatus(o.id, "testing")} title="Teste Başlat"><Clock size={14} className="text-green-600" /></Button>}
-                    {o.status === "testing" && <Button variant="ghost" size="sm" onClick={() => updateStatus(o.id, "completed")} title="Tamamla"><CheckCircle2 size={14} className="text-green-600" /></Button>}
-                    {o.status !== "refunded" && <Button variant="ghost" size="sm" onClick={() => { if (confirm("İade et?")) updateStatus(o.id, "refunded") }} title="İade Et"><Ban size={14} className="text-red-600" /></Button>}
+                    {o.status === "awaiting_payment" && o.txHash && (
+                      <Button variant="ghost" size="sm" onClick={() => updateStatus(o.id, "paid")} title="Ödeme Onayla">
+                        <CreditCard size={14} className="text-blue-600" />
+                      </Button>
+                    )}
+                    {o.status === "paid" && (
+                      <Button variant="ghost" size="sm" onClick={() => handleAssignTesters(o.id)} title="Testçi Ata">
+                        <Users size={14} className="text-green-600" />
+                      </Button>
+                    )}
+                    {o.status === "testing" && (
+                      <Button variant="ghost" size="sm" onClick={() => updateStatus(o.id, "completed")} title="Tamamla">
+                        <CheckCircle2 size={14} className="text-green-600" />
+                      </Button>
+                    )}
+                    {o.status !== "refunded" && o.status !== "completed" && (
+                      <Button variant="ghost" size="sm" onClick={() => { if (confirm("İade et?")) updateStatus(o.id, "refunded") }} title="İade Et">
+                        <Ban size={14} className="text-red-600" />
+                      </Button>
+                    )}
                   </div>
                 </td>
               </tr>

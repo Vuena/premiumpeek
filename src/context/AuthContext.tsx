@@ -11,7 +11,7 @@ import {
   type User,
 } from "firebase/auth"
 import { auth, db } from "@/lib/firebase"
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore"
+import { doc, getDoc, setDoc, serverTimestamp, collection, addDoc } from "firebase/firestore"
 
 interface AuthUser extends User {
   username?: string
@@ -71,7 +71,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         credits: 30,
         totalTested: 0,
         totalPosted: 0,
+        isTester: false,
         role: "user",
+        createdAt: serverTimestamp(),
+      })
+      await addDoc(collection(d, "transactions"), {
+        uid: user.uid,
+        amount: 30,
+        type: "earned",
+        reason: "bonus",
+        note: "Kayıt bonusu",
         createdAt: serverTimestamp(),
       })
     }

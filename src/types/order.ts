@@ -1,4 +1,4 @@
-export type OrderStatus = "pending" | "paid" | "testing" | "completed" | "refunded"
+export type OrderStatus = "awaiting_payment" | "paid" | "testing" | "completed" | "refunded"
 
 export interface Order {
   id: string
@@ -12,20 +12,21 @@ export interface Order {
   amount: number
   currency: string
   status: OrderStatus
-  stripePaymentId?: string
-  stripeSessionId?: string
+  txHash?: string
+  walletAddress?: string
   testers: string[]
   testerCount: number
   currentDay: number
   totalDays: number
   reportIds: string[]
   startedAt?: Date
+  paidAt?: Date
   completedAt?: Date
   refundReason?: string
   createdAt: Date
 }
 
-export const ORDER_PRICE = 499
-export const ORDER_CURRENCY = "TRY"
+export const ORDER_PRICE_USDT = 10
+export const ORDER_CURRENCY = "USDT"
 export const ORDER_TESTER_COUNT = 25
 export const ORDER_TOTAL_DAYS = 16

@@ -21,6 +21,15 @@ import {
 } from "firebase/firestore"
 import type { User } from "firebase/auth"
 
+// ==================== CONSTANTS ====================
+
+export const CREDIT_COST_POST = 60
+export const CREDIT_EARN_PER_TEST = 5
+export const CREDIT_EARN_BONUS_FEEDBACK = 2
+export const CREDIT_EARN_REFERRAL = 30
+export const CREDIT_EARN_ORDER_TESTER_DAY = 50
+export const CREDIT_SIGNUP_BONUS = 30
+
 // ==================== TYPES ====================
 
 export interface Pack {
@@ -222,8 +231,6 @@ export async function startPack(packId: string, uid: string) {
 
 // ==================== APP FUNCTIONS ====================
 
-const CREDIT_COST_POST = 60
-
 export async function submitApp(data: {
   uid: string
   appName: string
@@ -325,20 +332,169 @@ export async function getTodayActivities(packId: string, uid: string, day: numbe
   return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as DailyActivity))
 }
 
-export async function recordTestingActivity(packId: string, uid: string, day: number) {
+export async function recordTestingActivity(packId: string, uid: string, day: number, feedbackLength = 0) {
   const d = db!
   const activityId = `${packId}_${uid}_${day}`
   const ref = doc(d, "testingActivity", activityId)
   const snap = await getDoc(ref)
   if (!snap.exists()) {
-    await setDoc(ref, {
-      packId,
-      uid,
-      day,
-      status: "done",
-      completedAt: serverTimestamp(),
+    await runTransaction(d, async (transaction) => {
+      const activitySnap = await transaction.get(ref)
+      if (activitySnap.exists()) return
+
+      transaction.set(ref, {
+        packId, uid, day,
+        status: "done",
+        completedAt: serverTimestamp(),
+      })
+
+      const userRef = doc(d, "users", uid)
+      transaction.update(userRef, {
+        credits: increment(CREDIT_EARN_PER_TEST),
+        totalTested: increment(1),
+      })
+
+      transaction.set(doc(collection(d, "transactions")), {
+        uid,
+        amount: CREDIT_EARN_PER_TEST,
+        type: "earned",
+        reason: "test",
+        note: `Gün ${day} testi tamamlandı`,
+        createdAt: serverTimestamp(),
+      })
+
+      if (feedbackLength >= 20) {
+        transaction.update(userRef, {
+          credits: increment(CREDIT_EARN_BONUS_FEEDBACK),
+        })
+        transaction.set(doc(collection(d, "transactions")), {
+          uid,
+          amount: CREDIT_EARN_BONUS_FEEDBACK,
+          type: "earned",
+          reason: "test",
+          note: "Detaylı yorum bonusu",
+          createdAt: serverTimestamp(),
+        })
+      }
     })
   }
+}
+
+export async function recordOrderTesterActivity(orderId: string, testerUid: string, day: number) {
+  const d = db!
+  const logId = `${orderId}_${testerUid}_${day}`
+  const ref = doc(collection(d, "testerLogs"), logId)
+  const snap = await getDoc(ref)
+  if (!snap.exists()) {
+    await runTransaction(d, async (transaction) => {
+      const logSnap = await transaction.get(ref)
+      if (logSnap.exists()) return
+
+      transaction.set(ref, {
+        orderId, testerUid, day,
+        tested: true,
+        feedback: "",
+        createdAt: serverTimestamp(),
+      })
+
+      const userRef = doc(d, "users", testerUid)
+      transaction.update(userRef, {
+        credits: increment(CREDIT_EARN_ORDER_TESTER_DAY),
+      })
+
+      transaction.set(doc(collection(d, "transactions")), {
+        uid: testerUid,
+        amount: CREDIT_EARN_ORDER_TESTER_DAY,
+        type: "earned",
+        reason: "test",
+        referenceId: orderId,
+        note: `Ücretli test gün ${day} - ${orderId.slice(0, 8)}`,
+        createdAt: serverTimestamp(),
+      })
+    })
+  }
+}
+
+// ==================== TESTER POOL FUNCTIONS ====================
+
+export async function joinTesterPool(uid: string) {
+  const d = db!
+  const snap = await getDoc(doc(d, "users", uid))
+  if (!snap.exists()) throw new Error("Kullanıcı bulunamadı.")
+  await updateDoc(doc(d, "users", uid), { isTester: true, testerSince: serverTimestamp() })
+}
+
+export async function leaveTesterPool(uid: string) {
+  await updateDoc(doc(collection(doc({} as any, "users"), uid)), { isTester: false })
+  // Re-read db
+  const d = db!
+  await updateDoc(doc(d, "users", uid), { isTester: false })
+}
+
+export async function getAvailableTesters() {
+  const d = db!
+  const q = query(
+    collection(d, "users"),
+    where("isTester", "==", true),
+    limit(100)
+  )
+  const snap = await getDocs(q)
+  return snap.docs.map(doc => ({ uid: doc.id, ...doc.data() }))
+}
+
+export async function assignTestersToOrder(orderId: string, count: number = 25) {
+  const d = db!
+  const testers = await getAvailableTesters()
+  const selected = testers.slice(0, count)
+  const testerUids = selected.map(t => t.uid)
+  await updateDoc(doc(d, "orders", orderId), {
+    testers: testerUids,
+    testerCount: testerUids.length,
+    status: "testing",
+  })
+  return testerUids
+}
+
+// ==================== ORDER FUNCTIONS ====================
+
+export async function getUserOrders(uid: string) {
+  const d = db!
+  const q = query(
+    collection(d, "orders"),
+    where("uid", "==", uid),
+    orderBy("createdAt", "desc")
+  )
+  const snap = await getDocs(q)
+  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+}
+
+export async function getOrderById(orderId: string) {
+  const d = db!
+  const snap = await getDoc(doc(d, "orders", orderId))
+  if (!snap.exists()) return null
+  return { id: snap.id, ...snap.data() }
+}
+
+export async function getTesterTasks(testerUid: string) {
+  const d = db!
+  const q = query(
+    collection(d, "orders"),
+    where("testers", "array-contains", testerUid),
+    where("status", "==", "testing")
+  )
+  const snap = await getDocs(q)
+  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+}
+
+export async function getAllOrdersAdmin() {
+  const d = db!
+  const snap = await getDocs(query(collection(d, "orders"), orderBy("createdAt", "desc")))
+  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+}
+
+export async function updateOrderStatus(orderId: string, status: string, extra?: Record<string, any>) {
+  const d = db!
+  await updateDoc(doc(d, "orders", orderId), { status, ...extra })
 }
 
 // ==================== USER FUNCTIONS ====================

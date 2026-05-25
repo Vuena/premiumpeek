@@ -29,6 +29,7 @@ export default function PrivacyPage() {
           <ul className="list-disc list-inside space-y-1 text-muted text-sm">
             <li><strong>Firebase (Google):</strong> Altyapı ve veritabanı hizmetleri için.</li>
             <li><strong>Resend:</strong> E-posta gönderim hizmeti için.</li>
+            <li><strong>Kripto Cüzdan:</strong> Ödeme işlemleri için yalnızca cüzdan adresiniz paylaşılır. Özel anahtarlar saklanmaz.</li>
             <li><strong>Yasal zorunluluk:</strong> Kanunen yetkili mercilerin talebi durumunda.</li>
           </ul>
         </section>

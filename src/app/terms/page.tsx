@@ -45,7 +45,19 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold mb-3">4. Kullanıcı Davranışı</h2>
+          <h2 className="text-xl font-semibold mb-3">4. Kripto Ödeme ve Hızlı Test Hizmeti</h2>
+          <ul className="list-disc list-inside space-y-2 text-muted text-sm">
+            <li>Hızlı Test hizmeti $10 USDT (TRC-20) karşılığında 25 testçi ve 16 gün test sürecini kapsar.</li>
+            <li>Ödeme, belirtilen USDT cüzdan adresine yapılır. TX Hash kaydı kullanıcı tarafından sağlanır.</li>
+            <li>Ödeme onaylandıktan sonra 6 saat içinde testçiler atanır. Test süreci 16 gün sürer.</li>
+            <li>TX Hash doğrulaması admin tarafından yapılır. Yanlış/geçersiz TX Hash durumunda sipariş iptal edilebilir.</li>
+            <li>USDT iadeleri, aynı cüzdana geri gönderilir. İşlem ücretleri kullanıcıya aittir.</li>
+            <li>Google Play üretim erişim başvurunuz reddedilirse ödediğiniz $10 USDT iade edilir.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-semibold mb-3">5. Kullanıcı Davranışı</h2>
           <ul className="list-disc list-inside space-y-2 text-muted text-sm">
             <li>Diğer kullanıcılara saygılı ve profesyonel davranmak zorunludur.</li>
             <li>Hakaret, tehdit, taciz veya ayrımcılık içeren davranışlar kesinlikle yasaktır.</li>

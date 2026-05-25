@@ -7,11 +7,9 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { submitApp, getUserPacks, type Pack } from "@/lib/firestore"
+import { submitApp, getUserPacks, CREDIT_COST_POST, type Pack } from "@/lib/firestore"
 import { FileText, Loader2, ArrowLeft, Coins } from "lucide-react"
 import Link from "next/link"
-
-const CREDIT_COST_POST = 60
 
 export default function NewAppPage() {
   const { user, loading: authLoading } = useAuth()

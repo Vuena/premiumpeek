@@ -1,7 +1,8 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Users, Calendar, ShieldCheck, Clock, FileText, Star, ArrowRight, Sparkles, Smartphone } from "lucide-react"
+import { Users, Calendar, ShieldCheck, Clock, FileText, Star, ArrowRight, Sparkles, Smartphone, CheckCircle } from "lucide-react"
+import { CREDIT_COST_POST, CREDIT_EARN_PER_TEST, CREDIT_SIGNUP_BONUS } from "@/lib/firestore"
 
 export default function Home() {
   const stats = [
@@ -134,6 +135,48 @@ export default function Home() {
 
 
 
+      {/* Pricing */}
+      <section id="pricing" className="py-20 sm:py-28 bg-subtle">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <SectionTitle title="Fiyatlandırma" desc="Bütçene ve zamanına uygun planı seç." />
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <Card className="border-cardborder">
+              <CardContent className="p-8">
+                <h3 className="text-xl font-bold mb-2">Ücretsiz Topluluk</h3>
+                <p className="text-4xl font-bold mb-6">₺0</p>
+                <ul className="space-y-3 mb-8">
+                  {["16 kişilik pack sistemi", "Günlük test takibi", `${CREDIT_SIGNUP_BONUS}🪙 kayıt bonusu`, `Test başına +${CREDIT_EARN_PER_TEST}🪙`, "Liderlik tablosu"].map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-sm">
+                      <CheckCircle className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link href="/signup"><Button variant="outline" className="w-full">Ücretsiz Başla</Button></Link>
+              </CardContent>
+            </Card>
+
+            <Card className="relative border-2 border-blue-600 dark:border-blue-500 shadow-lg shadow-blue-600/10">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-xs font-medium px-4 py-1 rounded-full">En Popüler</div>
+              <CardContent className="p-8">
+                <h3 className="text-xl font-bold mb-2">Hızlı Test</h3>
+                <p className="text-4xl font-bold mb-1">$10</p>
+                <p className="text-sm text-muted mb-6">USDT (TRC-20) · tek seferlik</p>
+                <ul className="space-y-3 mb-8">
+                  {["25 profesyonel testçi", "6 saat içinde başlangıç", "16 gün tam test süreci", "Detaylı hata raporları", "Google Play form yanıtları", "%100 garanti", "7/24 öncelikli destek"].map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-sm">
+                      <CheckCircle className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link href="/purchase"><Button className="w-full shadow-lg shadow-blue-600/20">Hemen Başla</Button></Link>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials */}
       <section id="reviews" className="py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -177,8 +220,8 @@ export default function Home() {
               </thead>
               <tbody>
                 {[
-                  ["Başlama süresi", "Günler/Haftalar", "Hemen"],
-                  ["Testçi sayısı", "? (güvenilmez)", "16 garanti"],
+                  ["Başlama süresi", "Günler/Haftalar", "Hemen / 6 saat"],
+                  ["Testçi sayısı", "? (güvenilmez)", "16-25 garanti"],
                   ["Test garantisi", "Yok", "3 gün kuralı"],
                   ["Rapor", "Yok", "Detaylı geri bildirim"],
                   ["Maliyet", "Zaman + iyilik borcu", "Tamamen ücretsiz"],

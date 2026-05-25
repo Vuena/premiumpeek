@@ -72,5 +72,20 @@ service cloud.firestore {
       allow create: if isAuth();
       allow delete: if isAdmin();
     }
+
+    // Tester logs (for paid order testing)
+    match /testerLogs/{logId} {
+      allow read: if isAuth();
+      allow create: if isAuth();
+      allow update: if isAuth();
+    }
+
+    // Users: allow updating isTester field
+    match /users/{userId} {
+      allow read: if isAuth();
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId) || isAdmin();
+      allow delete: if isAdmin();
+    }
   }
 }
