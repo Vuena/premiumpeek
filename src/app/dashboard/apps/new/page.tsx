@@ -30,12 +30,17 @@ const ADIMLAR = [
 ]
 
 function extractPackageName(url: string): string {
-  const match = url.match(/play\.google\.com\/apps\/testing\/([^/?\s]+)/)
-  return match ? match[1] : ""
+  const testingMatch = url.match(/play\.google\.com\/apps\/testing\/([^/?\s]+)/)
+  if (testingMatch) return testingMatch[1]
+  const storeMatch = url.match(/[?&]id=([^&?\s]+)/)
+  if (storeMatch) return storeMatch[1]
+  return ""
 }
 
 function isValidPlayUrl(url: string): boolean {
-  return /^https:\/\/play\.google\.com\/apps\/testing\/.+/.test(url.trim())
+  const t = url.trim()
+  return /^https:\/\/play\.google\.com\/apps\/testing\/.+/.test(t) ||
+         /^https:\/\/play\.google\.com\/store\/apps\/details\?id=.+/.test(t)
 }
 
 const MAX_ICON_SIZE = 5 * 1024 * 1024
@@ -99,7 +104,7 @@ export default function NewAppPage() {
     setError("")
     if (!form.appName.trim()) { setError("Uygulama adı gerekli"); return }
     if (!form.googlePlayLink.trim()) { setError("Test linki gerekli"); return }
-    if (!isValidPlayUrl(form.googlePlayLink)) { setError("Geçerli bir Google Play test linki gir (https://play.google.com/apps/testing/...)."); return }
+    if (!isValidPlayUrl(form.googlePlayLink)) { setError("Geçerli bir Google Play linki gir (örn: https://play.google.com/apps/testing/... veya https://play.google.com/store/apps/details?id=...)."); return }
     if (!extractPackageName(form.googlePlayLink)) { setError("Linkten paket adı çıkarılamadı. Lütfen geçerli bir link gir."); return }
     if (!appIcon) { setError("Uygulama ikonu gerekli."); return }
     setStep("review")
@@ -261,9 +266,9 @@ export default function NewAppPage() {
                 <p className="text-xs text-zinc-400 mb-1">Google Play closed testing track için herkese açık katılım linki.</p>
                 <div className="flex gap-2">
                   <div className="flex-1">
-                    <Input value={form.googlePlayLink} onChange={(e) => handleLinkChange(e.target.value)} placeholder="https://play.google.com/apps/testing/..." required />
+                    <Input value={form.googlePlayLink} onChange={(e) => handleLinkChange(e.target.value)} placeholder="https://play.google.com/apps/testing/... veya store/apps/details?id=..." required />
                   </div>
-                  <button type="button" onClick={() => setShowUrlHelp(true)} className="flex items-center gap-1 shrink-0 rounded-xl border border-zinc-300 dark:border-zinc-600 px-3 text-xs text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer">
+                  <button type="button" onClick={() => setShowUrlHelp(true)} className="flex items-center gap-1 shrink-0 rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30 px-3 text-xs text-blue-700 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors cursor-pointer">
                     <HelpCircle size={14} /> Nasıl bulurum?
                   </button>
                 </div>
