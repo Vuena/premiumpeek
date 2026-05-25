@@ -265,11 +265,21 @@ export async function submitApp(data: {
   googlePlayLink: string
   instructions: string
   packId: string
+  appIcon?: string
 }) {
   const d = db!
 
   const ref = await addDoc(collection(d, "apps"), {
-    ...data,
+    uid: data.uid,
+    appName: data.appName,
+    packageName: data.packageName,
+    description: data.description,
+    category: data.category,
+    language: data.language,
+    googlePlayLink: data.googlePlayLink,
+    instructions: data.instructions,
+    packId: data.packId,
+    appIcon: data.appIcon || "",
     status: "pending",
     screenshots: [],
     createdAt: serverTimestamp(),

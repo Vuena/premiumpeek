@@ -8,12 +8,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { submitApp, getUserPacks, type Pack } from "@/lib/firestore"
-import { FileText, Loader2, ArrowLeft, CheckCircle, Smartphone, Users, Clock, ShieldCheck } from "lucide-react"
+import { FileText, Loader2, ArrowLeft, CheckCircle, Smartphone, Users, Clock, ShieldCheck, HelpCircle, X } from "lucide-react"
 import Link from "next/link"
 
 type Step = "setup" | "details" | "review" | "done"
 
-const PLATFORMS = ["📱 Android"] as const
+const PLATFORMS = ["Android"] as const
 
 const SETUP_ADIMLARI = [
   { num: "01", baslik: "Testçi Grubunu Ekle", aciklama: "Google Play Console'da uygulamanın closed test bölümüne testçi grubumuzu ekle", detay: "Uygulamanın test bölümüne gidip testçilerimizin uygulamana erişebilmesi için Google Group'umuzu ekle.", grup: "premiumpeek@googlegroups.com" },
@@ -28,6 +28,17 @@ const ADIMLAR = [
   { label: "Onayla & Gönder", key: "review" },
   { label: "Tamam", key: "done" },
 ]
+
+function extractPackageName(url: string): string {
+  const match = url.match(/play\.google\.com\/apps\/testing\/([^/?\s]+)/)
+  return match ? match[1] : ""
+}
+
+function isValidPlayUrl(url: string): boolean {
+  return /^https:\/\/play\.google\.com\/apps\/testing\/.+/.test(url.trim())
+}
+
+const MAX_ICON_SIZE = 5 * 1024 * 1024
 
 export default function NewAppPage() {
   const { user, loading: authLoading } = useAuth()
@@ -44,7 +55,7 @@ export default function NewAppPage() {
     instructions: "",
     testEmail: "",
     testPassword: "",
-    platform: "📱 Android",
+    platform: "Android",
     packId: "",
   })
   const [appIcon, setAppIcon] = useState<string | null>(null)
@@ -52,6 +63,7 @@ export default function NewAppPage() {
   const [loading, setLoading] = useState(false)
   const [selectedOption, setSelectedOption] = useState<"free" | "paid" | null>(null)
   const [setupAccepted, setSetupAccepted] = useState(false)
+  const [showUrlHelp, setShowUrlHelp] = useState(false)
 
   useEffect(() => {
     if (authLoading) return
@@ -69,21 +81,32 @@ export default function NewAppPage() {
   const handleIconUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+    if (file.size > MAX_ICON_SIZE) {
+      setError("Görsel boyutu en fazla 5 MB olabilir.")
+      return
+    }
+    setError("")
     const reader = new FileReader()
     reader.onload = () => setAppIcon(reader.result as string)
     reader.readAsDataURL(file)
   }
 
+  const handleLinkChange = (val: string) => {
+    setForm({ ...form, googlePlayLink: val, packageName: extractPackageName(val) })
+  }
+
   const goReview = () => {
     setError("")
     if (!form.appName.trim()) { setError("Uygulama adı gerekli"); return }
-    if (!form.packageName.trim()) { setError("Paket adı gerekli"); return }
     if (!form.googlePlayLink.trim()) { setError("Test linki gerekli"); return }
+    if (!isValidPlayUrl(form.googlePlayLink)) { setError("Geçerli bir Google Play test linki gir (https://play.google.com/apps/testing/...)."); return }
+    if (!extractPackageName(form.googlePlayLink)) { setError("Linkten paket adı çıkarılamadı. Lütfen geçerli bir link gir."); return }
+    if (!appIcon) { setError("Uygulama ikonu gerekli."); return }
     setStep("review")
   }
 
   const handleSubmitFree = async () => {
-    if (!form.packId) { setError("Aktif bir pack'in yok. Önce bir pack oluştur veya katıl."); return }
+    if (!form.packId) { setError("Aktif bir pack'in yok."); return }
     setError("")
     setLoading(true)
     try {
@@ -98,6 +121,7 @@ export default function NewAppPage() {
         googlePlayLink: form.googlePlayLink,
         instructions: extraNotes,
         packId: form.packId,
+        appIcon: appIcon || "",
       })
       setStep("done")
     } catch (err: any) {
@@ -107,8 +131,29 @@ export default function NewAppPage() {
     }
   }
 
-  const handleSubmitPaid = () => {
-    router.push("/purchase")
+  const handleSubmitPaid = async () => {
+    setError("")
+    setLoading(true)
+    try {
+      const extraNotes = [form.instructions, form.testEmail ? `Test girişi: ${form.testEmail} / ${form.testPassword}` : ""].filter(Boolean).join("\n")
+      const appId = await submitApp({
+        uid: user!.uid,
+        appName: form.appName,
+        packageName: form.packageName,
+        description: form.description,
+        category: form.category,
+        language: form.language,
+        googlePlayLink: form.googlePlayLink,
+        instructions: extraNotes,
+        packId: "",
+        appIcon: appIcon || "",
+      })
+      router.push(`/purchase?appId=${appId}`)
+    } catch (err: any) {
+      setError(err.message || "Uygulama gönderilirken hata oluştu")
+    } finally {
+      setLoading(false)
+    }
   }
 
   const gosterilecekAdimlar = ADIMLAR.filter(a => a.key !== "done" || step === "done")
@@ -213,11 +258,18 @@ export default function NewAppPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1.5">Test Linki <span className="text-red-500">*</span></label>
-                <p className="text-xs text-zinc-400 mb-1">Google Play closed testing track için herkese açık katılım linki. <a href="https://support.google.com/googleplay/android-developer/answer/9845334" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Nasıl bulurum?</a></p>
-                <Input value={form.googlePlayLink} onChange={(e) => setForm({ ...form, googlePlayLink: e.target.value })} placeholder="https://play.google.com/apps/testing/..." required />
+                <p className="text-xs text-zinc-400 mb-1">Google Play closed testing track için herkese açık katılım linki.</p>
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <Input value={form.googlePlayLink} onChange={(e) => handleLinkChange(e.target.value)} placeholder="https://play.google.com/apps/testing/..." required />
+                  </div>
+                  <button type="button" onClick={() => setShowUrlHelp(true)} className="flex items-center gap-1 shrink-0 rounded-xl border border-zinc-300 dark:border-zinc-600 px-3 text-xs text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer">
+                    <HelpCircle size={14} /> Nasıl bulurum?
+                  </button>
+                </div>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1.5">Uygulama İkonu</label>
+                <label className="block text-sm font-medium mb-1.5">Uygulama İkonu <span className="text-red-500">*</span></label>
                 <p className="text-xs text-zinc-400 mb-1">Testçilerin uygulamanı tanıması için kare bir görsel (PNG, JPG, max 5 MB).</p>
                 <div className="flex items-center gap-4">
                   {appIcon ? (
@@ -291,9 +343,10 @@ export default function NewAppPage() {
                 </div>
                 <ul className="space-y-1.5 text-xs text-zinc-500 mb-4">
                   <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 25 geliştirici birbirinin uygulamasını test eder</li>
-                  <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 16 gün boyunca günlük test</li>
+                  <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> Diğer uygulamaları her gün test etmen gerekir</li>
+                  <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 16 gün sonra yayına hazır</li>
                 </ul>
-                {packs.length === 0 && <p className="text-xs text-amber-600">Aktif bir pack'in yok. Önce pack oluştur.</p>}
+                {packs.length === 0 && <p className="text-xs text-amber-600">Aktif bir pack'in yok. Yeni bir pack oluşturulacak.</p>}
               </div>
 
               {/* Ücretli */}
@@ -305,8 +358,8 @@ export default function NewAppPage() {
                 </div>
                 <ul className="space-y-1.5 text-xs text-zinc-500 mb-4">
                   <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 25 profesyonel testçi</li>
-                  <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 16 gün test süreci</li>
-                  <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 6 saat içinde başlangıç</li>
+                  <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> Diğer uygulamaları test etmene gerek yok</li>
+                  <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 6 saat içinde başlangıç, 16 gün bekle</li>
                   <li className="flex items-start gap-1.5"><CheckCircle size={12} className="text-green-500 mt-0.5 shrink-0" /> 16 gün iade garantisi</li>
                 </ul>
               </div>
@@ -315,13 +368,13 @@ export default function NewAppPage() {
             <div className="flex justify-between pt-4 border-t border-zinc-100 dark:border-zinc-800">
               <Button variant="ghost" onClick={() => setStep("details")}>Geri</Button>
               {selectedOption === "free" ? (
-                <Button onClick={handleSubmitFree} disabled={loading || packs.length === 0} className="gap-2">
+                <Button onClick={handleSubmitFree} disabled={loading} className="gap-2">
                   {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText size={16} />}
                   Pack'e Gönder
                 </Button>
               ) : selectedOption === "paid" ? (
-                <Button onClick={handleSubmitPaid} className="gap-2 bg-purple-600 hover:bg-purple-700">
-                  $10 USDT ile Devam Et
+                <Button onClick={handleSubmitPaid} disabled={loading} className="gap-2 bg-purple-600 hover:bg-purple-700">
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "$10 USDT ile Devam Et"}
                 </Button>
               ) : (
                 <Button disabled>Bir seçenek seç</Button>
@@ -340,9 +393,9 @@ export default function NewAppPage() {
                 <CheckCircle className="h-8 w-8 text-green-600" />
               </div>
             </div>
-            <h2 className="text-xl font-bold mb-2">Uygulaman Gönderildi! 🎉</h2>
+            <h2 className="text-xl font-bold mb-2">Uygulaman Gönderildi!</h2>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6 max-w-md mx-auto">
-              Uygulaman pack'ine eklendi. Diğer üyeler 24 saat içinde test etmeye başlayacak.
+              Uygulaman kaydedildi ve uygulamalar listene eklendi.
               Pack'ini aktif tutmak için her gün diğer uygulamaları test etmeyi unutma.
             </p>
             <div className="flex gap-3 justify-center">
@@ -351,6 +404,46 @@ export default function NewAppPage() {
             </div>
           </CardContent>
         </Card>
+      )}
+
+      {/* Url Help Modal */}
+      {showUrlHelp && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4" onClick={() => setShowUrlHelp(false)}>
+          <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-xl max-w-lg w-full p-6" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-lg">Test Linki Nasıl Bulunur?</h3>
+              <button onClick={() => setShowUrlHelp(false)} className="cursor-pointer"><X size={20} /></button>
+            </div>
+
+            <p className="text-sm text-zinc-500 mb-4">
+              Google Play, closed testing track'ın için otomatik olarak herkese açık bir katılım linki oluşturur.
+              Bu linki bulmak için aşağıdaki adımları takip et:
+            </p>
+
+            <ol className="space-y-3 mb-4">
+              {[
+                "Google Play Console'da uygulamanı aç",
+                "Test ve Yayınlama → Testing → Closed testing bölümüne git",
+                "Aktif test track'ini seç ve Testçiler sekmesini aç",
+                '"Testçiler nasıl katılır?" bölümünün altındaki Android linkini kopyala',
+              ].map((adim, i) => (
+                <li key={i} className="flex items-start gap-3 text-sm">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-950 text-blue-600 text-xs font-bold mt-0.5">{i + 1}</span>
+                  <span className="text-zinc-700 dark:text-zinc-300">{adim}</span>
+                </li>
+              ))}
+            </ol>
+
+            <div className="rounded-xl bg-zinc-50 dark:bg-zinc-800 p-3 mb-4">
+              <p className="text-xs text-zinc-500 mb-1">Örnek link:</p>
+              <p className="text-sm text-blue-600 font-mono break-all">https://play.google.com/apps/testing/com.example.app</p>
+            </div>
+
+            <p className="text-xs text-amber-600">
+              Test track'ini yayınladığından ve aktif olduğundan emin ol, aksi halde link çalışmaz.
+            </p>
+          </div>
+        </div>
       )}
     </div>
   )

@@ -72,7 +72,7 @@ export function Navbar() {
               </button>
               {dropdown && (
                 <div className="absolute right-0 mt-2 w-48 rounded-xl border border-cardborder bg-card shadow-lg py-1">
-                  <Link href="/dashboard" className="block px-4 py-2 text-sm hover:bg-subtle" onClick={() => setDropdown(false)}>Panel</Link>
+                  <Link href="/dashboard" className="block px-4 py-2 text-sm hover:bg-subtle" onClick={() => { setDropdown(false); window.scrollTo(0, 0) }}>Panel</Link>
                   <Link href="/dashboard/orders" className="block px-4 py-2 text-sm hover:bg-subtle" onClick={() => setDropdown(false)}>Siparişlerim</Link>
                   <button onClick={() => { logout(); setDropdown(false) }} className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-subtle cursor-pointer">Çıkış Yap</button>
                 </div>
