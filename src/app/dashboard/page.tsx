@@ -89,19 +89,28 @@ export default function DashboardPage() {
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
           {currentPack && (
-            <Card className="border-cardborder shadow-sm">
+            <Card className="border-2 border-green-200 dark:border-green-800 shadow-md bg-gradient-to-br from-green-50/40 to-white dark:from-green-950/10 dark:to-zinc-950">
               <CardContent className="p-6">
-                <div className="mb-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" fill="#22c55e" opacity="0.15" />
+                    <circle cx="12" cy="12" r="5" fill="#22c55e" />
+                    <circle cx="12" cy="12" r="2" fill="white" />
+                  </svg>
                   <h2 className="font-semibold text-lg">Pack</h2>
+                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400 ml-auto">Aktif</span>
                 </div>
-                <Link href={`/dashboard/packs/${currentPack.id}`} className="flex items-center justify-between p-3 rounded-xl hover:bg-subtle transition-colors">
+                <Link href={`/dashboard/packs/${currentPack.id}`} className="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-zinc-900 border border-green-200 dark:border-green-800 hover:shadow-md transition-all group">
                   <div className="flex items-center gap-3">
-                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="none">
-                      <circle cx="10" cy="10" r="8" fill="#22c55e" opacity="0.15" />
-                      <circle cx="10" cy="10" r="4" fill="#22c55e" />
-                    </svg>
+                    <div className="flex items-center justify-center">
+                      <svg className="h-10 w-10" viewBox="0 0 40 40" fill="none">
+                        <circle cx="20" cy="20" r="18" fill="#22c55e" opacity="0.1" />
+                        <circle cx="20" cy="20" r="10" fill="#22c55e" />
+                        <circle cx="20" cy="20" r="4" fill="white" />
+                      </svg>
+                    </div>
                     <div>
-                      <p className="text-sm font-medium">Açık</p>
+                      <p className="text-base font-semibold text-green-700 dark:text-green-400">Açık</p>
                       <p className="text-xs text-muted">
                         {currentPack.status === "forming"
                           ? `${currentPack.members.length}/${currentPack.maxMembers} üye · Oluşuyor`
@@ -109,7 +118,7 @@ export default function DashboardPage() {
                       </p>
                     </div>
                   </div>
-                  <ArrowRight className="h-4 w-4 text-muted" />
+                  <ArrowRight className="h-5 w-5 text-green-500 group-hover:translate-x-0.5 transition-transform" />
                 </Link>
               </CardContent>
             </Card>

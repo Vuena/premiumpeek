@@ -453,6 +453,11 @@ export async function updateOrderStatus(orderId: string, status: string, extra?:
   await updateDoc(doc(d, "orders", orderId), { status, ...extra })
 }
 
+export async function deleteOrder(orderId: string) {
+  const d = db!
+  await deleteDoc(doc(d, "orders", orderId))
+}
+
 // ==================== USER FUNCTIONS ====================
 
 export async function getUserProfile(uid: string) {

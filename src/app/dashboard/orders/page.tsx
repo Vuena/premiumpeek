@@ -7,8 +7,8 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { getUserOrders } from "@/lib/firestore"
-import { Loader2, Clock, CheckCircle2, CreditCard } from "lucide-react"
+import { getUserOrders, deleteOrder } from "@/lib/firestore"
+import { Loader2, Clock, CheckCircle2, CreditCard, Trash2 } from "lucide-react"
 
 const statusLabels: Record<string, string> = {
   awaiting_payment: "Ödeme Bekliyor",
@@ -45,6 +45,17 @@ export default function OrdersPage() {
     setLoading(false)
   }
 
+  const handleDelete = async (orderId: string, e: React.MouseEvent) => {
+    e.preventDefault()
+    if (!confirm("Siparişi silmek istediğine emin misin?")) return
+    try {
+      await deleteOrder(orderId)
+      setOrders(prev => prev.filter(o => o.id !== orderId))
+    } catch (err: any) {
+      alert(err.message || "Silinirken hata oluştu")
+    }
+  }
+
   if (loading) return <div className="flex items-center justify-center min-h-[40vh]"><Loader2 className="h-8 w-8 animate-spin text-zinc-400" /></div>
   if (!user) return null
 
@@ -69,31 +80,36 @@ export default function OrdersPage() {
       ) : (
         <div className="space-y-4">
           {orders.map((order: any) => (
-            <Link key={order.id} href={`/dashboard/orders/${order.id}`}>
-              <Card className="border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
-                <CardContent className="p-5">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${order.status === "testing" ? "bg-green-50 dark:bg-green-950/30" : "bg-zinc-100 dark:bg-zinc-800"}`}>
-                        {order.status === "completed" ? <CheckCircle2 className="h-5 w-5 text-green-600" /> :
-                         order.status === "testing" ? <Clock className="h-5 w-5 text-green-600" /> :
-                         <CreditCard className="h-5 w-5 text-zinc-500" />}
+            <div key={order.id} className="flex items-stretch gap-2">
+              <Link href={`/dashboard/orders/${order.id}`} className="flex-1">
+                <Card className="border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer h-full">
+                  <CardContent className="p-5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${order.status === "testing" ? "bg-green-50 dark:bg-green-950/30" : "bg-zinc-100 dark:bg-zinc-800"}`}>
+                          {order.status === "completed" ? <CheckCircle2 className="h-5 w-5 text-green-600" /> :
+                           order.status === "testing" ? <Clock className="h-5 w-5 text-green-600" /> :
+                           <CreditCard className="h-5 w-5 text-zinc-500" />}
+                        </div>
+                        <div>
+                          <p className="font-medium">{order.appName}</p>
+                          <p className="text-xs text-zinc-500">{order.packageName}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-medium">{order.appName}</p>
-                        <p className="text-xs text-zinc-500">{order.packageName}</p>
+                      <div className="text-right">
+                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusColors[order.status] || ""}`}>
+                          {statusLabels[order.status] || order.status}
+                        </span>
+                        <p className="text-xs text-zinc-400 mt-1">{order.amount} {order.currency}</p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusColors[order.status] || ""}`}>
-                        {statusLabels[order.status] || order.status}
-                      </span>
-                      <p className="text-xs text-zinc-400 mt-1">{order.amount} {order.currency}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
+                  </CardContent>
+                </Card>
+              </Link>
+              <button onClick={(e) => handleDelete(order.id, e)} className="h-full w-10 flex items-center justify-center rounded-xl border border-zinc-200 dark:border-zinc-700 text-zinc-400 hover:text-red-600 hover:border-red-300 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer shrink-0" title="Siparişi Sil">
+                <Trash2 size={16} />
+              </button>
+            </div>
           ))}
         </div>
       )}
