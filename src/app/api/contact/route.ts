@@ -20,15 +20,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Tüm alanlar gerekli" }, { status: 400 })
     }
 
-    const result = await sendEmail({
+    await sendEmail({
       to: "premiumpeektest@gmail.com",
       subject: `İletişim Formu: ${escapeHtml(name)} <${escapeHtml(email)}>`,
       html: `<h2>Yeni İletişim Mesajı</h2><p><strong>Ad:</strong> ${escapeHtml(name)}</p><p><strong>E-posta:</strong> ${escapeHtml(email)}</p><p><strong>Mesaj:</strong></p><p>${escapeHtml(message)}</p>`,
-    })
-
-    if (result.error) {
-      return NextResponse.json({ error: "E-posta gönderilemedi" }, { status: 500 })
-    }
+    }).catch(err => console.error("Contact email send failed:", err))
 
     return NextResponse.json({ success: true, message: "Mesajınız alındı. En kısa sürede size dönüş yapacağız." })
   } catch (error: any) {
