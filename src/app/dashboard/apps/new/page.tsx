@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { submitApp, joinPack, getUserPacks, type Pack } from "@/lib/firestore"
+import { submitApp, joinPack, getUserPacks, getFormingPacks, type Pack } from "@/lib/firestore"
 import { FileText, Loader2, ArrowLeft, CheckCircle, Smartphone, Users, Clock, ShieldCheck, HelpCircle, X, Copy } from "lucide-react"
 import Link from "next/link"
 
@@ -119,10 +119,16 @@ export default function NewAppPage() {
   }
 
   const handleSubmitFree = async () => {
-    if (!form.packId) { setError("Aktif bir pack'in yok."); return }
     setError("")
     setLoading(true)
     try {
+      let targetPackId = form.packId || urlPackId
+      if (!targetPackId) {
+        const forming = await getFormingPacks()
+        if (forming.length === 0) { setError("Aktif bir pack bulunamadı."); setLoading(false); return }
+        targetPackId = forming[0].id
+      }
+
       const extraNotes = [form.instructions, form.testEmail ? `Test girişi: ${form.testEmail} / ${form.testPassword}` : ""].filter(Boolean).join("\n")
       await submitApp({
         uid: user!.uid,
@@ -133,12 +139,10 @@ export default function NewAppPage() {
         language: form.language,
         googlePlayLink: form.googlePlayLink,
         instructions: extraNotes,
-        packId: form.packId,
+        packId: targetPackId,
         appIcon: appIcon || "",
       })
-      if (urlPackId) {
-        await joinPack(urlPackId, user!)
-      }
+      await joinPack(targetPackId, user!)
       setStep("done")
     } catch (err: any) {
       setError(err.message || "Uygulama gönderilirken hata oluştu")
