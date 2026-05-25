@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Testers.In - Google Play Test Topluluğu
 
-## Getting Started
+Geliştiricilerin Google Play yayın şartlarını (12 testçi, 14 gün) kolayca karşılaması için kurulmuş platform.
 
-First, run the development server:
+## 🚀 Hızlı Başlangıç
+
+### 1. Firebase Projesi Oluştur
+
+1. [Firebase Console](https://console.firebase.google.com)'a git
+2. **Yeni proje** oluştur
+3. **Authentication** > **Sign-in method**:
+   - Google (ENABLE)
+   - Email/Password (ENABLE)
+4. **Firestore Database** > **Create database** (test mode ile başlat)
+5. **Storage** > **Get started** (test mode ile başlat)
+
+### 2. .env.local Dosyasını Doldur
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Firebase Config (Proje ayarları > Web uygulaması > Firebase SDK snippet)
+NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSy...
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=xxx.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=xxx
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=xxx.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789
+NEXT_PUBLIC_FIREBASE_APP_ID=1:123:web:abc
+
+# Resend (opsiyonel - e-posta bildirimleri için)
+RESEND_API_KEY=re_xxx
+EMAIL_FROM=noreply@testersin.com
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Çalıştır
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+npm run dev     # localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Firestore Security Rules
 
-## Learn More
+`firestore.rules` dosyasını Firebase Console > Firestore > Rules'a yapıştır.
 
-To learn more about Next.js, take a look at the following resources:
+### 5. Admin Hesabı
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+İlk kullanıcını admin yapmak için Firestore Console'dan:
+```
+/users/{uid} → role: "admin" (ekle)
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📁 Proje Yapısı
 
-## Deploy on Vercel
+```
+src/
+  app/                    # Sayfalar (Next.js App Router)
+  components/             # UI + Layout bileşenleri
+  context/                # Auth context
+  lib/                    # Firebase, Firestore, Email servisleri
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📦 Komutlar
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Komut | Açıklama |
+|---|---|
+| `npm run dev` | Development sunucusu |
+| `npm run build` | Production build |
+| `npm run start` | Production sunucu |
+| `npm run lint` | Kod kalite kontrolü |
+
+## 🧱 Teknoloji
+
+- **Next.js 16** (App Router)
+- **Firebase** (Auth, Firestore, Storage)
+- **Tailwind CSS** (Stil)
+- **Resend** (E-posta)
+- **Stripe** (Ödeme - Phase 2)
+
+## 📄 Lisans
+
+Private - Tüm hakları saklıdır.

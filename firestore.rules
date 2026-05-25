@@ -1,0 +1,76 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper: check if authenticated
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    // Helper: check if user is admin
+    function isAdmin() {
+      return isAuth() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Helper: check if user owns the document
+    function isOwner(userId) {
+      return isAuth() && request.auth.uid == userId;
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read: if isAuth();
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Packs collection
+    match /packs/{packId} {
+      allow read: if isAuth();
+      allow create: if isAuth();
+      allow update: if isAuth(); // Controlled by app logic
+      allow delete: if isAdmin();
+    }
+
+    // Apps collection
+    match /apps/{appId} {
+      allow read: if isAuth();
+      allow create: if isAuth();
+      allow update: if isOwner(resource.data.uid) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Transactions collection
+    match /transactions/{txId} {
+      allow read: if isAuth();
+      allow create: if isAuth();
+      allow delete: if isAdmin();
+    }
+
+    // Testing activity collection
+    match /testingActivity/{activityId} {
+      allow read: if isAuth();
+      allow create: if isAuth();
+      allow update: if isAuth();
+      allow delete: if isAdmin();
+    }
+
+    // Orders collection
+    match /orders/{orderId} {
+      allow read: if isOwner(resource.data.uid) || isAdmin();
+      allow create: if isAuth();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Reports collection
+    match /reports/{reportId} {
+      allow read: if isOwner(resource.data.uid) || isAdmin();
+      allow create: if isAuth();
+      allow delete: if isAdmin();
+    }
+  }
+}
