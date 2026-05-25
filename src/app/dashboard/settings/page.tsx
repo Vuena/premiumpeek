@@ -95,6 +95,7 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
+      {(user as any).role !== "admin" && (
       <Card className="border-0 shadow-sm mt-6">
         <CardHeader>
           <CardTitle className="text-lg">Testçi Havuzu</CardTitle>
@@ -114,6 +115,7 @@ export default function SettingsPage() {
           )}
         </CardContent>
       </Card>
+      )}
 
       <Card className="border-0 shadow-sm mt-6">
         <CardHeader>

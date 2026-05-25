@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json()
-    const { orderId, txHash } = body
+    const { orderId, txHash, packId, appId } = body
 
     if (!orderId || !txHash) {
       return NextResponse.json({ error: "Eksik alanlar" }, { status: 400 })
@@ -41,11 +41,15 @@ export async function POST(req: NextRequest) {
     }
 
     // Store TX hash for admin verification
-    await orderRef.update({
+    const updateData: Record<string, any> = {
       txHash,
       status: "awaiting_confirmation",
       submittedAt: new Date(),
-    })
+    }
+    if (packId) updateData.packId = packId
+    if (appId) updateData.appId = appId
+
+    await orderRef.update(updateData)
 
     return NextResponse.json({
       success: true,

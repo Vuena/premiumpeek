@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { ShieldCheck, Loader2, ArrowLeft, CheckCircle, Copy } from "lucide-react"
 import Link from "next/link"
 import { auth, db } from "@/lib/firebase"
-import { addDoc, collection, doc, updateDoc, getDoc, serverTimestamp } from "firebase/firestore"
+import { collection, addDoc, serverTimestamp } from "firebase/firestore"
 import { getFormingPacks, joinPack, submitApp } from "@/lib/firestore"
 import { usePageMeta } from "@/lib/usePageMeta"
 
@@ -122,42 +122,41 @@ export default function PurchasePage() {
     setLoading(true)
     try {
       if (!auth?.currentUser || !orderData) throw new Error("Giriş yapmalısın")
+      const token = await auth.currentUser.getIdToken()
       const user = auth.currentUser
 
-      const orderRef = doc(db!, "orders", orderData.orderId)
-      await updateDoc(orderRef, {
-        txHash: txHash.trim(),
-        status: "paid",
-        paidAt: serverTimestamp(),
+      const res = await fetch("/api/verify-payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ orderId: orderData.orderId, txHash: txHash.trim() }),
       })
+      const data = await res.json()
+      if (!data.success) throw new Error(data.error || "Doğrulama başarısız")
 
       // Add to forming pack as premium member
-      const snap = await getDoc(orderRef)
-      const order = snap.data()
-      let packId = ""
-      if (order) {
-        const formingPacks = await getFormingPacks()
-        if (formingPacks.length > 0) {
-          try {
-            await joinPack(formingPacks[0].id, user, "premium")
-            packId = formingPacks[0].id
-            const appId = await submitApp({
-              uid: user.uid,
-              appName: order.appName || form.appName,
-              packageName: order.packageName,
-              description: "",
-              category: "",
-              language: "",
-              googlePlayLink: order.googlePlayLink || form.googlePlayLink,
-              instructions: order.instructions || form.instructions,
-              packId: formingPacks[0].id,
-              appIcon: order.appIcon || form.appIcon || "",
-            })
-            await updateDoc(orderRef, { packId, appId })
-          } catch (err) {
-            // Silently fail — pack join is best-effort after payment
-          }
-        }
+      const formingPacks = await getFormingPacks()
+      if (formingPacks.length > 0) {
+        try {
+          await joinPack(formingPacks[0].id, user, "premium")
+          const appId = await submitApp({
+            uid: user.uid,
+            appName: form.appName,
+            packageName: "",
+            description: "",
+            category: "",
+            language: "",
+            googlePlayLink: form.googlePlayLink,
+            instructions: "",
+            packId: formingPacks[0].id,
+            appIcon: "",
+          })
+          // Update order with pack and app info
+          await fetch("/api/verify-payment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ orderId: orderData.orderId, txHash: txHash.trim(), packId: formingPacks[0].id, appId }),
+          })
+        } catch {}
       }
 
       setStep("success")
