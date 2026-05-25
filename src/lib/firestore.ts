@@ -382,7 +382,8 @@ export async function recordTestingActivity(packId: string, uid: string, day: nu
 
 export async function recordOrderTesterActivity(orderId: string, testerUid: string, day: number) {
   const d = db!
-  const logId = `${orderId}_${testerUid}_${day}`
+  const today = new Date().toISOString().slice(0, 10)
+  const logId = `${orderId}_${testerUid}_${today}`
   const ref = doc(collection(d, "testerLogs"), logId)
   const snap = await getDoc(ref)
   if (!snap.exists()) {
@@ -392,6 +393,7 @@ export async function recordOrderTesterActivity(orderId: string, testerUid: stri
 
       transaction.set(ref, {
         orderId, testerUid, day,
+        date: today,
         tested: true,
         feedback: "",
         createdAt: serverTimestamp(),
@@ -408,7 +410,7 @@ export async function recordOrderTesterActivity(orderId: string, testerUid: stri
         type: "earned",
         reason: "test",
         referenceId: orderId,
-        note: `Ücretli test gün ${day} - ${orderId.slice(0, 8)}`,
+        note: `Ücretli test (${today}) - ${orderId.slice(0, 8)}`,
         createdAt: serverTimestamp(),
       })
     })
@@ -425,8 +427,6 @@ export async function joinTesterPool(uid: string) {
 }
 
 export async function leaveTesterPool(uid: string) {
-  await updateDoc(doc(collection(doc({} as any, "users"), uid)), { isTester: false })
-  // Re-read db
   const d = db!
   await updateDoc(doc(d, "users", uid), { isTester: false })
 }

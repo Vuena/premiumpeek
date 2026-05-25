@@ -34,12 +34,14 @@ export default function TesterPage() {
     if (stored) setTestedToday(JSON.parse(stored))
   }
 
-  const markDone = async (orderId: string, day: number) => {
+  const markDone = async (orderId: string, createdAt: any) => {
     if (!user) return
     const updated = [...testedToday, orderId]
     setTestedToday(updated)
     localStorage.setItem(`tester_tested_${new Date().toDateString()}`, JSON.stringify(updated))
 
+    const start = createdAt?.toDate?.() || new Date(createdAt || Date.now())
+    const day = Math.floor((Date.now() - start.getTime()) / 86400000) + 1
     await recordOrderTesterActivity(orderId, user.uid, day)
   }
 
@@ -97,7 +99,7 @@ export default function TesterPage() {
                       <Button variant="ghost" size="sm"><ExternalLink size={16} /></Button>
                     </a>
                     {!done && (
-                      <Button size="sm" onClick={() => markDone(task.id, task.currentDay || 1)}>
+                      <Button size="sm" onClick={() => markDone(task.id, task.createdAt)}>
                         Test Edildi
                       </Button>
                     )}
