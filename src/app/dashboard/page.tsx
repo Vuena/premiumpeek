@@ -7,15 +7,17 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { getUserPacks, getUserApps, getFormingPacks, joinPack, type Pack, type App } from "@/lib/firestore"
-import { Users, Clock, FileText, Plus, ArrowRight, Loader2, Smartphone, Settings, Layers } from "lucide-react"
+import { getUserPacks, getUserApps, getFormingPacks, joinPack, createPack, type Pack, type App } from "@/lib/firestore"
+import { Users, Clock, FileText, Plus, ArrowRight, Loader2, Smartphone, Settings, Layers, LogIn } from "lucide-react"
 
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const [packs, setPacks] = useState<Pack[]>([])
+  const [formingPacks, setFormingPacks] = useState<Pack[]>([])
   const [apps, setApps] = useState<App[]>([])
   const [loading, setLoading] = useState(true)
+  const [joining, setJoining] = useState<string | null>(null)
 
   useEffect(() => {
     if (authLoading) return
@@ -26,26 +28,37 @@ export default function DashboardPage() {
   const loadData = async () => {
     if (!user) return
     let userPacks = await getUserPacks(user.uid)
-    if (userPacks.length === 0) {
-      const formingPacks = await getFormingPacks()
-      if (formingPacks.length > 0) {
-        try {
-          await joinPack(formingPacks[0].id, user)
-        } catch (_) {}
-      }
+    const userApps = await getUserApps(user.uid)
+    let avail = await getFormingPacks()
+    if (userPacks.length === 0 && avail.length === 0) {
+      const dateStr = new Date().toLocaleDateString("tr-TR")
+      await createPack(`PremiumPeek Pack (${dateStr})`)
+      avail = await getFormingPacks()
       userPacks = await getUserPacks(user.uid)
     }
-    const userApps = await getUserApps(user.uid)
     setPacks(userPacks)
+    setFormingPacks(avail.filter(p => !p.members.some(m => m.uid === user.uid)))
     setApps(userApps)
     setLoading(false)
+  }
+
+  const handleJoin = async (packId: string) => {
+    if (!user) return
+    setJoining(packId)
+    try {
+      await joinPack(packId, user)
+      await loadData()
+    } catch (err: any) {
+      alert(err.message)
+    } finally {
+      setJoining(null)
+    }
   }
 
   if (loading) return <div className="flex items-center justify-center min-h-[60vh]"><Loader2 className="h-8 w-8 animate-spin text-muted" /></div>
   if (!user) return null
 
   const activePacks = packs.filter(p => p.status === "testing" || p.status === "installing")
-  const formingPacks = packs.filter(p => p.status === "forming")
   const currentPack = packs[0]
 
   const testedStr = typeof window !== "undefined" ? localStorage.getItem(`tested_${new Date().toDateString()}`) : null
@@ -88,7 +101,7 @@ export default function DashboardPage() {
 
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
-          {currentPack && (
+          {currentPack && currentPack.members.some(m => m.uid === user?.uid) && (
             <Card className={`border-2 shadow-md bg-gradient-to-br ${
               currentPack.status === "forming" ? "border-yellow-200 dark:border-yellow-800 from-yellow-50/40 to-white dark:from-yellow-950/10 dark:to-zinc-950" :
               currentPack.status === "installing" ? "border-blue-200 dark:border-blue-800 from-blue-50/40 to-white dark:from-blue-950/10 dark:to-zinc-950" :
@@ -127,7 +140,7 @@ export default function DashboardPage() {
                       <p className="text-base font-semibold">{currentPack.name}</p>
                       <p className="text-xs text-muted">
                         {currentPack.status === "forming"
-                          ? `${currentPack.members.length}/${currentPack.maxMembers} üye`
+                          ? `${currentPack.members.length}/18 üye`
                           : currentPack.status === "installing"
                           ? `Yükleme aşaması · ${currentPack.members.length} üye`
                           : currentPack.status === "completed"
@@ -141,6 +154,36 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
           )}
+
+          {formingPacks.map(p => (
+            <Card key={p.id} className="border-2 border-yellow-200 dark:border-yellow-800 shadow-md bg-gradient-to-br from-yellow-50/40 to-white dark:from-yellow-950/10 dark:to-zinc-950">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <h2 className="font-semibold text-lg">Mevcut Pack</h2>
+                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-full ml-auto bg-yellow-100 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-400">Oluşuyor</span>
+                </div>
+                <div className="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-100 dark:bg-yellow-950/30">
+                      <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="10" fill="#eab308" opacity="0.15" />
+                        <circle cx="12" cy="12" r="5" fill="#eab308" />
+                        <circle cx="12" cy="12" r="2" fill="white" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-base font-semibold">{p.name}</p>
+                      <p className="text-xs text-muted">{p.members.length}/18 üye</p>
+                    </div>
+                  </div>
+                  <Button size="sm" onClick={() => handleJoin(p.id)} disabled={joining === p.id} className="gap-2">
+                    {joining === p.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn size={16} />}
+                    Katıl
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
 
           <Card className="border-cardborder shadow-sm">
             <CardContent className="p-6">

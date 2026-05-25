@@ -66,7 +66,7 @@ export interface App {
 
 // ==================== PACK FUNCTIONS ====================
 
-export async function createPack(name: string, user: User) {
+export async function createPack(name: string, user?: User) {
   const d = db!
   const data = {
     name,
@@ -74,18 +74,9 @@ export async function createPack(name: string, user: User) {
     currentDay: 0,
     maxMembers: 18,
     totalDays: 16,
-    members: [
-      {
-        uid: user.uid,
-        displayName: user.displayName || user.email || "İsimsiz",
-        photoURL: user.photoURL || "",
-        type: "free",
-        installConfirmed: false,
-        joinedAt: new Date(),
-      },
-    ],
-    memberUids: [user.uid],
-    createdBy: user.uid,
+    members: [],
+    memberUids: [],
+    createdBy: "",
     createdAt: serverTimestamp(),
     installDeadline: null,
   }

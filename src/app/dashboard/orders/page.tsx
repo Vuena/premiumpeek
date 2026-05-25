@@ -107,7 +107,7 @@ export default function OrdersPage() {
               </Link>
               {(order.status === "awaiting_payment" || order.status === "paid") && (
                 <button onClick={() => handleDelete(order.id)}
-                  className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-white dark:bg-zinc-800 shadow-sm border border-zinc-200 dark:border-zinc-700 text-zinc-400 hover:text-red-600 hover:border-red-300 opacity-0 group-hover:opacity-100 transition-all cursor-pointer" title="Siparişi Sil">
+                  className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-white dark:bg-zinc-800 shadow-sm border border-zinc-200 dark:border-zinc-700 text-zinc-400 hover:text-red-600 hover:border-red-300 transition-all cursor-pointer" title="Siparişi Sil">
                   <Trash2 size={13} />
                 </button>
               )}

@@ -201,7 +201,7 @@ export default function PackDetailPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
-          { icon: Users, label: "Üyeler", value: `${pack.members.length}/${pack.maxMembers}` },
+          { icon: Users, label: "Üyeler", value: `${pack.members.length}/18` },
           { icon: Calendar, label: "Durum", value: pack.status === "forming" ? "Bekliyor" : `${pack.currentDay || 0}/${pack.totalDays} Gün` },
           { icon: Clock, label: "İlerleme", value: pack.status === "forming" ? "-" : `${daysCompleted}/${pack.totalDays}` },
           { icon: CheckCircle2, label: "Uygulamalar", value: `${apps.length}` },
