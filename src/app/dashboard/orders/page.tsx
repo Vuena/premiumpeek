@@ -7,7 +7,8 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { getUserOrders, deleteOrder } from "@/lib/firestore"
+import { getUserOrders } from "@/lib/firestore"
+import { auth } from "@/lib/firebase"
 import { Loader2, Clock, CheckCircle2, CreditCard, Trash2 } from "lucide-react"
 
 const statusLabels: Record<string, string> = {
@@ -48,7 +49,16 @@ export default function OrdersPage() {
   const handleDelete = async (orderId: string) => {
     if (!confirm("Siparişi silmek istediğine emin misin?")) return
     try {
-      await deleteOrder(orderId)
+      const token = await auth!.currentUser!.getIdToken()
+      const res = await fetch("/api/delete-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ orderId }),
+      })
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || "Silinirken hata oluştu")
+      }
       setOrders(prev => prev.filter(o => o.id !== orderId))
     } catch (err: any) {
       alert(err.message || "Silinirken hata oluştu")
