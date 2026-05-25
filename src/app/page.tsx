@@ -84,7 +84,7 @@ export default function Home() {
               </div>
               <Link href="/purchase" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-medium px-5 py-3 text-sm shadow-lg shadow-green-500/30 transition-all hover:scale-105">
                 <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-[10px] font-bold">$</span>
-                $10 USDT ile pack'e premium üye ol
+                Uğraşmadan yayınla: $10 USDT premium
                 <ArrowRight size={16} />
               </Link>
               <Link href="/#pricing" className="text-sm text-muted hover:text-foreground underline underline-offset-2 pt-1">
