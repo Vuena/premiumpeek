@@ -64,6 +64,7 @@ export default function NewAppPage() {
     packId: "",
   })
   const [appIcon, setAppIcon] = useState<string | null>(null)
+  const [iconError, setIconError] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
   const [selectedOption, setSelectedOption] = useState<"free" | "paid" | null>(null)
@@ -87,10 +88,11 @@ export default function NewAppPage() {
     const file = e.target.files?.[0]
     if (!file) return
     if (file.size > MAX_ICON_SIZE) {
-      setError("Görsel boyutu en fazla 5 MB olabilir.")
+      setIconError("Görsel boyutu en fazla 5 MB olabilir.")
+      setTimeout(() => setIconError(""), 4000)
       return
     }
-    setError("")
+    setIconError("")
     const reader = new FileReader()
     reader.onload = () => setAppIcon(reader.result as string)
     reader.readAsDataURL(file)
@@ -287,6 +289,7 @@ export default function NewAppPage() {
                     <p className="text-xs text-zinc-400 mt-1">PNG, JPEG veya WebP (max. 5MB)</p>
                   </label>
                 </div>
+                {iconError && <p className="text-xs text-red-500 mt-1">{iconError}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1.5">Test Giriş Bilgileri</label>

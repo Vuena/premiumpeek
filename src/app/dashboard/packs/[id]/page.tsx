@@ -59,6 +59,9 @@ export default function PackDetailPage() {
   if (loading) return <div className="flex items-center justify-center min-h-[40vh]"><Loader2 className="h-8 w-8 animate-spin text-zinc-400" /></div>
   if (!pack) return <div className="text-center py-16 text-zinc-500">Pack bulunamadı.</div>
 
+  if (!isMember) { router.push("/dashboard"); return null }
+  if (myApps.length === 0) { router.push("/dashboard/apps/new"); return null }
+
   const daysCompleted = pack.status === "active" ? pack.currentDay - 1 : pack.status === "completed" ? pack.totalDays : 0
 
   return (
@@ -81,7 +84,7 @@ export default function PackDetailPage() {
           </div>
         </div>
         <div className="flex gap-2">
-          {isMember && pack.status === "forming" && (
+          {isMember && (
             <Button onClick={handleLeave} disabled={actionLoading} variant="destructive" className="gap-2">
               <LogOut size={16} /> Ayrıl
             </Button>

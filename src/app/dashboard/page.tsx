@@ -91,21 +91,17 @@ export default function DashboardPage() {
           {currentPack && (
             <Card className="border-cardborder shadow-sm">
               <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="font-semibold text-lg">Pack&apos;in</h2>
-                  <Link href={`/dashboard/packs/${currentPack.id}`} className="text-sm text-blue-600 hover:underline">
-                    Detay
-                  </Link>
+                <div className="mb-4">
+                  <h2 className="font-semibold text-lg">Pack</h2>
                 </div>
                 <Link href={`/dashboard/packs/${currentPack.id}`} className="flex items-center justify-between p-3 rounded-xl hover:bg-subtle transition-colors">
                   <div className="flex items-center gap-3">
-                    <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${
-                      currentPack.status === "active" ? "bg-green-50 dark:bg-green-950/30 text-green-600" : "bg-yellow-50 dark:bg-yellow-950/30 text-yellow-600"
-                    }`}>
-                      {currentPack.status === "active" ? <Clock className="h-5 w-5" /> : <Users className="h-5 w-5" />}
-                    </div>
+                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="none">
+                      <circle cx="10" cy="10" r="8" fill="#22c55e" opacity="0.15" />
+                      <circle cx="10" cy="10" r="4" fill="#22c55e" />
+                    </svg>
                     <div>
-                      <p className="text-sm font-medium">{currentPack.name}</p>
+                      <p className="text-sm font-medium">Açık</p>
                       <p className="text-xs text-muted">
                         {currentPack.status === "forming"
                           ? `${currentPack.members.length}/${currentPack.maxMembers} üye · Oluşuyor`
