@@ -22,7 +22,7 @@ export default function PurchasePage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const [step, setStep] = useState<"form" | "payment" | "confirming" | "success">("form")
-  const [form, setForm] = useState({ appName: "", googlePlayLink: "", instructions: "" })
+  const [form, setForm] = useState({ appName: "", googlePlayLink: "", instructions: "", packageName: "", appIcon: "" })
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
   const [orderData, setOrderData] = useState<{ orderId: string; walletAddress: string; amount: number; currency: string; network: string } | null>(null)
@@ -36,26 +36,41 @@ export default function PurchasePage() {
     return "unknown"
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
-    if (!form.appName.trim()) { setError("Uygulama adı gerekli"); return }
-    if (!form.googlePlayLink.trim()) { setError("Google Play linki gerekli"); return }
-    setLoading(true)
+  useEffect(() => {
+    if (authLoading || !user) return
+    const saved = sessionStorage.getItem("paidAppData")
+    if (saved) {
+      try {
+        const data = JSON.parse(saved)
+        setForm({
+          appName: data.appName || "",
+          googlePlayLink: data.googlePlayLink || "",
+          instructions: data.instructions || "",
+          packageName: data.packageName || extractPackageName(data.googlePlayLink || ""),
+          appIcon: data.appIcon || "",
+        })
+        // Auto-create order and go to payment
+        createOrder(data)
+      } catch {
+        sessionStorage.removeItem("paidAppData")
+      }
+    }
+  }, [user, authLoading])
 
+  const createOrder = async (appData: any) => {
+    setLoading(true)
+    setError("")
     try {
       if (!auth?.currentUser) throw new Error("Giriş yapmalısın")
-
-      const packageName = extractPackageName(form.googlePlayLink)
-
+      const pn = appData.packageName || extractPackageName(appData.googlePlayLink || "")
       const orderRef = await addDoc(collection(db!, "orders"), {
         uid: auth.currentUser.uid,
         userEmail: auth.currentUser.email || "",
         userName: auth.currentUser.displayName || "",
-        appName: form.appName,
-        packageName,
-        googlePlayLink: form.googlePlayLink,
-        instructions: form.instructions || "",
+        appName: appData.appName,
+        packageName: pn,
+        googlePlayLink: appData.googlePlayLink,
+        instructions: appData.instructions || "",
         amount: USDT_PRICE,
         currency: "USDT",
         status: "awaiting_payment",
@@ -66,6 +81,7 @@ export default function PurchasePage() {
         currentDay: 0,
         totalDays: 16,
         reportIds: [],
+        appIcon: appData.appIcon || "",
         createdAt: serverTimestamp(),
       })
 
@@ -76,12 +92,27 @@ export default function PurchasePage() {
         currency: "USDT",
         network: "TRC-20",
       })
+      sessionStorage.removeItem("paidAppData")
       setStep("payment")
     } catch (err: any) {
       setError(err.message || "Bir hata oluştu")
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError("")
+    if (!form.appName.trim()) { setError("Uygulama adı gerekli"); return }
+    if (!form.googlePlayLink.trim()) { setError("Google Play linki gerekli"); return }
+    await createOrder({
+      appName: form.appName,
+      googlePlayLink: form.googlePlayLink,
+      instructions: form.instructions,
+      packageName: extractPackageName(form.googlePlayLink),
+      appIcon: "",
+    })
   }
 
   const handleVerifyPayment = async () => {
@@ -119,6 +150,7 @@ export default function PurchasePage() {
               googlePlayLink: order.googlePlayLink || form.googlePlayLink,
               instructions: order.instructions || form.instructions,
               packId: formingPacks[0].id,
+              appIcon: order.appIcon || form.appIcon || "",
             })
             await updateDoc(orderRef, { packId, appId })
           } catch (err: any) {

@@ -156,8 +156,7 @@ export default function NewAppPage() {
     setLoading(true)
     try {
       const extraNotes = [form.instructions, form.testEmail ? `Test girişi: ${form.testEmail} / ${form.testPassword}` : ""].filter(Boolean).join("\n")
-      const appId = await submitApp({
-        uid: user!.uid,
+      sessionStorage.setItem("paidAppData", JSON.stringify({
         appName: form.appName,
         packageName: form.packageName,
         description: form.description,
@@ -165,12 +164,11 @@ export default function NewAppPage() {
         language: form.language,
         googlePlayLink: form.googlePlayLink,
         instructions: extraNotes,
-        packId: "",
         appIcon: appIcon || "",
-      })
-      router.push(`/purchase?appId=${appId}`)
+      }))
+      router.push("/purchase")
     } catch (err: any) {
-      setError(err.message || "Uygulama gönderilirken hata oluştu")
+      setError(err.message || "Yönlendirilirken hata oluştu")
     } finally {
       setLoading(false)
     }
