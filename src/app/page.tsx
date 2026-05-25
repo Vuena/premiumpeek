@@ -60,7 +60,7 @@ export default function Home() {
           <div className="mx-auto max-w-3xl text-center">
             <div className="inline-flex items-center gap-1.5 rounded-full border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/30 px-3.5 py-1 text-xs font-medium text-green-700 dark:text-green-400 mb-6">
               <ShieldCheck size={14} />
-              %100 Production Access Garantisi
+              %100 Yayın Garantisi
             </div>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-[1.1]">
               Google Play&apos;de Yayınlarken

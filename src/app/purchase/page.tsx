@@ -21,29 +21,38 @@ export default function PurchasePage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const [step, setStep] = useState<"form" | "payment" | "confirming" | "success">("form")
-  const [form, setForm] = useState({ appName: "", packageName: "", googlePlayLink: "", instructions: "" })
+  const [form, setForm] = useState({ appName: "", googlePlayLink: "", instructions: "" })
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
   const [orderData, setOrderData] = useState<{ orderId: string; walletAddress: string; amount: number; currency: string; network: string } | null>(null)
   const [txHash, setTxHash] = useState("")
 
+  function extractPackageName(url: string): string {
+    const testingMatch = url.match(/play\.google\.com\/apps\/testing\/([^/?\s]+)/)
+    if (testingMatch) return testingMatch[1]
+    const storeMatch = url.match(/[?&]id=([^&?\s]+)/)
+    if (storeMatch) return storeMatch[1]
+    return "unknown"
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
     if (!form.appName.trim()) { setError("Uygulama adı gerekli"); return }
-    if (!form.packageName.trim()) { setError("Paket adı gerekli"); return }
     if (!form.googlePlayLink.trim()) { setError("Google Play linki gerekli"); return }
     setLoading(true)
 
     try {
       if (!auth?.currentUser) throw new Error("Giriş yapmalısın")
 
+      const packageName = extractPackageName(form.googlePlayLink)
+
       const orderRef = await addDoc(collection(db!, "orders"), {
         uid: auth.currentUser.uid,
         userEmail: auth.currentUser.email || "",
         userName: auth.currentUser.displayName || "",
         appName: form.appName,
-        packageName: form.packageName,
+        packageName,
         googlePlayLink: form.googlePlayLink,
         instructions: form.instructions || "",
         amount: USDT_PRICE,
@@ -211,10 +220,6 @@ export default function PurchasePage() {
               <div>
                 <label className="block text-sm font-medium mb-1.5">Uygulama Adı *</label>
                 <Input value={form.appName} onChange={e => setForm({ ...form, appName: e.target.value })} placeholder="Örn: Hesap Makinesi" required />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1.5">Paket Adı *</label>
-                <Input value={form.packageName} onChange={e => setForm({ ...form, packageName: e.target.value })} placeholder="com.ornek.app" required />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1.5">Google Play Linki *</label>

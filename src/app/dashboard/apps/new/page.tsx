@@ -16,10 +16,10 @@ type Step = "setup" | "details" | "review" | "done"
 const PLATFORMS = ["Android"] as const
 
 const SETUP_ADIMLARI = [
-  { num: "01", baslik: "Testçi Grubunu Ekle", aciklama: "Google Play Console'da uygulamanın closed test bölümüne testçi grubumuzu ekle", detay: "Uygulamanın test bölümüne gidip testçilerimizin uygulamana erişebilmesi için Google Group'umuzu ekle.", grup: "premiumpeek@googlegroups.com" },
-  { num: "02", baslik: "Global Testi Aktifleştir", aciklama: "Tüm ülkeleri seçerek testçilerimizin uygulamana erişmesini sağla", detay: "Uygulamanın test bölümünde tüm ülkeleri seç. Böylece uluslararası testçilerimiz uygulamanı test edebilir." },
-  { num: "03", baslik: "İncelemeye Gönder", aciklama: "Değişiklikleri Google Play incelemesine gönder - genelde 30-60 dk içinde onaylanır", detay: "Test ayarlarını yaptıktan sonra değişiklikleri Google Play'e gönder. Bu işlem genelde çok hızlıdır." },
-  { num: "04", baslik: "Testi Başlat", aciklama: "Onaylandıktan sonra değişiklikleri yayınla ve test sürecini başlat", detay: "Google onayından sonra değişiklikleri yayınla ve 16 günlük test sürecini testçilerimizle başlat." },
+  { num: "01", baslik: "Testçi Grubunu Ekle", detay: "Google Play Console'da uygulamanın closed test bölümüne gidip testçilerimizin erişebilmesi için Google Group'umuzu ekle.", grup: "premiumpeek@googlegroups.com" },
+  { num: "02", baslik: "Global Testi Aktifleştir", detay: "Uygulamanın test bölümünde tüm ülkeleri seç. Böylece uluslararası testçilerimiz uygulamanı test edebilir." },
+  { num: "03", baslik: "İncelemeye Gönder", detay: "Test ayarlarını yaptıktan sonra değişiklikleri Google Play incelemesine gönder. Bu işlem genelde 30-60 dakika içinde onaylanır." },
+  { num: "04", baslik: "Testi Başlat", detay: "Google onayından sonra değişiklikleri yayınla ve 16 günlük test sürecini başlat." },
 ]
 
 const ADIMLAR = [
@@ -204,7 +204,6 @@ export default function NewAppPage() {
                     <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-950 text-blue-600 text-sm font-bold mt-0.5">{s.num}</span>
                     <div className="flex-1">
                       <p className="text-sm font-medium">{s.baslik}</p>
-                      <p className="text-xs text-zinc-500 mt-0.5">{s.aciklama}</p>
                     </div>
                   </div>
                   <div className="pb-4 pl-10">
