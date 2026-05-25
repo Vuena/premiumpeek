@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { CheckCircle, Users, Calendar, ShieldCheck, Clock, FileText, Star, ArrowRight, Sparkles, Smartphone } from "lucide-react"
+import { Users, Calendar, ShieldCheck, Clock, FileText, Star, ArrowRight, Sparkles, Smartphone } from "lucide-react"
 
 export default function Home() {
   const stats = [
@@ -31,13 +31,12 @@ export default function Home() {
     { name: "Ahmet Y.", title: "Android Geliştirici", text: "3 kere reddedildikten sonra PremiumPeek ile ilk denemede onay aldım. Pack sistemi gerçekten işe yarıyor." },
     { name: "Zeynep K.", title: "Mobil Uygulama Geliştiricisi", text: "Arkadaş bulamıyordum, 14 gün boyunca test edecek kimse yoktu. Burada 16 kişi birbirine destek oluyor." },
     { name: "Mehmet A.", title: "Freelancer Geliştirici", text: "Ücretsiz olmasına rağmen sistem çok sağlam. 16 günde uygulamam yayına hazırdı." },
-    { name: "Elif D.", title: "Startup Kurucusu", text: "Profesyonel test hizmetiyle 6 saatte testçiler atandı. Para iadesi garantisi de cabası." },
   ]
 
   const faqs = [
     { q: "Pack sistemi nedir?", a: "Pack, 16 geliştiriciden oluşan ve 16 gün boyunca birbirlerinin uygulamalarını test etmeyi taahhüt eden gruptur. Her üye diğer 15 uygulamayı her gün açar ve geri bildirim verir." },
     { q: "Google Play'in şartı ne?", a: "Yeni hesaplar, yayın öncesinde 12 gerçek kullanıcı tarafından 14 ardışık gün test edilmelidir." },
-    { q: "Ücretsiz topluluk ile ücretli hizmet arasındaki fark nedir?", a: "Ücretsiz toplulukta 16 kişilik pack'lerde birbirinizi test edersiniz. Ücretli hizmette 25 profesyonel testçi 6 saat içinde atanır, 16 gün boyunca test eder, detaylı rapor alırsınız." },
+    { q: "Kaç kişi bir pack'te yer alır?", a: "Her pack 16 geliştiriciden oluşur. 16 gün boyunca birbirinizin uygulamalarını test eder ve Google Play şartını karşılarsınız." },
     { q: "Ya birisi test etmezse?", a: "3 gün üst üste test etmeyen pack'ten atılır. Bu sayede herkesin aktif kalması sağlanır." },
     { q: "Kaç kredi kazanabilirim?", a: "Her test ettiğin uygulama için +4🪙 kazanırsın. Günde 15 uygulama × 4🪙 = 60🪙. 16 günde toplam 960🪙." },
     { q: "Uygulamam her dilde test edilebilir mi?", a: "Evet. Tüm dillerdeki uygulamalar desteklenir. Geri bildirimler Türkçe veya İngilizce verilir." },
@@ -133,48 +132,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Pricing */}
-      <section id="pricing" className="py-20 sm:py-28 bg-subtle">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <SectionTitle title="Fiyatlandırma" desc="Bütçene ve zamanına uygun planı seç." />
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <Card className="border-cardborder">
-              <CardContent className="p-8">
-                <h3 className="text-xl font-bold mb-2">Ücretsiz Topluluk</h3>
-                <p className="text-4xl font-bold mb-6">₺0</p>
-                <ul className="space-y-3 mb-8">
-                  {["16 kişilik pack sistemi", "Günlük test takibi", "Kredi kazanma sistemi", "Geri bildirim ve yorumlar", "Liderlik tablosu"].map((item) => (
-                    <li key={item} className="flex items-start gap-2 text-sm">
-                      <CheckCircle className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Link href="/signup"><Button variant="outline" className="w-full">Ücretsiz Başla</Button></Link>
-              </CardContent>
-            </Card>
 
-            <Card className="relative border-2 border-blue-600 dark:border-blue-500 shadow-lg shadow-blue-600/10">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-xs font-medium px-4 py-1 rounded-full">En Popüler</div>
-              <CardContent className="p-8">
-                <h3 className="text-xl font-bold mb-2">Profesyonel Test</h3>
-                <p className="text-4xl font-bold mb-1">₺499</p>
-                <p className="text-sm text-muted mb-6">uygulama başına · tek seferlik</p>
-                <ul className="space-y-3 mb-8">
-                  {["25 profesyonel testçi", "6 saat içinde başlangıç", "16 gün tam test süreci", "Detaylı PDF rapor", "Google Play form yanıtları", "%100 para iadesi garantisi", "7/24 öncelikli destek"].map((item) => (
-                    <li key={item} className="flex items-start gap-2 text-sm">
-                      <CheckCircle className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Link href="/purchase"><Button className="w-full shadow-lg shadow-blue-600/20">Hemen Başla</Button></Link>
-              </CardContent>
-            </Card>
-          </div>
-          <p className="text-center mt-8 text-sm text-muted">Kurumsal müşteriler için özel fiyatlandırma mevcut.</p>
-        </div>
-      </section>
 
       {/* Testimonials */}
       <section id="reviews" className="py-20 sm:py-28">
@@ -219,11 +177,11 @@ export default function Home() {
               </thead>
               <tbody>
                 {[
-                  ["Başlama süresi", "Günler/Haftalar", "6 saat"],
-                  ["Testçi sayısı", "? (güvenilmez)", "16-25 garanti"],
+                  ["Başlama süresi", "Günler/Haftalar", "Hemen"],
+                  ["Testçi sayısı", "? (güvenilmez)", "16 garanti"],
                   ["Test garantisi", "Yok", "3 gün kuralı"],
                   ["Rapor", "Yok", "Detaylı geri bildirim"],
-                  ["Maliyet", "Zaman + iyilik borcu", "Ücretsiz veya ₺499"],
+                  ["Maliyet", "Zaman + iyilik borcu", "Tamamen ücretsiz"],
                 ].map((row, i) => (
                   <tr key={i} className="border-b border-cardborder">
                     <td className="py-3 px-4 font-medium">{row[0]}</td>

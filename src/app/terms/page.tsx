@@ -45,18 +45,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold mb-3">4. Profesyonel Test Hizmeti</h2>
-          <ul className="list-disc list-inside space-y-2 text-muted text-sm">
-            <li>Ücretli hizmet, 25 profesyonel testçinin 16 gün boyunca uygulamanızı test etmesini kapsar.</li>
-            <li>Testçiler, sipariş onayından sonra en geç 6 saat içinde atanır.</li>
-            <li>Google Play üretim erişim başvurunuz reddedilirse para iadesi garantisi uygulanır.</li>
-            <li>İade talebi, red bildiriminden sonra 30 gün içinde yapılmalıdır.</li>
-            <li>Test süreci boyunca haftalık rapor sağlanır.</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="text-xl font-semibold mb-3">5. Kullanıcı Davranışı</h2>
+          <h2 className="text-xl font-semibold mb-3">4. Kullanıcı Davranışı</h2>
           <ul className="list-disc list-inside space-y-2 text-muted text-sm">
             <li>Diğer kullanıcılara saygılı ve profesyonel davranmak zorunludur.</li>
             <li>Hakaret, tehdit, taciz veya ayrımcılık içeren davranışlar kesinlikle yasaktır.</li>
@@ -67,7 +56,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold mb-3">6. Fikri Mülkiyet</h2>
+          <h2 className="text-xl font-semibold mb-3">5. Fikri Mülkiyet</h2>
           <p className="text-muted leading-relaxed">
             Platforma yüklediğiniz uygulama ve içeriklerin tüm hakları size aittir. 
             PremiumPeek, test sürecini yürütmek için gerekli olan ölçüde bu içeriklere erişim hakkına sahiptir. 
@@ -76,7 +65,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold mb-3">7. Sorumluluk Reddi</h2>
+          <h2 className="text-xl font-semibold mb-3">6. Sorumluluk Reddi</h2>
           <p className="text-muted leading-relaxed">
             PremiumPeek, Google Play yayın şartlarını karşılamanıza yardımcı olur ancak yayın onayını garanti etmez. 
             Google Play'in yayın politikaları değişebilir; bu değişikliklerden kaynaklanan durumlardan platform sorumlu tutulamaz. 
@@ -86,7 +75,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold mb-3">8. Değişiklikler</h2>
+          <h2 className="text-xl font-semibold mb-3">7. Değişiklikler</h2>
           <p className="text-muted leading-relaxed">
             Bu kullanım şartları önceden bildirim yapılmaksızın değiştirilebilir. 
             Önemli değişiklikler e-posta yoluyla bildirilir. Şartların güncel haline 

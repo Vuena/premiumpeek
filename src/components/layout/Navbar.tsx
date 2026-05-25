@@ -22,7 +22,6 @@ export function Navbar() {
 
   const links = [
     { href: "/#how-it-works", label: "Nasıl Çalışır" },
-    { href: "/#pricing", label: "Fiyatlandırma" },
     { href: "/#reviews", label: "Yorumlar" },
     { href: "/#faq", label: "SSS" },
   ]

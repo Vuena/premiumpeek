@@ -215,18 +215,6 @@ export default function DashboardPage() {
               </div>
             </CardContent>
           </Card>
-
-          <Card className="border-cardborder shadow-sm bg-gradient-to-br from-blue-600 to-purple-600 text-white">
-            <CardContent className="p-6">
-              <h3 className="font-semibold text-lg mb-2">Profesyonel Test</h3>
-              <p className="text-sm text-blue-100 mb-4">25 testçi, 6 saatte başlasın. Para iade garantili.</p>
-              <Link href="/purchase">
-                <Button variant="outline" className="w-full border-white/30 text-white hover:bg-white/10 gap-2">
-                  ₺499&apos;dan Başla <ArrowRight size={16} />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>

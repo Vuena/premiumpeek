@@ -27,7 +27,6 @@ export default function PrivacyPage() {
             Kullanıcı verileriniz üçüncü taraflarla paylaşılmaz. Aşağıdaki durumlar istisnadır:
           </p>
           <ul className="list-disc list-inside space-y-1 text-muted text-sm">
-            <li><strong>Stripe:</strong> Ödeme işlemleri için. Kart bilgileriniz Stripe tarafından işlenir, bizde saklanmaz.</li>
             <li><strong>Firebase (Google):</strong> Altyapı ve veritabanı hizmetleri için.</li>
             <li><strong>Resend:</strong> E-posta gönderim hizmeti için.</li>
             <li><strong>Yasal zorunluluk:</strong> Kanunen yetkili mercilerin talebi durumunda.</li>

@@ -6,3 +6,5 @@ node_modules/
 firebase-debug.log
 .ui
 todowrite.md
+
+.vercel
