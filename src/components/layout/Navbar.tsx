@@ -4,14 +4,13 @@ import Link from "next/link"
 import { useAuth } from "@/context/AuthContext"
 import { Button } from "@/components/ui/button"
 import { Menu, X, Moon, Sun, ChevronDown } from "lucide-react"
-import { useState, useCallback, useEffect, useRef } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useTheme } from "./ThemeProvider"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
 
 export function Navbar() {
   const { user, logout } = useAuth()
   const { theme, toggleTheme } = useTheme()
-  const router = useRouter()
   const [open, setOpen] = useState(false)
   const [dropdown, setDropdown] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -27,8 +26,6 @@ export function Navbar() {
     return () => document.removeEventListener("mousedown", handleClick)
   }, [])
 
-  const goHome = useCallback((e: React.MouseEvent) => { e.preventDefault(); router.push("/"); window.scrollTo(0, 0) }, [router])
-
   const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/signup")
   if (isAuthPage) return null
 
@@ -43,12 +40,12 @@ export function Navbar() {
   return (
     <nav className="sticky top-0 z-50 border-b border-cardborder bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-        <a href="/" onClick={goHome} className="flex items-center gap-2 font-bold text-lg">
+        <Link href="/" onClick={() => window.scrollTo(0, 0)} className="flex items-center gap-2 font-bold text-lg">
           <svg className="h-8 w-8" viewBox="0 0 32 32" fill="none">
             <defs>
               <linearGradient id="nav-logo" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0%" stopColor="#2563eb"/>
-                <stop offset="100%" stop-color="#7c3aed"/>
+                <stop offset="100%" stopColor="#7c3aed"/>
               </linearGradient>
             </defs>
             <rect width="32" height="32" rx="7" fill="url(#nav-logo)"/>
@@ -57,7 +54,7 @@ export function Navbar() {
             <rect x="14.5" y="21" width="3" height="1.5" rx="0.75" fill="white"/>
           </svg>
           PremiumPeek
-        </a>
+        </Link>
 
         <div className="hidden md:flex items-center gap-6">
           {links.map((link) => (
