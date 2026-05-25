@@ -161,9 +161,8 @@ async function doJoinPack(d: any, packId: string, packData: any, user: User, mem
   if (started) {
     const existing = await getDocs(query(collection(d, "packs"), where("status", "==", "forming"), limit(1)))
     if (existing.empty) {
-      const dateStr = new Date().toLocaleDateString("tr-TR")
       await addDoc(collection(d, "packs"), {
-        name: `PremiumPeek Pack (${dateStr})`,
+        name: "Geliştiriciler Bekleniyor",
         status: "forming",
         currentDay: 0,
         maxMembers: 18,
@@ -222,9 +221,8 @@ export async function getFormingPacks() {
     .sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0))
 
   if (packs.length === 0) {
-    const dateStr = new Date().toLocaleDateString("tr-TR")
     await addDoc(collection(d, "packs"), {
-      name: `PremiumPeek Pack (${dateStr})`,
+      name: "Geliştiriciler Bekleniyor",
       status: "forming",
       currentDay: 0,
       maxMembers: 18,

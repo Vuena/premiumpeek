@@ -3,12 +3,12 @@ export const dynamic = "force-dynamic"
 
 import { useState, useEffect } from "react"
 import { useAuth } from "@/context/AuthContext"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { submitApp, getUserPacks, type Pack } from "@/lib/firestore"
-import { FileText, Loader2, ArrowLeft, CheckCircle, Smartphone, Users, Clock, ShieldCheck, HelpCircle, X } from "lucide-react"
+import { submitApp, joinPack, getUserPacks, type Pack } from "@/lib/firestore"
+import { FileText, Loader2, ArrowLeft, CheckCircle, Smartphone, Users, Clock, ShieldCheck, HelpCircle, X, Copy } from "lucide-react"
 import Link from "next/link"
 
 type Step = "setup" | "details" | "review" | "done"
@@ -48,7 +48,9 @@ const MAX_ICON_SIZE = 5 * 1024 * 1024
 export default function NewAppPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
-  const [step, setStep] = useState<Step>("setup")
+  const searchParams = useSearchParams()
+  const urlPackId = searchParams.get("packId")
+  const [step, setStep] = useState<Step>(urlPackId ? "details" : "setup")
   const [packs, setPacks] = useState<Pack[]>([])
   const [form, setForm] = useState({
     appName: "",
@@ -81,7 +83,9 @@ export default function NewAppPage() {
     if (!user) return
     const userPacks = await getUserPacks(user.uid)
     setPacks(userPacks)
-    if (userPacks.length > 0 && !form.packId) {
+    if (urlPackId) {
+      setForm(f => ({ ...f, packId: urlPackId }))
+    } else if (userPacks.length > 0 && !form.packId) {
       setForm(f => ({ ...f, packId: userPacks[0].id }))
     }
   }
@@ -132,6 +136,9 @@ export default function NewAppPage() {
         packId: form.packId,
         appIcon: appIcon || "",
       })
+      if (urlPackId) {
+        await joinPack(urlPackId, user!)
+      }
       setStep("done")
     } catch (err: any) {
       setError(err.message || "Uygulama gönderilirken hata oluştu")
@@ -214,8 +221,14 @@ export default function NewAppPage() {
                     <p className="text-xs text-zinc-500 leading-relaxed mb-2">{s.detay}</p>
                     {s.grup && (
                       <div className="rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 p-3">
-                        <p className="text-xs text-zinc-500 mb-1">Google Group e-postası (kopyala):</p>
-                        <p className="text-sm text-blue-700 dark:text-blue-400 font-mono font-bold select-all">{s.grup}</p>
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="text-xs text-zinc-500">Google Group e-postası:</p>
+                          <button onClick={() => { navigator.clipboard.writeText(s.grup); alert("Kopyalandı!") }}
+                            className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 transition-colors cursor-pointer">
+                            <Copy size={12} /> Kopyala
+                          </button>
+                        </div>
+                        <p className="text-sm text-blue-700 dark:text-blue-400 font-mono font-bold">{s.grup}</p>
                       </div>
                     )}
                   </div>

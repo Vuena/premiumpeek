@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { getUserPacks, getUserApps, getFormingPacks, joinPack, createPack, type Pack, type App } from "@/lib/firestore"
+import { getUserPacks, getUserApps, getFormingPacks, createPack, type Pack, type App } from "@/lib/firestore"
 import { Users, Clock, FileText, Plus, ArrowRight, Loader2, Smartphone, Settings, Layers, LogIn } from "lucide-react"
 
 export default function DashboardPage() {
@@ -17,7 +17,6 @@ export default function DashboardPage() {
   const [formingPacks, setFormingPacks] = useState<Pack[]>([])
   const [apps, setApps] = useState<App[]>([])
   const [loading, setLoading] = useState(true)
-  const [joining, setJoining] = useState<string | null>(null)
 
   useEffect(() => {
     if (authLoading) return
@@ -31,8 +30,7 @@ export default function DashboardPage() {
     const userApps = await getUserApps(user.uid)
     let avail = await getFormingPacks()
     if (userPacks.length === 0 && avail.length === 0) {
-      const dateStr = new Date().toLocaleDateString("tr-TR")
-      await createPack(`PremiumPeek Pack (${dateStr})`)
+      await createPack("Geliştiriciler Bekleniyor")
       avail = await getFormingPacks()
       userPacks = await getUserPacks(user.uid)
     }
@@ -42,18 +40,7 @@ export default function DashboardPage() {
     setLoading(false)
   }
 
-  const handleJoin = async (packId: string) => {
-    if (!user) return
-    setJoining(packId)
-    try {
-      await joinPack(packId, user)
-      await loadData()
-    } catch (err: any) {
-      alert(err.message)
-    } finally {
-      setJoining(null)
-    }
-  }
+
 
   if (loading) return <div className="flex items-center justify-center min-h-[60vh]"><Loader2 className="h-8 w-8 animate-spin text-muted" /></div>
   if (!user) return null
@@ -176,10 +163,11 @@ export default function DashboardPage() {
                       <p className="text-xs text-muted">{p.members.length}/18 üye</p>
                     </div>
                   </div>
-                  <Button size="sm" onClick={() => handleJoin(p.id)} disabled={joining === p.id} className="gap-2">
-                    {joining === p.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn size={16} />}
-                    Katıl
-                  </Button>
+                  <Link href={`/dashboard/apps/new?packId=${p.id}`}>
+                    <Button size="sm" className="gap-2">
+                      <LogIn size={16} /> Katıl & Uygulama Yükle
+                    </Button>
+                  </Link>
                 </div>
               </CardContent>
             </Card>
