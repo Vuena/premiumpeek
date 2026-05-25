@@ -80,8 +80,8 @@ export default function NewAppPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
-    loadData()
-  }, [user, authLoading])
+    loadData().catch(console.error)
+  }, [user, authLoading, router])
 
   const loadData = async () => {
     if (!user) return

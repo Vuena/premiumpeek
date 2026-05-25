@@ -26,8 +26,8 @@ export default function DashboardPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
-    loadData()
-  }, [user, authLoading])
+    loadData().catch(console.error)
+  }, [user, authLoading, router])
 
   const loadData = async () => {
     if (!user) return
@@ -57,7 +57,7 @@ export default function DashboardPage() {
   try {
     const testedStr = typeof window !== "undefined" ? localStorage.getItem(`tested_${new Date().toDateString()}`) : null
     if (testedStr) testedCount = JSON.parse(testedStr).length
-  } catch {}
+  } catch (err) { console.error("Failed to parse localStorage tested data:", err) }
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">

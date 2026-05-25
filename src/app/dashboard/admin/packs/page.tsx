@@ -51,11 +51,12 @@ export default function AdminPacksPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user || (user as any).role !== "admin") { router.push("/dashboard"); return }
-    loadPacks()
-  }, [user, authLoading])
+    loadPacks().catch(console.error)
+  }, [user, authLoading, router])
 
   const loadPacks = async () => {
-    const d = db!
+    if (!db) { return }
+    const d = db
     const snap = await getDocs(query(collection(d, "packs"), orderBy("createdAt", "desc")))
     setPacks(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })))
     setLoading(false)
@@ -63,7 +64,8 @@ export default function AdminPacksPage() {
 
   const deletePack = async (id: string, name: string) => {
     if (!confirm("Pack'i silmek istediğine emin misin?")) return
-    const d = db!
+    if (!db) { return }
+    const d = db
     await deleteDoc(doc(d, "packs", id))
     await logAudit("pack_delete", { packId: id, packName: name })
     loadPacks()
@@ -73,7 +75,8 @@ export default function AdminPacksPage() {
     setActionLoading(`${action}-${packId}`)
     setActionError("")
     try {
-      const token = await auth!.currentUser!.getIdToken()
+      const token = await auth?.currentUser?.getIdToken()
+      if (!token) { setActionError("Oturum bulunamadı"); setActionLoading(null); return }
       const res = await fetch("/api/admin/pack-manage", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },

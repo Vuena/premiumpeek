@@ -32,7 +32,8 @@ export default function NewReportPage() {
   }, [user, authLoading])
 
   const loadApps = async () => {
-    const d = db!
+    if (!db) { addToast("error", "Veritabanı bağlantısı kurulamadı"); return }
+    const d = db
     const q = query(collection(d, "apps"), where("uid", "==", user!.uid))
     const snap = await getDocs(q)
     setApps(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })))
@@ -83,7 +84,8 @@ export default function NewReportPage() {
     if (!selectedApp || items.length === 0) return
     setSaving(true)
     try {
-      await addDoc(collection(db!, "reports"), {
+      if (!db) { addToast("error", "Veritabanı bağlantısı kurulamadı"); return }
+      await addDoc(collection(db, "reports"), {
         appId: selectedApp, uid: user!.uid, items, createdAt: serverTimestamp(),
       })
       setItems([])

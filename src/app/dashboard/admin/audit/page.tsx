@@ -40,13 +40,14 @@ export default function AdminAuditPage() {
 
   const loadLogs = async () => {
     try {
-      const token = await auth!.currentUser!.getIdToken()
+      if (!auth?.currentUser) { return }
+      const token = await auth.currentUser.getIdToken()
       const res = await fetch("/api/admin/audit-log?limit=100", {
         headers: { Authorization: `Bearer ${token}` },
       })
       const data = await res.json()
       setLogs(data.logs || [])
-    } catch {
+    } catch (err) { console.error("Failed to load audit logs:", err)
     } finally {
       setLoading(false)
     }

@@ -31,8 +31,8 @@ export default function OrderDetailPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
-    loadOrder()
-  }, [user, authLoading])
+    loadOrder().catch(console.error)
+  }, [user, authLoading, router])
 
   const loadOrder = async () => {
     if (!user || !params.id) return

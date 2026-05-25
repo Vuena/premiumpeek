@@ -3,6 +3,12 @@ import { adminAuth, adminDb } from "@/lib/firebase-admin"
 
 export async function POST(req: NextRequest) {
   try {
+    if (!adminDb) {
+      return NextResponse.json({ error: "Firebase Admin not configured" }, { status: 500 })
+    }
+    if (!adminAuth) {
+      return NextResponse.json({ error: "Firebase Admin not configured" }, { status: 500 })
+    }
     if (req.headers.get("x-setup-key") !== process.env.SETUP_KEY) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }

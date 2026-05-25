@@ -43,7 +43,7 @@ export default function OrdersPage() {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
     loadOrders().catch(() => setLoading(false))
-  }, [user, authLoading])
+  }, [user, authLoading, router])
 
   const loadOrders = async () => {
     try {

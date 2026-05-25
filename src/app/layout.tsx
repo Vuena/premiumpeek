@@ -8,7 +8,7 @@ import { Navbar } from "@/components/layout/Navbar"
 import { Footer } from "@/components/layout/Footer"
 
 const inter = Inter({
-  subsets: ["latin", "latin-ext"],
+  subsets: ["latin"],
   variable: "--font-inter",
 })
 
@@ -70,7 +70,7 @@ export default function RootLayout({
               if (t === "dark" || (!t && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
                 document.documentElement.classList.add("dark");
               }
-            } catch(e) {}
+            } catch(e) { console.error("Theme initialization failed:", e) }
           `,
         }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{
@@ -81,7 +81,11 @@ export default function RootLayout({
             url: siteUrl,
             logo: `${siteUrl}/favicon.svg`,
             description: "Google Play yayın şartlarını karşılamak için test topluluğu",
-            sameAs: [],
+            sameAs: [
+              "https://twitter.com/premiumpeek",
+              "https://linkedin.com/company/premiumpeek",
+              "https://youtube.com/@premiumpeek",
+            ],
           }),
         }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{

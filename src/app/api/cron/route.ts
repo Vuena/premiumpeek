@@ -50,6 +50,7 @@ export async function GET(req: NextRequest) {
           if (missedDays >= 3) {
             await packDoc.ref.update({
               members: pack.members.filter((m: any) => m.uid !== uid),
+              memberUids: pack.memberUids?.filter((u: string) => u !== uid) || [],
             })
 
             await userRef.update({ missedDays: 0 })

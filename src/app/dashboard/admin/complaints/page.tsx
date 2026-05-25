@@ -24,14 +24,14 @@ export default function AdminComplaintsPage() {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
     if ((user as any).role !== "admin") { router.push("/dashboard"); return }
-    loadComplaints()
-  }, [user, authLoading])
+    loadComplaints().catch(console.error)
+  }, [user, authLoading, router])
 
   const loadComplaints = async () => {
     try {
       const data = await getComplaints()
       setComplaints(data)
-    } catch {
+    } catch (err) { console.error("Failed to load complaints:", err)
     } finally {
       setLoading(false)
     }
@@ -44,7 +44,7 @@ export default function AdminComplaintsPage() {
       await resolveComplaint(complaintId, action)
       await logAudit("complaint_resolve", { complaintId, action, appName: complaint?.appName || "" })
       setComplaints(prev => prev.map(c => c.id === complaintId ? { ...c, status: action } : c))
-    } catch {
+    } catch (err) { console.error("Failed to resolve complaint:", err)
     } finally {
       setProcessing(null)
     }

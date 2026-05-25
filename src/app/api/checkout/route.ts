@@ -6,6 +6,12 @@ const USDT_PRICE = parseInt(process.env.USDT_PRICE || "10")
 
 export async function POST(req: NextRequest) {
   try {
+    if (!adminDb) {
+      return NextResponse.json({ error: "Firebase Admin not configured" }, { status: 500 })
+    }
+    if (!adminAuth) {
+      return NextResponse.json({ error: "Firebase Admin not configured" }, { status: 500 })
+    }
     const authHeader = req.headers.get("authorization")
     if (!authHeader?.startsWith("Bearer ")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })

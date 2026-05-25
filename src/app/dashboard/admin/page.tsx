@@ -38,12 +38,13 @@ export default function AdminPage() {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
     if ((user as any).role !== "admin") { router.push("/dashboard"); return }
-    loadStats()
-    loadRecentLogs()
-  }, [user, authLoading])
+    loadStats().catch(console.error)
+    loadRecentLogs().catch(console.error)
+  }, [user, authLoading, router])
 
   const loadStats = async () => {
-    const d = db!
+    if (!db) { return }
+    const d = db
     const [usersSnap, packsSnap, appsSnap, activePacksSnap] = await Promise.all([
       getDocs(query(collection(d, "users"), limit(1000))),
       getDocs(query(collection(d, "packs"), limit(1000))),
@@ -61,7 +62,8 @@ export default function AdminPage() {
 
   const loadRecentLogs = async () => {
     try {
-      const token = await auth!.currentUser!.getIdToken()
+      if (!auth?.currentUser) { console.error("Not authenticated"); return }
+      const token = await auth.currentUser.getIdToken()
       const res = await fetch("/api/admin/audit-log?limit=10", {
         headers: { Authorization: `Bearer ${token}` },
       })

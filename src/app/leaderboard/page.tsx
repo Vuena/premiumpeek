@@ -16,15 +16,16 @@ export default function LeaderboardPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    loadLeaderboard()
+    loadLeaderboard().catch(console.error)
   }, [])
 
   const loadLeaderboard = async () => {
     try {
-      const d = db!
+      if (!db) { setLoading(false); return }
+      const d = db
       const snap = await getDocs(query(collection(d, "users"), orderBy("totalTested", "desc"), limit(50)))
       setTopUsers(snap.docs.map((doc, i) => ({ id: doc.id, rank: i + 1, ...doc.data() })))
-    } catch {}
+    } catch (err) { console.error("Failed to load leaderboard:", err) }
     setLoading(false)
   }
 

@@ -21,8 +21,8 @@ export default function AdminTestersPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user || (user as any).role !== "admin") { router.push("/dashboard"); return }
-    loadTesters()
-  }, [user, authLoading])
+    loadTesters().catch(console.error)
+  }, [user, authLoading, router])
 
   const loadTesters = async () => {
     const data = await getAvailableTesters()

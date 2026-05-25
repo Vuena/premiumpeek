@@ -32,7 +32,7 @@ export default function SettingsPage() {
       devAccountLink: (user as any).devAccountLink || "",
     })
     setIsTester(!!(user as any).isTester)
-  }, [user, authLoading])
+  }, [user, authLoading, router])
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()

@@ -36,7 +36,8 @@ export default function AdminEmailPage() {
 
     setSending(true)
     try {
-      const token = await auth!.currentUser!.getIdToken()
+      const token = await auth?.currentUser?.getIdToken()
+      if (!token) { setError("Oturum bulunamadı"); return }
       const res = await fetch("/api/admin/send-email", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },

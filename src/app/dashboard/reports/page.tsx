@@ -22,11 +22,12 @@ export default function ReportsPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
-    loadReports()
-  }, [user, authLoading])
+    loadReports().catch(console.error)
+  }, [user, authLoading, router])
 
   const loadReports = async () => {
-    const d = db!
+    if (!db) { return }
+    const d = db
     const q = query(collection(d, "reports"), where("uid", "==", user!.uid))
     const snap = await getDocs(q)
     const items = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))

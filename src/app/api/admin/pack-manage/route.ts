@@ -5,6 +5,9 @@ import { FieldValue } from "firebase-admin/firestore"
 
 export async function POST(req: NextRequest) {
   try {
+    if (!adminDb) {
+      return NextResponse.json({ error: "Firebase Admin not configured" }, { status: 500 })
+    }
     const auth = await verifyAdmin(req)
     if (auth.error) return auth.error
 

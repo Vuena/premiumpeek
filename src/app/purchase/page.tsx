@@ -13,6 +13,7 @@ import { auth, db } from "@/lib/firebase"
 import { collection, addDoc, serverTimestamp } from "firebase/firestore"
 import { getFormingPacks, joinPack, submitApp } from "@/lib/firestore"
 import { usePageMeta } from "@/lib/usePageMeta"
+import { useToast } from "@/context/ToastContext"
 
 const USDT_WALLET = process.env.NEXT_PUBLIC_USDT_WALLET || ""
 const USDT_PRICE = parseInt(process.env.NEXT_PUBLIC_USDT_PRICE || "10")
@@ -21,11 +22,13 @@ export default function PurchasePage() {
   usePageMeta({ title: "Profesyonel Test Satın Al | PremiumPeek", description: "PremiumPeek'ten profesyonel test hizmeti satın alın.", canonical: "https://www.premiumpeek.com/purchase" })
 
   const { user, loading: authLoading } = useAuth()
+  const { toast: addToast } = useToast()
   const router = useRouter()
   const [step, setStep] = useState<"form" | "payment" | "confirming" | "success">("form")
   const [form, setForm] = useState({ appName: "", googlePlayLink: "", instructions: "", packageName: "", appIcon: "" })
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const [redirectTo, setRedirectTo] = useState<string | null>(null)
   const [orderData, setOrderData] = useState<{ orderId: string; walletAddress: string; amount: number; currency: string; network: string } | null>(null)
   const [txHash, setTxHash] = useState("")
 
@@ -51,12 +54,16 @@ export default function PurchasePage() {
           appIcon: data.appIcon || "",
         })
         // Auto-create order and go to payment
-        createOrder(data)
+        createOrder(data).catch(console.error)
       } catch {
         sessionStorage.removeItem("paidAppData")
       }
     }
-  }, [user, authLoading])
+  }, [user, authLoading, router])
+
+  useEffect(() => {
+    if (redirectTo) { router.push(redirectTo) }
+  }, [redirectTo, router])
 
   const createOrder = async (appData: any) => {
     setLoading(true)
@@ -64,7 +71,8 @@ export default function PurchasePage() {
     try {
       if (!auth?.currentUser) throw new Error("Giriş yapmalısın")
       const pn = appData.packageName || extractPackageName(appData.googlePlayLink || "")
-      const orderRef = await addDoc(collection(db!, "orders"), {
+      if (!db) throw new Error("Veritabanı bağlantısı kurulamadı")
+      const orderRef = await addDoc(collection(db, "orders"), {
         uid: auth.currentUser.uid,
         userEmail: auth.currentUser.email || "",
         userName: auth.currentUser.displayName || "",
@@ -141,7 +149,7 @@ export default function PurchasePage() {
           const appId = await submitApp({
             uid: user.uid,
             appName: form.appName,
-            packageName: "",
+            packageName: extractPackageName(form.googlePlayLink),
             description: "",
             category: "",
             language: "",
@@ -156,7 +164,10 @@ export default function PurchasePage() {
             headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
             body: JSON.stringify({ orderId: orderData.orderId, txHash: txHash.trim(), packId: formingPacks[0].id, appId }),
           })
-        } catch {}
+        } catch (e: any) {
+          addToast("error", "Sipariş oluşturuldu ancak pack'e eklenirken hata oluştu. Admin ile iletişime geçin.")
+          console.error("Post-payment error:", e)
+        }
       }
 
       setStep("success")
@@ -168,7 +179,7 @@ export default function PurchasePage() {
   }
 
   if (authLoading) return null
-  if (!user) { router.push("/login"); return null }
+  if (!user) { setRedirectTo("/login"); return null }
 
   const benefits = [
     "16-18 pack üyesi test eder",
@@ -274,6 +285,20 @@ export default function PurchasePage() {
           <CardHeader>
             <h1 className="sr-only">Premium Pack Satın Al</h1>
             <CardTitle className="text-xl">Premium Pack Satın Al</CardTitle>
+            <script type="application/ld+json" dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Product",
+                name: "Profesyonel Google Play Test Hizmeti",
+                description: "18 testçi ile uygulamanızı Google Play'de yayınlayın. 16 gün boyunca profesyonel test hizmeti.",
+                offers: {
+                  "@type": "Offer",
+                  price: "10",
+                  priceCurrency: "USD",
+                  availability: "https://schema.org/InStock",
+                },
+              }),
+            }} />
             <CardDescription>16-18 testçi, 16 gün, $10 USDT</CardDescription>
           </CardHeader>
           <CardContent>

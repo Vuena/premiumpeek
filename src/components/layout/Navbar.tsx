@@ -70,7 +70,7 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button onClick={toggleTheme} aria-label="Temayı değiştir" className="hidden md:flex h-9 w-9 items-center justify-center rounded-xl hover:bg-subtle transition-colors cursor-pointer">
+          <button onClick={toggleTheme} aria-label="Temayı değiştir" className="hidden md:flex h-9 w-9 items-center justify-center rounded-xl hover:bg-subtle transition-colors">
             {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
           </button>
 

@@ -35,8 +35,8 @@ export default function TestingPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
-    loadTesting()
-  }, [user, authLoading])
+    loadTesting().catch(console.error)
+  }, [user, authLoading, router])
 
   const [isPremium, setIsPremium] = useState(false)
 
@@ -99,7 +99,8 @@ export default function TestingPage() {
 
       const day = pack.currentDay
       const storagePath = `screenshots/tests/${packId}/${user.uid}/${day}_${Date.now()}.jpg`
-      const storageRef = ref(storage!, storagePath)
+      if (!storage) { addToast("error", "Storage bağlantısı kurulamadı"); return }
+      const storageRef = ref(storage, storagePath)
       await uploadBytes(storageRef, file)
       const url = await getDownloadURL(storageRef)
 
@@ -111,7 +112,7 @@ export default function TestingPage() {
 
       const fb = feedbacks[appId] || ""
       await recordTestingActivity(packId, user.uid, day, fb)
-    } catch {
+    } catch (err) { console.error("Failed to record test activity:", err)
       addToast("error", "Test kaydedilemedi")
       setError("Screenshot yüklenirken hata oluştu"); setTimeout(() => setError(""), 4000)
     } finally {
@@ -140,7 +141,7 @@ export default function TestingPage() {
       })
       setComplaintOpen(null)
       setComplaintReason("")
-    } catch {
+    } catch (err) { console.error("Failed to submit complaint:", err)
       addToast("error", "Şikayet gönderilemedi")
     } finally {
       setComplaintSubmitting(false)

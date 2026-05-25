@@ -23,11 +23,12 @@ export default function ReportDetailPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
-    loadReport()
-  }, [user, authLoading])
+    loadReport().catch(console.error)
+  }, [user, authLoading, router])
 
   const loadReport = async () => {
-    const snap = await getDoc(doc(db!, "reports", params.id as string))
+    if (!db) { return }
+    const snap = await getDoc(doc(db, "reports", params.id as string))
     if (!snap.exists() || snap.data().uid !== user!.uid) {
       router.push("/dashboard/reports")
       return

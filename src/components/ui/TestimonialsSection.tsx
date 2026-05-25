@@ -62,6 +62,20 @@ export function TestimonialsSection() {
 
   return (
     <section id="reviews" className="py-20 sm:py-28">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: "PremiumPeek Google Play Test Hizmeti",
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: "5",
+            reviewCount: "51",
+            bestRating: "5",
+            worstRating: "1",
+          },
+        }),
+      }} />
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Geliştiriciler Ne Diyor?</h2>

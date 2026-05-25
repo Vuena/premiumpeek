@@ -4,7 +4,7 @@ const stripeKey = process.env.STRIPE_SECRET_KEY
 let stripe: Stripe | null = null
 
 if (stripeKey) {
-  stripe = new Stripe(stripeKey, { apiVersion: "2025-02-24-acacia" as any })
+  stripe = new Stripe(stripeKey, { apiVersion: Stripe.API_VERSION })
 }
 
 export { stripe }

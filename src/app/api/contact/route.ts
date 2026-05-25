@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server"
 import { sendEmail } from "@/lib/email"
 
+function escapeHtml(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;")
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
@@ -12,8 +16,8 @@ export async function POST(req: NextRequest) {
 
     const result = await sendEmail({
       to: "premiumpeektest@gmail.com",
-      subject: `İletişim Formu: ${name} <${email}>`,
-      html: `<h2>Yeni İletişim Mesajı</h2><p><strong>Ad:</strong> ${name}</p><p><strong>E-posta:</strong> ${email}</p><p><strong>Mesaj:</strong></p><p>${message}</p>`,
+      subject: `İletişim Formu: ${escapeHtml(name)} <${escapeHtml(email)}>`,
+      html: `<h2>Yeni İletişim Mesajı</h2><p><strong>Ad:</strong> ${escapeHtml(name)}</p><p><strong>E-posta:</strong> ${escapeHtml(email)}</p><p><strong>Mesaj:</strong></p><p>${escapeHtml(message)}</p>`,
     })
 
     if (result.error) {

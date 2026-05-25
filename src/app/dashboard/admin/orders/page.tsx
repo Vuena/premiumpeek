@@ -23,8 +23,8 @@ export default function AdminOrdersPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user || (user as any).role !== "admin") { router.push("/dashboard"); return }
-    loadOrders()
-  }, [user, authLoading])
+    loadOrders().catch(console.error)
+  }, [user, authLoading, router])
 
   const loadOrders = async () => {
     const data = await getAllOrdersAdmin()

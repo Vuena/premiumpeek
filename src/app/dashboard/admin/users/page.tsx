@@ -24,18 +24,20 @@ export default function AdminUsersPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user || (user as any).role !== "admin") { router.push("/dashboard"); return }
-    loadUsers()
-  }, [user, authLoading])
+    loadUsers().catch(console.error)
+  }, [user, authLoading, router])
 
   const loadUsers = async () => {
-    const d = db!
+    if (!db) { return }
+    const d = db
     const snap = await getDocs(query(collection(d, "users"), orderBy("createdAt", "desc")))
     setUsers(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })))
     setLoading(false)
   }
 
   const toggleBan = async (uid: string, currentRole: string) => {
-    const d = db!
+    if (!db) { return }
+    const d = db
     await updateDoc(doc(d, "users", uid), { role: currentRole === "banned" ? "user" : "banned" })
     await logAudit("user_ban_toggle", { targetUid: uid, newRole: currentRole === "banned" ? "user" : "banned" })
     loadUsers()

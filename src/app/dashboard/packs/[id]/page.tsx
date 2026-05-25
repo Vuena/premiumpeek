@@ -27,6 +27,7 @@ export default function PackDetailPage() {
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState(false)
   const [installTimeLeft, setInstallTimeLeft] = useState("")
+  const [redirectTo, setRedirectTo] = useState<string | null>(null)
   const [installScreenshot, setInstallScreenshot] = useState<File | null>(null)
   const [installScreenshotPreview, setInstallScreenshotPreview] = useState("")
   const [installError, setInstallError] = useState("")
@@ -37,8 +38,12 @@ export default function PackDetailPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
-    loadData()
-  }, [user, authLoading, packId])
+    loadData().catch(console.error)
+  }, [user, authLoading, router, packId])
+
+  useEffect(() => {
+    if (redirectTo) { router.push(redirectTo) }
+  }, [redirectTo, router])
 
   useEffect(() => {
     if (pack?.status !== "installing" || !pack?.id) return
@@ -47,7 +52,7 @@ export default function PackDetailPage() {
         await transitionInstallingToTesting(pack.id)
         const fresh = await getPackById(pack.id)
         if (fresh && fresh.status !== pack.status) setPack(fresh)
-        } catch {}
+        } catch (err) { console.error("Pack status transition failed:", err) }
     }
     doTransition()
     const interval = setInterval(doTransition, 30000)
@@ -115,7 +120,8 @@ export default function PackDetailPage() {
     setInstallError("")
     try {
       const storagePath = `screenshots/installs/${pack.id}/${user.uid}/${Date.now()}.jpg`
-      const storageRef = ref(storage!, storagePath)
+      if (!storage) { addToast("error", "Storage bağlantısı kurulamadı"); return }
+      const storageRef = ref(storage, storagePath)
       await uploadBytes(storageRef, installScreenshot)
       const url = await getDownloadURL(storageRef)
       await recordScreenshot(pack.id, user.uid, 0, url, "install")
@@ -133,8 +139,8 @@ export default function PackDetailPage() {
   if (loading) return <div className="flex items-center justify-center min-h-[40vh]"><Loader2 className="h-8 w-8 animate-spin text-zinc-400" /></div>
   if (!pack) return <div className="text-center py-16 text-zinc-500">Pack bulunamadı.</div>
 
-  if (!isMember) { router.push("/dashboard"); return null }
-  if (myApps.length === 0 && !isPremium && pack.status === "testing") { router.push("/dashboard/apps/new"); return null }
+  if (!isMember) { setRedirectTo("/dashboard"); return null }
+  if (myApps.length === 0 && !isPremium && pack.status === "testing") { setRedirectTo("/dashboard/apps/new"); return null }
 
   const daysCompleted = pack.status === "testing" ? Math.max(0, pack.currentDay - 1) : pack.status === "completed" ? pack.totalDays : 0
 

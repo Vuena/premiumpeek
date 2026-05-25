@@ -24,11 +24,12 @@ export default function AdminAppsPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user || (user as any).role !== "admin") { router.push("/dashboard"); return }
-    loadApps()
-  }, [user, authLoading])
+    loadApps().catch(console.error)
+  }, [user, authLoading, router])
 
   const loadApps = async () => {
-    const d = db!
+    if (!db) { return }
+    const d = db
     const snap = await getDocs(query(collection(d, "apps"), orderBy("createdAt", "desc")))
     setApps(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })))
     setLoading(false)
@@ -36,7 +37,8 @@ export default function AdminAppsPage() {
 
   const deleteApp = async (id: string) => {
     if (!confirm("Uygulamayı silmek istediğine emin misin?")) return
-    const d = db!
+    if (!db) { return }
+    const d = db
     const app = apps.find(a => a.id === id)
     await deleteDoc(doc(d, "apps", id))
     await logAudit("app_delete", { appId: id, appName: app?.appName || "" })

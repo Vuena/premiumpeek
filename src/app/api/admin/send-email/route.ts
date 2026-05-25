@@ -7,6 +7,9 @@ const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KE
 
 export async function POST(req: NextRequest) {
   try {
+    if (!adminDb) {
+      return NextResponse.json({ error: "Firebase Admin not configured" }, { status: 500 })
+    }
     const auth = await verifyAdmin(req)
     if (auth.error) return auth.error
 
