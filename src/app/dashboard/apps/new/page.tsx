@@ -208,17 +208,17 @@ export default function NewAppPage() {
             <CardDescription>Test sürecini başlatmak için önce Google Play Console'da aşağıdaki adımları tamamla.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-0 mb-8">
+            <div className="space-y-0 mb-6">
               {SETUP_ADIMLARI.map((s) => (
                 <div key={s.num} className="border-b border-zinc-100 dark:border-zinc-800 last:border-0">
-                  <div className="flex items-start gap-3 py-4">
+                  <div className="flex items-start gap-3 py-2">
                     <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-950 text-blue-600 text-sm font-bold mt-0.5">{s.num}</span>
                     <div className="flex-1">
                       <p className="text-sm font-medium">{s.baslik}</p>
                     </div>
                   </div>
-                  <div className="pb-4 pl-10">
-                    <p className="text-xs text-zinc-500 leading-relaxed mb-2">{s.detay}</p>
+                  <div className="pb-2 pl-10">
+                    <p className="text-xs text-zinc-500 leading-relaxed mb-1.5">{s.detay}</p>
                     {s.grup && (
                       <div className="rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 p-3">
                         <div className="flex items-center justify-between mb-1">
@@ -263,7 +263,7 @@ export default function NewAppPage() {
           </CardHeader>
           <CardContent>
             {error && <div className="mb-4 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 p-3 text-sm text-red-600 dark:text-red-400">{error}</div>}
-            <div className="space-y-4">
+            <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium mb-1.5">Uygulama Adı <span className="text-red-500">*</span></label>
                 <p className="text-xs text-zinc-400 mb-1">Google Play'de göründüğü şekliyle.</p>
