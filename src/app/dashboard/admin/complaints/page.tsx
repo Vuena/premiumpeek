@@ -24,7 +24,7 @@ export default function AdminComplaintsPage() {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
     if ((user as any).role !== "admin") { router.push("/dashboard"); return }
-    loadComplaints().catch(console.error)
+    loadComplaints()
   }, [user, authLoading, router])
 
   const loadComplaints = async () => {

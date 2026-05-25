@@ -23,13 +23,12 @@ export default function AdminOrdersPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user || (user as any).role !== "admin") { router.push("/dashboard"); return }
-    loadOrders().catch(console.error)
+    ;(async () => { try { await loadOrders() } catch { setOrders([]) } finally { setLoading(false) } })()
   }, [user, authLoading, router])
 
   const loadOrders = async () => {
     const data = await getAllOrdersAdmin()
     setOrders(data as any[])
-    setLoading(false)
   }
 
   const updateStatus = async (id: string, status: string) => {

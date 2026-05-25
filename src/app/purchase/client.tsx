@@ -53,8 +53,7 @@ export default function PurchaseClient() {
           packageName: data.packageName || extractPackageName(data.googlePlayLink || ""),
           appIcon: data.appIcon || "",
         })
-        // Auto-create order and go to payment
-        createOrder(data).catch(console.error)
+        createOrder(data)
       } catch {
         sessionStorage.removeItem("paidAppData")
       }

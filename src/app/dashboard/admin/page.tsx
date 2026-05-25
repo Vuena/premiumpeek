@@ -38,8 +38,16 @@ export default function AdminPage() {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
     if ((user as any).role !== "admin") { router.push("/dashboard"); return }
-    loadStats().catch(console.error)
-    loadRecentLogs().catch(console.error)
+    ;(async () => {
+      try {
+        await loadStats()
+        await loadRecentLogs()
+      } catch (err) {
+        console.error("Admin load failed:", err)
+      } finally {
+        setLoading(false)
+      }
+    })()
   }, [user, authLoading, router])
 
   const loadStats = async () => {
@@ -59,7 +67,6 @@ export default function AdminPage() {
       apps: appsCount,
       activePacks: activePacksSnap.docs.filter(d => d.data().status === "testing" || d.data().status === "installing").length,
     })
-    setLoading(false)
   }
 
   const loadRecentLogs = async () => {

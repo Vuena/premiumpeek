@@ -21,13 +21,12 @@ export default function AdminTestersPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user || (user as any).role !== "admin") { router.push("/dashboard"); return }
-    loadTesters().catch(console.error)
+    ;(async () => { try { await loadTesters() } catch { setTesters([]) } finally { setLoading(false) } })()
   }, [user, authLoading, router])
 
   const loadTesters = async () => {
     const data = await getAvailableTesters()
     setTesters(data)
-    setLoading(false)
   }
 
   if (loading) return <div className="flex items-center justify-center min-h-[40vh]"><Loader2 className="h-8 w-8 animate-spin text-zinc-400" /></div>
