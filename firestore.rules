@@ -68,7 +68,7 @@ service cloud.firestore {
       allow read: if isOwner(resource.data.uid) || isAdmin();
       allow create: if isAuth();
       allow update: if isAdmin();
-      allow delete: if isAdmin();
+      allow delete: if (isOwner(resource.data.uid) && resource.data.status in ["awaiting_payment", "awaiting_confirmation", "paid"]) || isAdmin();
     }
 
     // Reports

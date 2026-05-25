@@ -7,8 +7,9 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { deleteDoc, doc } from "firebase/firestore"
+import { db } from "@/lib/firebase"
 import { getUserOrders } from "@/lib/firestore"
-import { auth } from "@/lib/firebase"
 import { useToast } from "@/context/ToastContext"
 import { Loader2, Clock, CheckCircle2, CreditCard, Trash2 } from "lucide-react"
 import { usePageMeta } from "@/lib/usePageMeta"
@@ -62,21 +63,12 @@ export default function OrdersPage() {
     e.preventDefault()
     e.stopPropagation()
     if (!confirm("Siparişi silmek istediğine emin misin?")) return
-    if (!auth?.currentUser) {
-      addToast("error", "Oturum bulunamadı. Lütfen sayfayı yenile.")
+    if (!db) {
+      addToast("error", "Veritabanı bağlantısı kurulamadı.")
       return
     }
     try {
-      const token = await auth.currentUser.getIdToken()
-      const res = await fetch("/api/delete-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ orderId }),
-      })
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({ error: "Sunucu hatası" }))
-        throw new Error(data.error || "Silinirken hata oluştu")
-      }
+      await deleteDoc(doc(db, "orders", orderId))
       setOrders(prev => prev.filter(o => o.id !== orderId))
       addToast("success", "Sipariş silindi.")
     } catch (err: any) {
