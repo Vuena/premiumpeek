@@ -44,7 +44,12 @@ export function Navbar() {
     <nav className="sticky top-0 z-50 border-b border-cardborder bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
         <a href="/" onClick={goHome} className="flex items-center gap-2 font-bold text-lg">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-sm font-bold">P</div>
+          <svg className="h-8 w-8" viewBox="0 0 32 32" fill="none">
+            <rect width="32" height="32" rx="7" fill="currentColor" className="text-zinc-900 dark:text-white"/>
+            <rect x="8" y="4" width="16" height="24" rx="3" stroke="white" stroke-width="1.8" className="dark:stroke-zinc-900" fill="none"/>
+            <rect x="10.5" y="6" width="11" height="14" rx="1" fill="white" opacity="0.2" className="dark:fill-zinc-900 dark:opacity-10"/>
+            <rect x="14.5" y="21" width="3" height="1.5" rx="0.75" fill="white" className="dark:fill-zinc-900"/>
+          </svg>
           PremiumPeek
         </a>
 

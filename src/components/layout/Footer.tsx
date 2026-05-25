@@ -7,7 +7,12 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div className="col-span-2 md:col-span-1 sm:col-span-2">
             <Link href="/" className="flex items-center gap-2 font-bold text-lg mb-3">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-xs font-bold">P</div>
+              <svg className="h-7 w-7" viewBox="0 0 32 32" fill="none">
+                <rect width="32" height="32" rx="7" fill="currentColor" className="text-zinc-900 dark:text-white"/>
+                <rect x="8" y="4" width="16" height="24" rx="3" stroke="white" stroke-width="1.8" className="dark:stroke-zinc-900" fill="none"/>
+                <rect x="10.5" y="6" width="11" height="14" rx="1" fill="white" opacity="0.2" className="dark:fill-zinc-900 dark:opacity-10"/>
+                <rect x="14.5" y="21" width="3" height="1.5" rx="0.75" fill="white" className="dark:fill-zinc-900"/>
+              </svg>
               PremiumPeek
             </Link>
             <p className="text-sm text-muted max-w-xs sm:max-w-none">
