@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { getUserPacks, getUserApps, type Pack, type App } from "@/lib/firestore"
+import { getUserPacks, getUserApps, getFormingPacks, joinPack, type Pack, type App } from "@/lib/firestore"
 import { Users, Clock, FileText, Plus, ArrowRight, Loader2, Smartphone, Settings, Layers } from "lucide-react"
 
 export default function DashboardPage() {
@@ -25,10 +25,17 @@ export default function DashboardPage() {
 
   const loadData = async () => {
     if (!user) return
-    const [userPacks, userApps] = await Promise.all([
-      getUserPacks(user.uid),
-      getUserApps(user.uid),
-    ])
+    let userPacks = await getUserPacks(user.uid)
+    if (userPacks.length === 0) {
+      const formingPacks = await getFormingPacks()
+      if (formingPacks.length > 0) {
+        try {
+          await joinPack(formingPacks[0].id, user)
+        } catch (_) {}
+      }
+      userPacks = await getUserPacks(user.uid)
+    }
+    const userApps = await getUserApps(user.uid)
     setPacks(userPacks)
     setApps(userApps)
     setLoading(false)
