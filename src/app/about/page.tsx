@@ -23,7 +23,7 @@ export default function AboutPage() {
       <div className="grid sm:grid-cols-2 gap-6 mb-12">
         {[
           { icon: Users, title: "Topluluk", desc: "Binlerce geliştirici birbirinin uygulamasını test ediyor." },
-          { icon: ShieldCheck, title: "Güvenilir", desc: "3 gün kuralı ile herkesin aktif kalması sağlanır." },
+          { icon: ShieldCheck, title: "Güvenilir", desc: "Aksatma halinde atılma kuralı ile herkesin aktif kalması sağlanır." },
           { icon: Sparkles, title: "Ücretsiz", desc: "Temel pack sistemi tamamen ücretsizdir." },
           { icon: Globe, title: "Global", desc: "Tüm dillerdeki uygulamalar desteklenir." },
         ].map(item => (

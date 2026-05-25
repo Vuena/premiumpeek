@@ -30,11 +30,11 @@ export default function TermsPage() {
           <h2 className="text-xl font-semibold mb-3">2. Pack ve Test Kuralları</h2>
           <ul className="list-disc list-inside space-y-2 text-muted text-sm">
             <li>Pack üyeleri, 16 gün boyunca her gün diğer üyelerin uygulamalarını test etmeyi taahhüt eder.</li>
-            <li>3 gün üst üste test yapmayan üyeler, otomatik olarak pack'ten atılır.</li>
+            <li>Test yapmayan üyeler, aksatma halinde otomatik olarak pack'ten atılır.</li>
             <li>Atılan üyenin uygulaması pack'ten çıkarılır, diğer üyeler kaldıkları yerden devam eder.</li>
-            <li>Bir pack en az 2 üye ile başlatılabilir.</li>
-            <li>Pack sahibi, pack'i başlatma ve üye çıkarma yetkisine sahiptir.</li>
-            <li>Her üye, aynı anda birden fazla aktif pack'te yer alabilir.</li>
+            <li>Pack, 18 üye dolunca otomatik olarak başlar.</li>
+            <li>Pack'ten ayrılan üyenin uygulaması pack'ten çıkarılır.</li>
+            <li>Her üye aynı anda yalnızca bir pack'te yer alabilir.</li>
           </ul>
         </section>
 

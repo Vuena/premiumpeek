@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { ArrowRight, ChevronUp } from "lucide-react"
 
 export default function BlogPage() {
+  useEffect(() => { document.title = "Blog | PremiumPeek" }, [])
   const [expanded, setExpanded] = useState<number | null>(null)
 
   const posts = [
@@ -18,7 +19,7 @@ export default function BlogPage() {
       title: "12 Testçi Bulma Rehberi",
       desc: "Uygulamanız için 12 gerçek test kullanıcısı bulmanın en kolay yolları.",
       date: "Nisan 2026",
-      content: "Google Play'in kapalı test şartını karşılamak için 12 gerçek kullanıcı bulmak birçok geliştirici için en büyük engeldir. Arkadaş çevrenizden testçi toplamaya çalışmak genellikle yetersiz kalır ve kullanıcıların 14 gün boyunca düzenli test yapmasını sağlamak neredeyse imkansızdır. PremiumPeek topluluğunda 5.000'den fazla geliştirici birbirinin uygulamasını test etmektedir. Pack sistemimiz sayesinde her üye diğerlerinin uygulamalarını test etmeyi taahhüt eder ve 3 gün kuralı ile herkesin aktif kalması sağlanır."
+      content: "Google Play'in kapalı test şartını karşılamak için 12 gerçek kullanıcı bulmak birçok geliştirici için en büyük engeldir. Arkadaş çevrenizden testçi toplamaya çalışmak genellikle yetersiz kalır ve kullanıcıların 14 gün boyunca düzenli test yapmasını sağlamak neredeyse imkansızdır. PremiumPeek topluluğunda 5.000'den fazla geliştirici birbirinin uygulamasını test etmektedir. Pack sistemimiz sayesinde her üye diğerlerinin uygulamalarını test etmeyi taahhüt eder ve aksatma halinde atılma kuralı ile herkesin aktif kalması sağlanır."
     },
     {
       title: "Pack Sistemi Nasıl Çalışır?",
@@ -42,7 +43,7 @@ export default function BlogPage() {
       title: "Kapalı Test Sürecinde Sık Yapılan Hatalar",
       desc: "Google Play kapalı test başvurusunda yapılan en yaygın hatalar.",
       date: "Aralık 2025",
-      content: "En sık yapılan hatalar: 1) Testçilerin uygulamayı yeterince uzun süre test etmemesi (14 gün şartı), 2) Testçilerin gerçek kullanıcı olmaması (bot veya sahte hesaplar), 3) Test süresince yetersiz aktivite (günlük açılış şartı), 4) Test süreci tamamlanmadan yayın başvurusu yapmak. PremiumPeek tüm bu hataları otomatik sistemle önler: günlük takip, 3 gün kuralı ve gerçek geliştiricilerden oluşan topluluk."
+      content: "En sık yapılan hatalar: 1) Testçilerin uygulamayı yeterince uzun süre test etmemesi (14 gün şartı), 2) Testçilerin gerçek kullanıcı olmaması (bot veya sahte hesaplar), 3) Test süresince yetersiz aktivite (günlük açılış şartı), 4) Test süreci tamamlanmadan yayın başvurusu yapmak. PremiumPeek tüm bu hataları otomatik sistemle önler: günlük takip, aksatma halinde atılma kuralı ve gerçek geliştiricilerden oluşan topluluk."
     },
     {
       title: "Google Play Testçi Bulma Siteleri Karşılaştırması",
