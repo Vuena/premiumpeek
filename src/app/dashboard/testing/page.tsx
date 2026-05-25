@@ -71,8 +71,8 @@ export default function TestingPage() {
           {new Date().toLocaleDateString("tr-TR", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
         </p>
         <div className="flex items-center gap-4 mt-3 text-xs text-zinc-500">
-          <span className="flex items-center gap-1"><Coins size={14} /> Her test: +{CREDIT_EARN_PER_TEST}🪙</span>
-          <span className="flex items-center gap-1"><MessageSquare size={14} /> Detaylı yorum: +{CREDIT_EARN_BONUS_FEEDBACK}🪙</span>
+          <span className="flex items-center gap-1"><Coins size={14} /> Her test: +{CREDIT_EARN_PER_TEST} Kredi</span>
+          <span className="flex items-center gap-1"><MessageSquare size={14} /> Detaylı yorum: +{CREDIT_EARN_BONUS_FEEDBACK} Kredi</span>
         </div>
       </div>
 
@@ -130,7 +130,7 @@ export default function TestingPage() {
                       <textarea
                         value={feedbacks[app.id] || ""}
                         onChange={(e) => setFeedbacks({ ...feedbacks, [app.id]: e.target.value })}
-                        placeholder="Yorum yap (+2🪙 bonus)..."
+                        placeholder={`Yorum yap (+${CREDIT_EARN_BONUS_FEEDBACK} Kredi bonus)...`}
                         className="w-full rounded-xl border border-zinc-300 dark:border-zinc-600 bg-transparent px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-zinc-400"
                         rows={2}
                       />

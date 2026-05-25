@@ -82,7 +82,7 @@ export default function NewPackPage() {
           </div>
           <CardTitle className="text-xl">Yeni Pack Oluştur</CardTitle>
           <CardDescription>
-            16 geliştiricilik bir grup oluştur ve 16 gün boyunca birbirinizi test edin.
+            16 geliştiricilik bir grup oluştur ve 14 gün boyunca birbirinizi test edin.
           </CardDescription>
         </CardHeader>
         <CardContent>

@@ -87,8 +87,8 @@ export default function NewAppPage() {
             <div className="flex items-center gap-2 rounded-xl bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-800 px-4 py-2">
               <Coins className="h-5 w-5 text-yellow-600" />
               <div>
-                <span className="font-bold text-yellow-700 dark:text-yellow-400">{userCredits} 🪙</span>
-                <p className="text-[10px] text-yellow-600/60">Maliyet: {CREDIT_COST_POST}🪙</p>
+                <span className="font-bold text-yellow-700 dark:text-yellow-400">{userCredits}</span> <Coins className="inline h-4 w-4 text-yellow-600" />
+                <p className="text-[10px] text-yellow-600/60">Maliyet: {CREDIT_COST_POST} Kredi</p>
               </div>
             </div>
           </div>
@@ -100,7 +100,7 @@ export default function NewAppPage() {
 
           {userCredits < CREDIT_COST_POST && (
             <div className="mb-4 rounded-xl bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-800 p-3 text-sm text-yellow-700 dark:text-yellow-400">
-              Yetersiz kredi! Uygulama yüklemek için {CREDIT_COST_POST}🪙 gerekli. Mevcut: {userCredits}🪙. 
+              Yetersiz kredi! Uygulama yüklemek için {CREDIT_COST_POST} Kredi gerekli. Mevcut: {userCredits} Kredi. 
               Pack'teki diğer uygulamaları test ederek kredi kazanabilirsin.
             </div>
           )}
@@ -176,7 +176,7 @@ export default function NewAppPage() {
 
             <Button type="submit" disabled={loading || userCredits < CREDIT_COST_POST || packs.length === 0} className="w-full gap-2">
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText size={18} />}
-              {userCredits < CREDIT_COST_POST ? "Yetersiz Kredi" : "Uygulamayı Yükle (60🪙)"}
+              {userCredits < CREDIT_COST_POST ? "Yetersiz Kredi" : `Uygulamayı Yükle (${CREDIT_COST_POST} Kredi)`}
             </Button>
           </form>
         </CardContent>

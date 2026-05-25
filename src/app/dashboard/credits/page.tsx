@@ -81,7 +81,7 @@ export default function CreditsPage() {
                   {tx.note && <p className="text-xs text-zinc-500 truncate">{tx.note}</p>}
                 </div>
                 <div className={`font-bold text-sm ${tx.type === "earned" ? "text-green-600" : "text-red-600"}`}>
-                  {tx.type === "earned" ? "+" : ""}{tx.amount}🪙
+                  {tx.type === "earned" ? "+" : ""}{tx.amount} Kredi
                 </div>
               </CardContent>
             </Card>

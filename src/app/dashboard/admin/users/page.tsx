@@ -80,7 +80,7 @@ export default function AdminUsersPage() {
               <tr>
                 <th className="text-left px-4 py-3 font-medium">Kullanıcı</th>
                 <th className="text-left px-4 py-3 font-medium">E-posta</th>
-                <th className="text-center px-4 py-3 font-medium">🪙</th>
+                <th className="text-center px-4 py-3 font-medium">Kredi</th>
                 <th className="text-center px-4 py-3 font-medium">Rol</th>
                 <th className="text-right px-4 py-3 font-medium">İşlem</th>
               </tr>

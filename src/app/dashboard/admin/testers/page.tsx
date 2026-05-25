@@ -64,7 +64,7 @@ export default function AdminTestersPage() {
               <tr key={t.uid} className="border-t border-zinc-100 dark:border-zinc-800">
                 <td className="px-4 py-3 font-medium">{t.displayName || "İsimsiz"}</td>
                 <td className="px-4 py-3 text-zinc-500">{t.email || "-"}</td>
-                <td className="px-4 py-3 text-center">{t.credits ?? 0} 🪙</td>
+                <td className="px-4 py-3 text-center">{t.credits ?? 0}</td>
                 <td className="px-4 py-3 text-center text-xs text-zinc-500">
                   {t.testerSince?.toDate?.()?.toLocaleDateString("tr-TR") || "-"}
                 </td>

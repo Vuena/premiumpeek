@@ -54,7 +54,7 @@ export default function PacksPage() {
         <div>
           <h1 className="text-2xl font-bold">Pack&apos;lerim</h1>
           <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            16 geliştirici, 16 gün, sonsuz destek
+            16 geliştirici, 14 gün, sonsuz destek
           </p>
         </div>
         <div className="flex gap-3">

@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { updateUserProfile, joinTesterPool, leaveTesterPool } from "@/lib/firestore"
+import { updateUserProfile, joinTesterPool, leaveTesterPool, CREDIT_EARN_ORDER_TESTER_DAY, CREDIT_EARN_PER_TEST } from "@/lib/firestore"
 import { Settings, Loader2, CheckCircle2, Users } from "lucide-react"
 
 export default function SettingsPage() {
@@ -96,7 +96,7 @@ export default function SettingsPage() {
         <CardContent>
           <p className="text-sm text-zinc-500 mb-4">
             Testçi havuzuna katılarak ücretli test siparişlerinde görev alabilir, 
-            her test günü için 50🪙 kazanabilirsin. Kendi pack testlerinden ayrıca +5🪙 kazanmaya devam edersin.
+            her test günü için {CREDIT_EARN_ORDER_TESTER_DAY} Kredi kazanabilirsin. Kendi pack testlerinden ayrıca +{CREDIT_EARN_PER_TEST} Kredi kazanmaya devam edersin.
           </p>
           {(user as any).isTester ? (
             <Button variant="outline" onClick={async () => { await leaveTesterPool(user.uid); window.location.reload() }}>
@@ -121,7 +121,7 @@ export default function SettingsPage() {
           </div>
           <div className="flex justify-between py-2 border-b border-zinc-100 dark:border-zinc-800">
             <span className="text-zinc-500">Kredi</span>
-            <span className="font-bold">{(user as any).credits ?? 0} 🪙</span>
+            <span className="font-bold">{(user as any).credits ?? 0} Kredi</span>
           </div>
           <div className="flex justify-between py-2">
             <span className="text-zinc-500">Üyelik</span>

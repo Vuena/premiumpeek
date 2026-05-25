@@ -57,7 +57,7 @@ export default function DashboardPage() {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 rounded-xl bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-800 px-4 py-2">
             <Coins className="h-5 w-5 text-yellow-600" />
-            <span className="font-bold text-yellow-700 dark:text-yellow-400">{credits} 🪙</span>
+            <span className="font-bold text-yellow-700 dark:text-yellow-400">{credits}</span> <Coins className="inline h-4 w-4 text-yellow-600" />
           </div>
           <Link href="/dashboard/apps/new">
             <Button className="gap-2"><Plus size={16} />Uygulama Yükle</Button>
@@ -70,7 +70,7 @@ export default function DashboardPage() {
           { icon: Layers, label: "Aktif Pack", value: activePacks.length.toString(), href: "/dashboard/packs", color: "text-blue-600 bg-blue-50 dark:bg-blue-950/30" },
           { icon: Smartphone, label: "Bugün Test", value: `${testedCount}/${activePacks.length > 0 ? "?" : "0"}`, href: "/dashboard/testing", color: "text-green-600 bg-green-50 dark:bg-green-950/30" },
           { icon: FileText, label: "Uygulamalar", value: apps.length.toString(), href: "/dashboard/apps", color: "text-purple-600 bg-purple-50 dark:bg-purple-950/30" },
-          { icon: TrendingUp, label: "Kazanılan 🪙", value: earnedTotal.toString(), href: "/dashboard/credits", color: "text-yellow-600 bg-yellow-50 dark:bg-yellow-950/30" },
+          { icon: Coins, label: "Kazanılan Kredi", value: earnedTotal.toString(), href: "/dashboard/credits", color: "text-yellow-600 bg-yellow-50 dark:bg-yellow-950/30" },
         ].map((stat) => (
           <Link key={stat.label} href={stat.href}>
             <Card className="border-cardborder shadow-sm hover:shadow-md transition-shadow cursor-pointer">
@@ -133,7 +133,7 @@ export default function DashboardPage() {
                 {[
                   { icon: Plus, label: "Yeni Pack", href: "/dashboard/packs/new", desc: "16 kişilik grup kur", color: "text-blue-600" },
                   { icon: Users, label: "Pack'e Katıl", href: "/dashboard/packs/join", desc: "Davet kodu gir", color: "text-indigo-600" },
-                  { icon: FileText, label: "Uygulama Yükle", href: "/dashboard/apps/new", desc: "60🪙 ile yayınla", color: "text-purple-600" },
+                  { icon: FileText, label: "Uygulama Yükle", href: "/dashboard/apps/new", desc: "Kredi ile yayınla", color: "text-purple-600" },
                   { icon: Clock, label: "Bugünkü Testler", href: "/dashboard/testing", desc: "Kredi kazan", color: "text-green-600" },
                   { icon: FileText, label: "Raporlar", href: "/dashboard/reports", desc: "Test raporlarını gör", color: "text-orange-600" },
                   { icon: Settings, label: "Ayarlar", href: "/dashboard/settings", desc: "Profili düzenle", color: "text-zinc-600" },
@@ -173,7 +173,7 @@ export default function DashboardPage() {
                         </div>
                       </div>
                       <span className={`font-medium text-sm ${tx.type === "earned" ? "text-green-600" : "text-red-600"}`}>
-                        {tx.type === "earned" ? "+" : ""}{tx.amount}🪙
+                        {tx.type === "earned" ? "+" : ""}{tx.amount} Kredi
                       </span>
                     </div>
                   ))}
@@ -188,7 +188,7 @@ export default function DashboardPage() {
             <CardContent className="p-6">
               <h2 className="font-semibold text-lg mb-4">Nasıl Çalışır?</h2>
               <ol className="space-y-3">
-                {["Bir pack'e katıl veya yeni pack oluştur","Uygulamanın Google Play linkini yükle","Her gün pack'teki uygulamaları test et","16 gün sonra yayına hazırsın!"].map((step, i) => (
+                {["Bir pack'e katıl veya yeni pack oluştur","Uygulamanın Google Play linkini yükle","Her gün pack'teki uygulamaları test et","14 gün sonra yayına hazırsın!"].map((step, i) => (
                   <li key={i} className="flex items-start gap-3 text-sm">
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white text-xs font-bold">{i + 1}</span>
                     <span className="text-muted">{step}</span>

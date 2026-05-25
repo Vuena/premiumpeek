@@ -108,25 +108,25 @@ function generatePackCode(): string {
 export async function createPack(name: string, user: User) {
   const d = db!
   const code = generatePackCode()
-  const packRef = await addDoc(collection(d, "packs"), {
-    name,
-    code,
+  const data = {
+    name, code,
     status: "forming",
     currentDay: 0,
     maxMembers: 16,
-    totalDays: 16,
+    totalDays: 14,
     members: [
       {
         uid: user.uid,
         displayName: user.displayName || user.email || "İsimsiz",
         photoURL: user.photoURL || "",
-        joinedAt: serverTimestamp(),
+        joinedAt: new Date(),
       },
     ],
     memberUids: [user.uid],
     createdBy: user.uid,
     createdAt: serverTimestamp(),
-  })
+  }
+  const packRef = await addDoc(collection(d, "packs"), data)
   return { id: packRef.id, code }
 }
 
@@ -251,7 +251,7 @@ export async function submitApp(data: {
     const userData = userSnap.data()
     const credits = userData.credits ?? 0
     if (credits < CREDIT_COST_POST) {
-      throw new Error(`Yetersiz kredi. ${CREDIT_COST_POST}🪙 gerekiyor, mevcut: ${credits}🪙`)
+      throw new Error(`Yetersiz kredi. ${CREDIT_COST_POST} kredi gerekiyor, mevcut: ${credits} kredi`)
     }
 
     const ref = await addDoc(collection(d, "apps"), {

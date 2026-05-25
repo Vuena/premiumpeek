@@ -89,7 +89,9 @@ export default function PurchasePage() {
     "16 gün tam test süreci",
     "Detaylı hata raporları",
     "Google Play form yanıtları",
-    "%100 garanti",
+    "%100 memnuniyet garantisi",
+    "14 gün tam iade garantisi",
+    "7/24 öncelikli destek",
   ]
 
   if (step === "payment" && orderData) {
@@ -214,7 +216,7 @@ export default function PurchasePage() {
                 {loading ? "İşleniyor..." : "$10 USDT ile Devam Et"}
               </Button>
               <p className="text-xs text-center text-zinc-400">
-                Ödeme USDT (TRC-20) ile alınır.
+                Ödeme USDT (TRC-20) ile alınır. 14 gün içinde sonuç alınmazsa <strong>tam iade garantisi</strong>.
               </p>
             </form>
           </CardContent>

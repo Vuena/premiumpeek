@@ -1,3 +1,4 @@
+import { CREDIT_EARN_PER_TEST, CREDIT_COST_POST, CREDIT_SIGNUP_BONUS } from "@/lib/firestore"
 export const metadata = { title: "Kullanım Şartları" }
 
 export default function TermsPage() {
@@ -36,9 +37,9 @@ export default function TermsPage() {
           <h2 className="text-xl font-semibold mb-3">3. Kredi Sistemi</h2>
           <ul className="list-disc list-inside space-y-2 text-muted text-sm">
             <li>Krediler yalnızca platform içi kullanım içindir, nakte çevrilemez veya devredilemez.</li>
-            <li>Her test edilen uygulama için +4🪙 kazanılır.</li>
-            <li>Uygulama yayınlama maliyeti 60🪙'dir.</li>
-            <li>Yeni kullanıcılara kayıt bonusu olarak 30🪙 hediye edilir.</li>
+            <li>Her test edilen uygulama için +{CREDIT_EARN_PER_TEST} kredi kazanılır.</li>
+            <li>Uygulama yayınlama maliyeti {CREDIT_COST_POST} kredidir.</li>
+            <li>Yeni kullanıcılara kayıt bonusu olarak {CREDIT_SIGNUP_BONUS} kredi hediye edilir.</li>
             <li>Kredi kötüye kullanımı (bot, sahte hesap, hile) tespit edilirse hesap kalıcı olarak askıya alınır.</li>
             <li>Platform yönetimi, gerekli gördüğü durumlarda kredi bakiyelerinde düzeltme yapma hakkını saklı tutar.</li>
           </ul>

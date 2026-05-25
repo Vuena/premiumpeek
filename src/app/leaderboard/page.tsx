@@ -49,7 +49,7 @@ export default function LeaderboardPage() {
                 <th className="text-left px-4 py-3 font-medium">Kullanıcı</th>
                 <th className="text-center px-4 py-3 font-medium">Test Edilen</th>
                 <th className="text-center px-4 py-3 font-medium">Yayınlanan</th>
-                <th className="text-center px-4 py-3 font-medium">🪙</th>
+                <th className="text-center px-4 py-3 font-medium">Kredi</th>
               </tr>
             </thead>
             <tbody>
