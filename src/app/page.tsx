@@ -217,7 +217,7 @@ export default function Home() {
                     { label: "Testçi Sayısı", value: "? (güvenilmez)", good: false },
                     { label: "Test Garantisi", value: "Yok", good: false },
                     { label: "Raporlama", value: "Yok", good: false },
-                    { label: "Maliyet", value: "Zaman + İyilik Borcu", good: false },
+                    { label: "Maliyet", value: "Zaman", good: false },
                   ].map(item => (
                     <div key={item.label}>
                       <div className="text-xs text-zinc-400 mb-1">{item.label}</div>
@@ -264,7 +264,7 @@ export default function Home() {
                     { label: "Testçi Sayısı", value: "25 Garantili", good: true },
                     { label: "Test Garantisi", value: "3 Gün Kuralı", good: true },
                     { label: "Raporlama", value: "Detaylı Geri Bildirim", good: true },
-                    { label: "Maliyet", value: "Tamamen Ücretsiz", good: true },
+                    { label: "Maliyet", value: "Ücretsiz / $10", good: true },
                   ].map(item => (
                     <div key={item.label}>
                       <div className="text-xs text-zinc-400 mb-1">{item.label}</div>
