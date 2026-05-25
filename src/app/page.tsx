@@ -70,8 +70,8 @@ export default function Home() {
               25 geliştiriciden oluşan pack&apos;lerle uygulamanı 16 günde test et, 
               Google Play yayın şartlarını karşıla ve yayına geç. Ücretsiz başla.
             </p>
-            <div className="mt-8 flex flex-col items-center gap-4">
-              <div className="flex flex-col sm:flex-row items-center gap-3">
+            <div className="mt-10 flex flex-col items-center gap-6">
+              <div className="flex flex-col sm:flex-row items-center gap-4">
                 <CtaButton>
                   <Button size="lg" className="text-base gap-2 w-full sm:w-auto shadow-lg shadow-blue-600/20">
                     Ücretsiz Başla <ArrowRight size={18} />
@@ -83,12 +83,12 @@ export default function Home() {
                   </Button>
                 </Link>
               </div>
-              <Link href="/purchase" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-medium px-5 py-2.5 text-sm shadow-lg shadow-green-500/30 transition-all hover:scale-105">
+              <Link href="/purchase" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-medium px-5 py-3 text-sm shadow-lg shadow-green-500/30 transition-all hover:scale-105">
                 <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-[10px] font-bold">$</span>
                 $10 USDT ile hemen 25 profesyonel testçi bul
                 <ArrowRight size={16} />
               </Link>
-              <Link href="/#pricing" className="text-sm text-muted hover:text-foreground underline underline-offset-2">
+              <Link href="/#pricing" className="text-sm text-muted hover:text-foreground underline underline-offset-2 pt-1">
                 Ne Kazanırsın? Detayları Gör →
               </Link>
             </div>

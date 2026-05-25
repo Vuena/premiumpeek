@@ -48,7 +48,7 @@ export default function PackDetailPage() {
     setActionLoading(true)
     try {
       await leavePack(pack.id, user.uid)
-      router.push("/dashboard/packs")
+      router.push("/dashboard")
     } catch (err: any) {
       alert(err.message)
     } finally {
@@ -63,8 +63,8 @@ export default function PackDetailPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
-      <Link href="/dashboard/packs" className="inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white mb-6">
-        <ArrowLeft size={16} /> Pack&apos;lerim
+      <Link href="/dashboard" className="inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white mb-6">
+        <ArrowLeft size={16} /> Panele Dön
       </Link>
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
