@@ -44,21 +44,23 @@ export default function AdminOrdersPage() {
     loadOrders()
   }
 
-  const statusColors: Record<string, string> = {
-    awaiting_payment: "bg-yellow-100 dark:bg-yellow-950/30 text-yellow-700",
-    paid: "bg-blue-100 dark:bg-blue-950/30 text-blue-700",
-    testing: "bg-green-100 dark:bg-green-950/30 text-green-700",
-    completed: "bg-green-100 dark:bg-green-950/30 text-green-700",
-    refunded: "bg-red-100 dark:bg-red-950/30 text-red-700",
-  }
+const statusLabels: Record<string, string> = {
+  awaiting_payment: "Ödeme Bekliyor",
+  awaiting_confirmation: "TX Hash Gönderildi",
+  paid: "Ödendi (Onay Bekliyor)",
+  testing: "Test Ediliyor",
+  completed: "Tamamlandı",
+  refunded: "İade Edildi",
+}
 
-  const statusLabels: Record<string, string> = {
-    awaiting_payment: "Ödeme Bekliyor",
-    paid: "Ödendi (Onay Bekliyor)",
-    testing: "Test Ediliyor",
-    completed: "Tamamlandı",
-    refunded: "İade Edildi",
-  }
+const statusColors: Record<string, string> = {
+  awaiting_payment: "bg-yellow-100 dark:bg-yellow-950/30 text-yellow-700",
+  awaiting_confirmation: "bg-blue-100 dark:bg-blue-950/30 text-blue-700",
+  paid: "bg-blue-100 dark:bg-blue-950/30 text-blue-700",
+  testing: "bg-green-100 dark:bg-green-950/30 text-green-700",
+  completed: "bg-green-100 dark:bg-green-950/30 text-green-700",
+  refunded: "bg-red-100 dark:bg-red-950/30 text-red-700",
+}
 
   const filtered = orders.filter(o =>
     (o.appName || "").toLowerCase().includes(search.toLowerCase()) ||
@@ -117,7 +119,7 @@ export default function AdminOrdersPage() {
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center justify-center gap-1">
-                    {o.status === "awaiting_payment" && o.txHash && (
+                    {o.status === "awaiting_confirmation" && (
                       <Button variant="ghost" size="sm" onClick={() => updateStatus(o.id, "paid")} title="Ödeme Onayla">
                         <CreditCard size={14} className="text-blue-600" />
                       </Button>
@@ -175,7 +177,7 @@ export default function AdminOrdersPage() {
                 </div>
               )}
               <div className="flex items-center gap-1 pt-2 border-t border-zinc-100 dark:border-zinc-800">
-                {o.status === "awaiting_payment" && o.txHash && (
+                {o.status === "awaiting_confirmation" && (
                   <Button variant="ghost" size="sm" onClick={() => updateStatus(o.id, "paid")} title="Ödeme Onayla">
                     <CreditCard size={14} className="text-blue-600" />
                   </Button>

@@ -43,13 +43,13 @@ export async function POST(req: NextRequest) {
     // Store TX hash for admin verification
     await orderRef.update({
       txHash,
-      status: "paid",
-      paidAt: new Date(),
+      status: "awaiting_confirmation",
+      submittedAt: new Date(),
     })
 
     return NextResponse.json({
       success: true,
-      message: "Ödeme kaydedildi. Admin onayından sonra test süreci başlayacak.",
+      message: "Ödeme bilgisi kaydedildi. Admin onayından sonra test süreci başlayacak.",
     })
   } catch (error: any) {
     console.error("Verify payment error:", error)

@@ -1,10 +1,13 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { adminDb } from "@/lib/firebase-admin"
 
 export const maxDuration = 60
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    if (req.headers.get("x-cron-secret") !== process.env.CRON_SECRET) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
     if (!adminDb) {
       return NextResponse.json({ error: "Firebase Admin not configured" }, { status: 500 })
     }
@@ -81,23 +84,6 @@ export async function GET() {
 
       const batch = d.batch()
       for (const doc of screenshotsSnap.docs) {
-        const data = doc.data()
-        if (data.url) {
-          try {
-            // Parse Firebase Storage URL to get file path
-            const urlParts = data.url.split("/o/")
-            if (urlParts.length > 1) {
-              const encodedPath = urlParts[1].split("?")[0]
-              const filePath = decodeURIComponent(encodedPath)
-              // Delete from Storage using fetch (HTTP DELETE with admin token fallback)
-              const bucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || ""
-              if (bucket) {
-                const storageUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encodeURIComponent(filePath)}`
-                await fetch(storageUrl, { method: "DELETE" }).catch(() => {})
-              }
-            }
-          } catch {}
-        }
         batch.delete(doc.ref)
       }
       await batch.commit()

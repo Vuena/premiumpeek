@@ -13,6 +13,7 @@ import { usePageMeta } from "@/lib/usePageMeta"
 
 const statusLabels: Record<string, string> = {
   awaiting_payment: "Ödeme Bekliyor",
+  awaiting_confirmation: "TX Hash Gönderildi",
   paid: "Ödendi (Onay Bekliyor)",
   testing: "Test Ediliyor",
   completed: "Tamamlandı",
@@ -63,7 +64,7 @@ export default function OrderDetailPage() {
                 <h1 className="text-xl font-bold">{order.appName}</h1>
                 <p className="text-sm text-zinc-500">{order.packageName}</p>
               </div>
-              <span className={`text-xs font-medium px-3 py-1 rounded-full ${order.status === "testing" ? "bg-green-100 dark:bg-green-950/30 text-green-700" : order.status === "awaiting_payment" ? "bg-yellow-100 dark:bg-yellow-950/30 text-yellow-700" : order.status === "completed" ? "bg-blue-100 dark:bg-blue-950/30 text-blue-700" : "bg-zinc-100 dark:bg-zinc-800 text-zinc-500"}`}>
+              <span className={`text-xs font-medium px-3 py-1 rounded-full ${order.status === "testing" ? "bg-green-100 dark:bg-green-950/30 text-green-700" : order.status === "awaiting_payment" ? "bg-yellow-100 dark:bg-yellow-950/30 text-yellow-700" : order.status === "awaiting_confirmation" ? "bg-blue-100 dark:bg-blue-950/30 text-blue-700" : order.status === "completed" ? "bg-blue-100 dark:bg-blue-950/30 text-blue-700" : "bg-zinc-100 dark:bg-zinc-800 text-zinc-500"}`}>
                 {statusLabels[order.status] || order.status}
               </span>
             </div>

@@ -229,12 +229,7 @@ export async function getFormingPacks() {
   let packs = snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Pack))
     .sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0))
 
-  // Rename any stray forming pack to the correct name
-  for (const pack of packs) {
-    if (pack.name !== "Geliştiriciler Bekleniyor") {
-      await updateDoc(doc(d, "packs", pack.id), { name: "Geliştiriciler Bekleniyor" })
-    }
-  }
+  // Ensure consistent naming
   packs = packs.map(p => ({ ...p, name: "Geliştiriciler Bekleniyor" }))
 
   if (packs.length === 0) {
@@ -588,9 +583,9 @@ export async function resolveComplaint(complaintId: string, action: "resolved" |
         where("uid", "==", complaint.targetUid),
         where("packId", "==", complaint.packId)
       ))
-      userAppsSnap.docs.forEach(async (appDoc) => {
+      for (const appDoc of userAppsSnap.docs) {
         await updateDoc(appDoc.ref, { packId: "", status: "pending" })
-      })
+      }
     }
   }
 

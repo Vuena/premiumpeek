@@ -15,6 +15,7 @@ import { usePageMeta } from "@/lib/usePageMeta"
 
 const statusLabels: Record<string, string> = {
   awaiting_payment: "Ödeme Bekliyor",
+  awaiting_confirmation: "TX Hash Gönderildi",
   paid: "Ödendi (Onay Bekliyor)",
   testing: "Test Ediliyor",
   completed: "Tamamlandı",
@@ -23,6 +24,7 @@ const statusLabels: Record<string, string> = {
 
 const statusColors: Record<string, string> = {
   awaiting_payment: "bg-yellow-100 dark:bg-yellow-950/30 text-yellow-700",
+  awaiting_confirmation: "bg-blue-100 dark:bg-blue-950/30 text-blue-700",
   paid: "bg-blue-100 dark:bg-blue-950/30 text-blue-700",
   testing: "bg-green-100 dark:bg-green-950/30 text-green-700",
   completed: "bg-green-100 dark:bg-green-950/30 text-green-700",
