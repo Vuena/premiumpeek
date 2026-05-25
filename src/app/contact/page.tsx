@@ -1,11 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Mail, MessageSquare, Clock, Loader2, CheckCircle2 } from "lucide-react"
 import Link from "next/link"
 
 export default function ContactPage() {
+  useEffect(() => { document.title = "İletişim | PremiumPeek" }, [])
   const [form, setForm] = useState({ name: "", email: "", message: "" })
   const [sending, setSending] = useState(false)
   const [status, setStatus] = useState<{ type: "success" | "error"; text: string } | null>(null)

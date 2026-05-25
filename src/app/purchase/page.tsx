@@ -1,7 +1,7 @@
 "use client"
 export const dynamic = "force-dynamic"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useAuth } from "@/context/AuthContext"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -16,6 +16,8 @@ const USDT_WALLET = process.env.NEXT_PUBLIC_USDT_WALLET || ""
 const USDT_PRICE = parseInt(process.env.NEXT_PUBLIC_USDT_PRICE || "10")
 
 export default function PurchasePage() {
+  useEffect(() => { document.title = "Profesyonel Test Satın Al | PremiumPeek" }, [])
+
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const [step, setStep] = useState<"form" | "payment" | "confirming" | "success">("form")

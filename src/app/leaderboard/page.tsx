@@ -9,6 +9,7 @@ import { db } from "@/lib/firebase"
 import { Trophy, Medal, Loader2, TrendingUp } from "lucide-react"
 
 export default function LeaderboardPage() {
+  useEffect(() => { document.title = "Liderlik Tablosu | PremiumPeek" }, [])
   const { user } = useAuth()
   const [topUsers, setTopUsers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)

@@ -260,6 +260,20 @@ export default function Home() {
       <section id="faq" className="py-20 sm:py-28">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <SectionTitle title="Sık Sorulan Sorular" />
+          <script type="application/ld+json" dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: faqs.map((faq) => ({
+                "@type": "Question",
+                name: faq.q,
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: typeof faq.a === "string" ? faq.a : "PremiumPeek kredi sistemi hakkında bilgi.",
+                },
+              })),
+            }),
+          }} />
           <div className="space-y-3">
             {faqs.map((faq) => (
               <details key={faq.q} className="group rounded-2xl border border-cardborder bg-card [&_summary::-webkit-details-marker]:hidden">

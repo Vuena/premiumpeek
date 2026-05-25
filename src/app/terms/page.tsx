@@ -1,5 +1,12 @@
 import { CREDIT_EARN_PER_TEST, CREDIT_COST_POST, CREDIT_SIGNUP_BONUS } from "@/lib/firestore"
-export const metadata = { title: "Kullanım Şartları" }
+export const metadata = {
+  title: "Kullanım Şartları",
+  description: "PremiumPeek kullanım şartları - hesap, kredi sistemi, pack kuralları ve sorumluluk reddi.",
+  openGraph: {
+    title: "Kullanım Şartları | PremiumPeek",
+    description: "PremiumPeek platformu kullanım şartları ve kuralları.",
+  },
+}
 
 export default function TermsPage() {
   return (

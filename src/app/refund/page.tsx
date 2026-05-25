@@ -1,4 +1,11 @@
-export const metadata = { title: "Para İadesi Politikası" }
+export const metadata = {
+  title: "Para İadesi Politikası",
+  description: "PremiumPeek para iadesi garantisi - Google Play üretim erişiminiz reddedilirse ödediğiniz $10 USDT'yi koşulsuz iade ediyoruz.",
+  openGraph: {
+    title: "Para İadesi Politikası | PremiumPeek",
+    description: "$10 USDT para iadesi garantisi - Google Play reddinde koşulsuz iade.",
+  },
+}
 
 export default function RefundPage() {
   return (

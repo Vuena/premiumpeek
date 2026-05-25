@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { AuthProvider } from "@/context/AuthContext"
@@ -12,25 +12,44 @@ const inter = Inter({
   variable: "--font-inter",
 })
 
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.premiumpeek.com"
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#18181b",
+}
+
 export const metadata: Metadata = {
   title: {
     default: "PremiumPeek - Google Play Test Topluluğu",
     template: "%s | PremiumPeek",
   },
   description: "Google Play yayın şartlarını karşılamak için 16 geliştiriciden oluşan pack'lerle uygulamanızı test edin. Ücretsiz topluluk ve profesyonel test hizmeti.",
-  keywords: ["google play testing", "closed testing", "12 testers", "production access", "app testing", "google play test kullanıcısı"],
+  keywords: ["google play testing", "closed testing", "12 testers", "production access", "app testing", "google play test kullanıcısı", "premiumpeek", "google play test topluluğu"],
   authors: [{ name: "PremiumPeek" }],
+  metadataBase: new URL(siteUrl),
+  alternates: {
+    canonical: siteUrl,
+  },
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/icon.svg",
+  },
   openGraph: {
     title: "PremiumPeek - Google Play Test Topluluğu",
-    description: "16 geliştiriciden oluşan pack'lerle uygulamanı 16 günde test et, Google Play'de yayınla.",
-    type: "website",
-    locale: "tr_TR",
+    description: "16 geliştiriciden oluşan pack'lerle uygulamanı test et, Google Play'de yayınla.",
+    url: siteUrl,
     siteName: "PremiumPeek",
+    locale: "tr_TR",
+    type: "website",
+    images: [{ url: "/og-image.svg", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "PremiumPeek - Google Play Test Topluluğu",
-    description: "16 geliştiriciden oluşan pack'lerle uygulamanı 16 günde test et, Google Play'de yayınla.",
+    description: "16 geliştiriciden oluşan pack'lerle uygulamanı test et, Google Play'de yayınla.",
+    images: ["/og-image.svg"],
   },
   robots: {
     index: true,
@@ -55,6 +74,35 @@ export default function RootLayout({
               }
             } catch(e) {}
           `,
+        }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "PremiumPeek",
+            url: siteUrl,
+            logo: `${siteUrl}/favicon.svg`,
+            description: "Google Play yayın şartlarını karşılamak için test topluluğu",
+            sameAs: [],
+          }),
+        }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "PremiumPeek",
+            url: siteUrl,
+            description: "Google Play Test Topluluğu - Uygulamanızı 16 geliştiriciyle test edin, Google Play'de yayınlayın.",
+            inLanguage: "tr",
+            potentialAction: {
+              "@type": "SearchAction",
+              target: {
+                "@type": "EntryPoint",
+                urlTemplate: `${siteUrl}/search?q={search_term_string}`,
+              },
+              "query-input": "required name=search_term_string",
+            },
+          }),
         }} />
       </head>
       <body className="min-h-screen flex flex-col antialiased">

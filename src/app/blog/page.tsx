@@ -2,7 +2,14 @@ import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { ArrowRight, Calendar } from "lucide-react"
 
-export const metadata = { title: "Blog" }
+export const metadata = {
+  title: "Blog",
+  description: "Google Play kapalı test şartı, 12 testçi bulma rehberi, uygulama yayınlama ipuçları ve daha fazlası.",
+  openGraph: {
+    title: "Blog | PremiumPeek",
+    description: "Google Play kapalı test şartı, 12 testçi bulma rehberi ve uygulama yayınlama ipuçları.",
+  },
+}
 
 export default function BlogPage() {
   const posts = [

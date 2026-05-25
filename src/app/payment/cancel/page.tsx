@@ -5,6 +5,6 @@ import { useRouter } from "next/navigation"
 
 export default function PaymentCancelPage() {
   const router = useRouter()
-  useEffect(() => { router.replace("/dashboard") }, [router])
+  useEffect(() => { document.title = "Ödeme İptal Edildi | PremiumPeek"; router.replace("/dashboard") }, [router])
   return null
 }

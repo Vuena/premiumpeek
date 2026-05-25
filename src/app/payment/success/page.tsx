@@ -6,6 +6,6 @@ import { useRouter } from "next/navigation"
 
 export default function PaymentSuccessPage() {
   const router = useRouter()
-  useEffect(() => { router.replace("/dashboard") }, [router])
+  useEffect(() => { document.title = "Ödeme Başarılı | PremiumPeek"; router.replace("/dashboard") }, [router])
   return null
 }

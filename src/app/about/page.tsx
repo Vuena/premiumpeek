@@ -2,7 +2,14 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Users, ShieldCheck, Sparkles, Globe } from "lucide-react"
 
-export const metadata = { title: "Hakkımızda" }
+export const metadata = {
+  title: "Hakkımızda",
+  description: "PremiumPeek, Google Play'de uygulama yayınlamak isteyen geliştiricilerin kapalı test şartını karşılaması için kurulmuş bir test topluluğudur.",
+  openGraph: {
+    title: "Hakkımızda | PremiumPeek",
+    description: "Google Play kapalı test şartını karşılamak için geliştirici topluluğu.",
+  },
+}
 
 export default function AboutPage() {
   return (

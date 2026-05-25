@@ -1,4 +1,11 @@
-export const metadata = { title: "Gizlilik Politikası" }
+export const metadata = {
+  title: "Gizlilik Politikası",
+  description: "PremiumPeek gizlilik politikası - hangi verileri topladığımız, nasıl kullandığımız ve haklarınız.",
+  openGraph: {
+    title: "Gizlilik Politikası | PremiumPeek",
+    description: "PremiumPeek gizlilik politikası ve veri işleme kuralları.",
+  },
+}
 
 export default function PrivacyPage() {
   return (

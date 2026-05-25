@@ -1,12 +1,13 @@
 import type { MetadataRoute } from "next"
 
 export default function robots(): MetadataRoute.Robots {
+  const base = process.env.NEXT_PUBLIC_APP_URL || "https://www.premiumpeek.com"
   return {
     rules: {
       userAgent: "*",
       allow: "/",
       disallow: ["/dashboard/", "/api/"],
     },
-    sitemap: "https://premiumpeek.com/sitemap.xml",
+    sitemap: `${base}/sitemap.xml`,
   }
 }
