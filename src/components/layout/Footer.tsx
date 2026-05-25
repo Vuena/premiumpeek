@@ -11,7 +11,7 @@ export function Footer() {
                 <defs>
                   <linearGradient id="foot-logo" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="0%" stopColor="#2563eb"/>
-                    <stop offset="100%" stop-color="#7c3aed"/>
+                    <stop offset="100%" stopColor="#7c3aed"/>
                   </linearGradient>
                 </defs>
                 <rect width="32" height="32" rx="7" fill="url(#foot-logo)"/>

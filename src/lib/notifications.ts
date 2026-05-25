@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3333"
+import { sendEmail, dailyReminderHtml, warningHtml, removedHtml } from "@/lib/email"
 
 interface EmailOptions {
   to: string
@@ -7,17 +7,10 @@ interface EmailOptions {
 
 export async function sendDailyReminder({ to, userName }: EmailOptions, appCount: number, packName: string) {
   try {
-    await fetch(`${API_URL}/api/email`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type: "daily-reminder",
-        to,
-        userName,
-        appCount,
-        packName,
-        testingLink: `${API_URL}/dashboard/testing`,
-      }),
+    await sendEmail({
+      to,
+      subject: "Günlük Test Hatırlatması | PremiumPeek",
+      html: dailyReminderHtml(userName, appCount, packName, "https://www.premiumpeek.com/dashboard/testing"),
     })
   } catch (err) {
     console.error("Failed to send email:", err)
@@ -26,16 +19,10 @@ export async function sendDailyReminder({ to, userName }: EmailOptions, appCount
 
 export async function sendWarning({ to, userName }: EmailOptions, daysMissed: number, packName: string) {
   try {
-    await fetch(`${API_URL}/api/email`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type: "warning",
-        to,
-        userName,
-        daysMissed,
-        packName,
-      }),
+    await sendEmail({
+      to,
+      subject: "Uyarı: Test Aksatma | PremiumPeek",
+      html: warningHtml(userName, daysMissed, packName),
     })
   } catch (err) {
     console.error("Failed to send email:", err)
@@ -44,15 +31,10 @@ export async function sendWarning({ to, userName }: EmailOptions, daysMissed: nu
 
 export async function sendRemoved({ to, userName }: EmailOptions, packName: string) {
   try {
-    await fetch(`${API_URL}/api/email`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type: "removed",
-        to,
-        userName,
-        packName,
-      }),
+    await sendEmail({
+      to,
+      subject: "Pack'ten Atıldın | PremiumPeek",
+      html: removedHtml(userName, packName),
     })
   } catch (err) {
     console.error("Failed to send email:", err)

@@ -20,7 +20,7 @@ let db: ReturnType<typeof getFirestore> | undefined
 let storage: ReturnType<typeof getStorage> | undefined
 
 if (typeof window !== "undefined" && hasConfig) {
-  app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig as any)
+  app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig)
   auth = getAuth(app)
   db = getFirestore(app)
   storage = getStorage(app)

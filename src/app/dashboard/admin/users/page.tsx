@@ -6,10 +6,9 @@ import { useAuth } from "@/context/AuthContext"
 import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { collection, getDocs, query, orderBy, doc, updateDoc } from "firebase/firestore"
-import { db } from "@/lib/firebase"
+import { collection, getDocs, query, orderBy, limit } from "firebase/firestore"
+import { auth, db } from "@/lib/firebase"
 import { Loader2, ArrowLeft, Ban, Search } from "lucide-react"
-import { logAudit } from "@/lib/useAuditLog"
 import Link from "next/link"
 import { usePageMeta } from "@/lib/usePageMeta"
 
@@ -30,17 +29,29 @@ export default function AdminUsersPage() {
   const loadUsers = async () => {
     if (!db) { return }
     const d = db
-    const snap = await getDocs(query(collection(d, "users"), orderBy("createdAt", "desc")))
+    const snap = await getDocs(query(collection(d, "users"), orderBy("createdAt", "desc"), limit(50)))
     setUsers(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })))
     setLoading(false)
   }
 
   const toggleBan = async (uid: string, currentRole: string) => {
-    if (!db) { return }
-    const d = db
-    await updateDoc(doc(d, "users", uid), { role: currentRole === "banned" ? "user" : "banned" })
-    await logAudit("user_ban_toggle", { targetUid: uid, newRole: currentRole === "banned" ? "user" : "banned" })
-    loadUsers()
+    try {
+      const token = await auth?.currentUser?.getIdToken()
+      if (!token) return
+      const newRole = currentRole === "banned" ? "user" : "banned"
+      const res = await fetch("/api/admin/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ uid, role: newRole }),
+      })
+      if (!res.ok) {
+        const result = await res.json()
+        console.error(result.error)
+      }
+      loadUsers()
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   const filtered = users.filter(u =>

@@ -6,9 +6,8 @@ import { useAuth } from "@/context/AuthContext"
 import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { collection, getDocs, query, orderBy, doc, deleteDoc } from "firebase/firestore"
-import { db } from "@/lib/firebase"
-import { logAudit } from "@/lib/useAuditLog"
+import { collection, getDocs, query, orderBy, limit } from "firebase/firestore"
+import { auth, db } from "@/lib/firebase"
 import { Loader2, ArrowLeft, Trash2, ExternalLink, Clock, CheckCircle2, Hourglass } from "lucide-react"
 import Link from "next/link"
 import { usePageMeta } from "@/lib/usePageMeta"
@@ -30,19 +29,29 @@ export default function AdminAppsPage() {
   const loadApps = async () => {
     if (!db) { return }
     const d = db
-    const snap = await getDocs(query(collection(d, "apps"), orderBy("createdAt", "desc")))
+    const snap = await getDocs(query(collection(d, "apps"), orderBy("createdAt", "desc"), limit(50)))
     setApps(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })))
     setLoading(false)
   }
 
   const deleteApp = async (id: string) => {
     if (!confirm("Uygulamayı silmek istediğine emin misin?")) return
-    if (!db) { return }
-    const d = db
-    const app = apps.find(a => a.id === id)
-    await deleteDoc(doc(d, "apps", id))
-    await logAudit("app_delete", { appId: id, appName: app?.appName || "" })
-    loadApps()
+    try {
+      const token = await auth?.currentUser?.getIdToken()
+      if (!token) return
+      const res = await fetch("/api/admin/apps", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ action: "delete", appId: id }),
+      })
+      if (!res.ok) {
+        const result = await res.json()
+        console.error(result.error)
+      }
+      loadApps()
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   const statusIcon = (s: string) => {

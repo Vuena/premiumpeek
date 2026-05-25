@@ -7,9 +7,8 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { collection, getDocs, query, orderBy, doc, deleteDoc } from "firebase/firestore"
+import { collection, getDocs, query, orderBy, limit } from "firebase/firestore"
 import { db, auth } from "@/lib/firebase"
-import { logAudit } from "@/lib/useAuditLog"
 import { Loader2, ArrowLeft, Trash2, Clock, CheckCircle2, AlertCircle, Settings, ChevronUp, Plus, X } from "lucide-react"
 import Link from "next/link"
 import { usePageMeta } from "@/lib/usePageMeta"
@@ -57,18 +56,14 @@ export default function AdminPacksPage() {
   const loadPacks = async () => {
     if (!db) { return }
     const d = db
-    const snap = await getDocs(query(collection(d, "packs"), orderBy("createdAt", "desc")))
+    const snap = await getDocs(query(collection(d, "packs"), orderBy("createdAt", "desc"), limit(50)))
     setPacks(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })))
     setLoading(false)
   }
 
-  const deletePack = async (id: string, name: string) => {
+  const deletePack = async (id: string) => {
     if (!confirm("Pack'i silmek istediğine emin misin?")) return
-    if (!db) { return }
-    const d = db
-    await deleteDoc(doc(d, "packs", id))
-    await logAudit("pack_delete", { packId: id, packName: name })
-    loadPacks()
+    await handleAction(id, "delete", {})
   }
 
   const handleAction = async (packId: string, action: string, data: any) => {
@@ -128,7 +123,7 @@ export default function AdminPacksPage() {
                   <Button variant="ghost" size="sm" onClick={() => setExpanded(expanded === p.id ? null : p.id)}>
                     <Settings size={16} />
                   </Button>
-                  <Button variant="ghost" size="sm" onClick={() => deletePack(p.id, p.name)}>
+                  <Button variant="ghost" size="sm" onClick={() => deletePack(p.id)}>
                     <Trash2 size={14} className="text-red-600" />
                   </Button>
                 </div>

@@ -43,15 +43,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return
     }
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        const userDoc = await getDoc(doc(getFirestoreDb(), "users", firebaseUser.uid))
-        if (userDoc.exists()) {
-          setUser({ ...firebaseUser, ...userDoc.data() } as AuthUser)
+      try {
+        if (firebaseUser) {
+          const userDoc = await getDoc(doc(getFirestoreDb(), "users", firebaseUser.uid))
+          if (userDoc.exists()) {
+            setUser({ ...firebaseUser, ...userDoc.data() } as AuthUser)
+          } else {
+            setUser(firebaseUser as AuthUser)
+          }
         } else {
-          setUser(firebaseUser as AuthUser)
+          setUser(null)
         }
-      } else {
-        setUser(null)
+      } catch (err) {
+        console.error("Auth state change error:", err)
+        if (firebaseUser) {
+          setUser(firebaseUser as AuthUser)
+        } else {
+          setUser(null)
+        }
       }
       setLoading(false)
     })

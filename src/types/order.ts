@@ -1,4 +1,4 @@
-export type OrderStatus = "awaiting_payment" | "paid" | "testing" | "completed" | "refunded"
+export type OrderStatus = "awaiting_payment" | "awaiting_confirmation" | "paid" | "testing" | "completed" | "refunded"
 
 export interface Order {
   id: string

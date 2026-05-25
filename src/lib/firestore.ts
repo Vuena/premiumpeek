@@ -74,21 +74,26 @@ export interface App {
 // ==================== PACK FUNCTIONS ====================
 
 export async function createPack(name: string) {
-  const d = getDb()
-  const data = {
-    name,
-    status: "forming",
-    currentDay: 0,
-    maxMembers: 18,
-    totalDays: 16,
-    members: [],
-    memberUids: [],
-    createdBy: "",
-    createdAt: serverTimestamp(),
-    installDeadline: null,
+  try {
+    const d = getDb()
+    const data = {
+      name,
+      status: "forming",
+      currentDay: 0,
+      maxMembers: 18,
+      totalDays: 16,
+      members: [],
+      memberUids: [],
+      createdBy: "",
+      createdAt: serverTimestamp(),
+      installDeadline: null,
+    }
+    const packRef = await addDoc(collection(d, "packs"), data)
+    return { id: packRef.id }
+  } catch (err) {
+    console.error("createPack failed:", err)
+    throw err
   }
-  const packRef = await addDoc(collection(d, "packs"), data)
-  return { id: packRef.id }
 }
 
 export async function joinPackWithApp(packId: string, appId: string, user: User) {
@@ -125,12 +130,6 @@ async function doJoinPack(d: any, packId: string, packData: any, user: User, mem
     })
     return { packId, packName: packData.name, started: false, upgraded: true }
   }
-  // Premium slot check
-  if (memberType === "premium") {
-    const currentPremium = packData.members.filter((m: any) => m.type === "premium").length
-    if (currentPremium >= 2) throw new Error("Premium kontenjanı dolu (max 2).")
-  }
-
   let started = false
   await runTransaction(d, async (transaction) => {
     const ref = doc(d, "packs", packId)
@@ -213,56 +212,74 @@ export async function leavePack(packId: string, uid: string) {
 }
 
 export async function getUserPacks(uid: string) {
-  const d = getDb()
-  const packsRef = collection(d, "packs")
-  const q = query(
-    packsRef,
-    where("memberUids", "array-contains", uid)
-  )
-  const snapshot = await getDocs(q)
-  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Pack))
-    .sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0))
+  try {
+    const d = getDb()
+    const packsRef = collection(d, "packs")
+    const q = query(
+      packsRef,
+      where("memberUids", "array-contains", uid)
+    )
+    const snapshot = await getDocs(q)
+    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Pack))
+      .sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0))
+  } catch (err) {
+    console.error("getUserPacks failed:", err)
+    return []
+  }
 }
 
 export async function getFormingPacks() {
-  const d = getDb()
-  const q = query(
-    collection(d, "packs"),
-    where("status", "==", "forming")
-  )
-  const snap = await getDocs(q)
-  let packs = snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Pack))
-    .sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0))
-
-  // Ensure consistent naming
-  packs = packs.map(p => ({ ...p, name: "Geliştiriciler Bekleniyor" }))
-
-  if (packs.length === 0) {
-    await addDoc(collection(d, "packs"), {
-      name: "Geliştiriciler Bekleniyor",
-      status: "forming",
-      currentDay: 0,
-      maxMembers: 18,
-      totalDays: 16,
-      members: [],
-      memberUids: [],
-      createdBy: "",
-      createdAt: serverTimestamp(),
-      installDeadline: null,
-    })
-    const snap2 = await getDocs(q)
-    packs = snap2.docs.map(doc => ({ id: doc.id, ...doc.data() } as Pack))
+  try {
+    const d = getDb()
+    const q = query(
+      collection(d, "packs"),
+      where("status", "==", "forming")
+    )
+    const snap = await getDocs(q)
+    let packs = snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Pack))
       .sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0))
-  }
 
-  return packs
+    // Ensure consistent naming
+    packs = packs.map(p => ({ ...p, name: "Geliştiriciler Bekleniyor" }))
+
+    if (packs.length === 0) {
+      await runTransaction(d, async (transaction) => {
+        const newPackRef = doc(collection(d, "packs"))
+        transaction.set(newPackRef, {
+          name: "Geliştiriciler Bekleniyor",
+          status: "forming",
+          currentDay: 0,
+          maxMembers: 18,
+          totalDays: 16,
+          members: [],
+          memberUids: [],
+          createdBy: "",
+          createdAt: serverTimestamp(),
+          installDeadline: null,
+        })
+      })
+      const snap2 = await getDocs(q)
+      packs = snap2.docs.map(doc => ({ id: doc.id, ...doc.data() } as Pack))
+        .sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0))
+    }
+
+    return packs
+  } catch (err) {
+    console.error("getFormingPacks failed:", err)
+    return []
+  }
 }
 
 export async function getPackById(packId: string) {
-  const d = getDb()
-  const snap = await getDoc(doc(d, "packs", packId))
-  if (!snap.exists()) return null
-  return { id: snap.id, ...snap.data() } as Pack
+  try {
+    const d = getDb()
+    const snap = await getDoc(doc(d, "packs", packId))
+    if (!snap.exists()) return null
+    return { id: snap.id, ...snap.data() } as Pack
+  } catch (err) {
+    console.error("getPackById failed:", err)
+    return null
+  }
 }
 
 export async function confirmInstall(packId: string, uid: string) {
@@ -355,18 +372,28 @@ export async function submitApp(data: {
 }
 
 export async function getUserApps(uid: string) {
-  const d = getDb()
-  const q = query(collection(d, "apps"), where("uid", "==", uid))
-  const snapshot = await getDocs(q)
-  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as App))
-    .sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0))
+  try {
+    const d = getDb()
+    const q = query(collection(d, "apps"), where("uid", "==", uid))
+    const snapshot = await getDocs(q)
+    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as App))
+      .sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0))
+  } catch (err) {
+    console.error("getUserApps failed:", err)
+    return []
+  }
 }
 
 export async function getPackApps(packId: string) {
-  const d = getDb()
-  const q = query(collection(d, "apps"), where("packId", "==", packId))
-  const snapshot = await getDocs(q)
-  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as App))
+  try {
+    const d = getDb()
+    const q = query(collection(d, "apps"), where("packId", "==", packId))
+    const snapshot = await getDocs(q)
+    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as App))
+  } catch (err) {
+    console.error("getPackApps failed:", err)
+    return []
+  }
 }
 
 // ==================== ACTIVITY FUNCTIONS ====================
@@ -389,9 +416,7 @@ export async function recordTestingActivity(packId: string, uid: string, day: nu
       })
 
       const userRef = doc(d, "users", uid)
-      transaction.update(userRef, {
-        totalTested: increment(1),
-      })
+      transaction.set(userRef, { totalTested: increment(1) }, { merge: true })
     })
   }
 }
@@ -433,40 +458,55 @@ export async function leaveTesterPool(uid: string) {
 }
 
 export async function getAvailableTesters() {
-  const d = getDb()
-  const q = query(
-    collection(d, "users"),
-    where("isTester", "==", true),
-    limit(100)
-  )
-  const snap = await getDocs(q)
-  return snap.docs.map(doc => ({ uid: doc.id, ...doc.data() }))
+  try {
+    const d = getDb()
+    const q = query(
+      collection(d, "users"),
+      where("isTester", "==", true),
+      limit(100)
+    )
+    const snap = await getDocs(q)
+    return snap.docs.map(doc => ({ uid: doc.id, ...doc.data() }))
+  } catch (err) {
+    console.error("getAvailableTesters failed:", err)
+    return []
+  }
 }
 
 export async function assignTestersToOrder(orderId: string, count: number = 18) {
-  const d = getDb()
-  const testers = await getAvailableTesters()
-  const selected = testers.slice(0, count)
-  const testerUids = selected.map(t => t.uid)
-  await updateDoc(doc(d, "orders", orderId), {
-    testers: testerUids,
-    testerCount: testerUids.length,
-    status: "testing",
-  })
-  return testerUids
+  try {
+    const d = getDb()
+    const testers = await getAvailableTesters()
+    const selected = testers.slice(0, count)
+    const testerUids = selected.map(t => t.uid)
+    await updateDoc(doc(d, "orders", orderId), {
+      testers: testerUids,
+      testerCount: testerUids.length,
+      status: "testing",
+    })
+    return testerUids
+  } catch (err) {
+    console.error("assignTestersToOrder failed:", err)
+    throw err
+  }
 }
 
 // ==================== ORDER FUNCTIONS ====================
 
 export async function getUserOrders(uid: string) {
-  const d = getDb()
-  const q = query(
-    collection(d, "orders"),
-    where("uid", "==", uid)
-  )
-  const snap = await getDocs(q)
-  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-    .sort((a: any, b: any) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0))
+  try {
+    const d = getDb()
+    const q = query(
+      collection(d, "orders"),
+      where("uid", "==", uid)
+    )
+    const snap = await getDocs(q)
+    return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+      .sort((a: any, b: any) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0))
+  } catch (err) {
+    console.error("getUserOrders failed:", err)
+    return []
+  }
 }
 
 export async function getOrderById(orderId: string) {
@@ -488,32 +528,57 @@ export async function getTesterTasks(testerUid: string) {
 }
 
 export async function getAllOrdersAdmin() {
-  const d = getDb()
-  const snap = await getDocs(query(collection(d, "orders"), orderBy("createdAt", "desc")))
-  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+  try {
+    const d = getDb()
+    const snap = await getDocs(query(collection(d, "orders"), orderBy("createdAt", "desc"), limit(50)))
+    return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+  } catch (err) {
+    console.error("getAllOrdersAdmin failed:", err)
+    return []
+  }
 }
 
 export async function updateOrderStatus(orderId: string, status: string, extra?: Record<string, any>) {
-  const d = getDb()
-  await updateDoc(doc(d, "orders", orderId), { status, ...extra })
+  try {
+    const d = getDb()
+    await updateDoc(doc(d, "orders", orderId), { status, ...extra })
+  } catch (err) {
+    console.error("updateOrderStatus failed:", err)
+    throw err
+  }
 }
 
 export async function deleteOrder(orderId: string) {
-  const d = getDb()
-  await deleteDoc(doc(d, "orders", orderId))
+  try {
+    const d = getDb()
+    await deleteDoc(doc(d, "orders", orderId))
+  } catch (err) {
+    console.error("deleteOrder failed:", err)
+    throw err
+  }
 }
 
 // ==================== USER FUNCTIONS ====================
 
 export async function getUserProfile(uid: string) {
-  const d = getDb()
-  const snap = await getDoc(doc(d, "users", uid))
-  return snap.data() || null
+  try {
+    const d = getDb()
+    const snap = await getDoc(doc(d, "users", uid))
+    return snap.data() || null
+  } catch (err) {
+    console.error("getUserProfile failed:", err)
+    return null
+  }
 }
 
 export async function updateUserProfile(uid: string, data: Partial<{ displayName: string; country: string; bio: string; devAccountLink: string }>) {
-  const d = getDb()
-  await updateDoc(doc(d, "users", uid), data)
+  try {
+    const d = getDb()
+    await updateDoc(doc(d, "users", uid), data)
+  } catch (err) {
+    console.error("updateUserProfile failed:", err)
+    throw err
+  }
 }
 
 // ==================== COMPLAINT FUNCTIONS ====================
@@ -553,7 +618,7 @@ export async function addComplaint(data: {
 
 export async function getComplaints() {
   const d = getDb()
-  const q = query(collection(d, "complaints"), orderBy("createdAt", "desc"))
+  const q = query(collection(d, "complaints"), orderBy("createdAt", "desc"), limit(50))
   const snap = await getDocs(q)
   return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Complaint))
 }
@@ -600,34 +665,49 @@ export async function resolveComplaint(complaintId: string, action: "resolved" |
 // ==================== SCREENSHOT HELPERS ====================
 
 export async function hasDayScreenshot(packId: string, uid: string, day: number): Promise<boolean> {
-  const d = getDb()
-  const snap = await getDocs(query(
-    collection(d, "screenshots"),
-    where("packId", "==", packId),
-    where("uid", "==", uid),
-    where("day", "==", day),
-    limit(1)
-  ))
-  return !snap.empty
+  try {
+    const d = getDb()
+    const snap = await getDocs(query(
+      collection(d, "screenshots"),
+      where("packId", "==", packId),
+      where("uid", "==", uid),
+      where("day", "==", day),
+      limit(1)
+    ))
+    return !snap.empty
+  } catch (err) {
+    console.error("hasDayScreenshot failed:", err)
+    return false
+  }
 }
 
 export async function recordScreenshot(packId: string, uid: string, day: number, url: string, type: "test" | "install") {
-  const d = getDb()
-  await addDoc(collection(d, "screenshots"), {
-    packId, uid, day, url, type,
-    createdAt: serverTimestamp(),
-  })
+  try {
+    const d = getDb()
+    await addDoc(collection(d, "screenshots"), {
+      packId, uid, day, url, type,
+      createdAt: serverTimestamp(),
+    })
+  } catch (err) {
+    console.error("recordScreenshot failed:", err)
+    throw err
+  }
 }
 
 export async function getScreenshotsForPack(packId: string) {
-  const d = getDb()
-  const q = query(
-    collection(d, "screenshots"),
-    where("packId", "==", packId),
-    orderBy("createdAt", "asc")
-  )
-  const snap = await getDocs(q)
-  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+  try {
+    const d = getDb()
+    const q = query(
+      collection(d, "screenshots"),
+      where("packId", "==", packId),
+      orderBy("createdAt", "asc")
+    )
+    const snap = await getDocs(q)
+    return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+  } catch (err) {
+    console.error("getScreenshotsForPack failed:", err)
+    return []
+  }
 }
 
 export async function getOldCompletedPacks(daysOld: number) {

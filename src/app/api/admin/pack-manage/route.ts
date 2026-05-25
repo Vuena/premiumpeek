@@ -79,6 +79,12 @@ export async function POST(req: NextRequest) {
         break
       }
 
+      case "delete": {
+        await packRef.delete()
+        await log(d, auth.uid, "pack_delete", { packId, packName: packSnap.data()?.name || "" })
+        break
+      }
+
       default:
         return NextResponse.json({ error: "Geçersiz işlem" }, { status: 400 })
     }
