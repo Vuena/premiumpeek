@@ -1,7 +1,18 @@
-export const metadata = {
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
   title: "Kullanım Şartları",
   description: "PremiumPeek kullanım şartları - hesap, pack kuralları ve sorumluluk reddi.",
+  alternates: { canonical: "https://www.premiumpeek.com/terms" },
   openGraph: {
+    title: "Kullanım Şartları | PremiumPeek",
+    description: "PremiumPeek platformu kullanım şartları ve kuralları.",
+    url: "https://www.premiumpeek.com/terms",
+    siteName: "PremiumPeek",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
     title: "Kullanım Şartları | PremiumPeek",
     description: "PremiumPeek platformu kullanım şartları ve kuralları.",
   },

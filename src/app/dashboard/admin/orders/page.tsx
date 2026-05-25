@@ -17,6 +17,8 @@ export default function AdminOrdersPage() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
 
+  useEffect(() => { document.title = "Siparişler | PremiumPeek" }, [])
+
   useEffect(() => {
     if (authLoading) return
     if (!user || (user as any).role !== "admin") { router.push("/dashboard"); return }
@@ -68,11 +70,11 @@ export default function AdminOrdersPage() {
         <ArrowLeft size={16} /> Admin Paneli
       </Link>
 
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <h1 className="text-2xl font-bold">Siparişler ({orders.length})</h1>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Ara..." className="h-10 w-64 rounded-xl border border-zinc-300 dark:border-zinc-600 bg-transparent pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-400" />
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Ara..." className="h-10 w-full sm:w-64 rounded-xl border border-zinc-300 dark:border-zinc-600 bg-transparent pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-400" />
         </div>
       </div>
 

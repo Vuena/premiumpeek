@@ -21,6 +21,7 @@ export default function DashboardPage() {
   const [joinLoading, setJoinLoading] = useState(false)
   const [joinError, setJoinError] = useState("")
 
+  useEffect(() => { document.title = "Panel | PremiumPeek" }, [])
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
@@ -252,7 +253,7 @@ export default function DashboardPage() {
                     <div key={app.id} className="flex items-center justify-between p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
                       <div className="flex items-center gap-3 min-w-0">
                         {app.appIcon ? (
-                          <img src={app.appIcon} alt="" className="h-9 w-9 rounded-lg object-cover shrink-0" />
+                          <img src={app.appIcon} alt="Uygulama ikonu" className="h-9 w-9 rounded-lg object-cover shrink-0" />
                         ) : (
                           <div className="h-9 w-9 rounded-lg bg-blue-100 dark:bg-blue-950/30 flex items-center justify-center text-blue-600 text-xs font-bold shrink-0">
                             {app.appName[0]?.toUpperCase() || "?"}

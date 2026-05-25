@@ -1,10 +1,24 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Download } from "lucide-react"
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Örnek Test Raporu | PremiumPeek",
   description: "PremiumPeek test raporu örneği - detaylı hata raporları, UI/UX geri bildirimleri ve öneriler.",
+  alternates: { canonical: "https://www.premiumpeek.com/sample-report" },
+  openGraph: {
+    title: "Örnek Test Raporu | PremiumPeek",
+    description: "PremiumPeek test raporu örneği - detaylı hata raporları, UI/UX geri bildirimleri ve öneriler.",
+    url: "https://www.premiumpeek.com/sample-report",
+    siteName: "PremiumPeek",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Örnek Test Raporu | PremiumPeek",
+    description: "PremiumPeek test raporu örneği - detaylı hata raporları, UI/UX geri bildirimleri ve öneriler.",
+  },
 }
 
 export default function SampleReportPage() {

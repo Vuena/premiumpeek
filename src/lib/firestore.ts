@@ -88,8 +88,9 @@ export async function createPack(name: string, user?: User) {
 
 export async function joinPackWithApp(packId: string, appId: string, user: User) {
   const d = db!
+  const result = await joinPack(packId, user, "free")
   await updateDoc(doc(d, "apps", appId), { packId, status: "pending" })
-  return joinPack(packId, user, "free")
+  return result
 }
 
 export async function joinPack(packId: string, user: User, memberType: "free" | "premium" = "free") {
@@ -559,6 +560,40 @@ export async function getComplaints() {
 
 export async function resolveComplaint(complaintId: string, action: "resolved" | "dismissed") {
   const d = db!
+  const complaintSnap = await getDoc(doc(d, "complaints", complaintId))
+  if (!complaintSnap.exists()) throw new Error("Şikayet bulunamadı")
+  const complaint = complaintSnap.data() as Complaint
+
+  if (action === "resolved") {
+    // Remove user from pack
+    const packRef = doc(d, "packs", complaint.packId)
+    const packSnap = await getDoc(packRef)
+    if (packSnap.exists()) {
+      const packData = packSnap.data()
+      const member = packData.members.find((m: PackMember) => m.uid === complaint.targetUid)
+      if (member) {
+        await runTransaction(d, async (transaction) => {
+          const snap = await transaction.get(packRef)
+          if (!snap.exists()) return
+          const current = snap.data()
+          transaction.update(packRef, {
+            members: current.members.filter((m: PackMember) => m.uid !== complaint.targetUid),
+            memberUids: current.memberUids.filter((u: string) => u !== complaint.targetUid),
+          })
+        })
+      }
+      // Unlink user's apps from this pack
+      const userAppsSnap = await getDocs(query(
+        collection(d, "apps"),
+        where("uid", "==", complaint.targetUid),
+        where("packId", "==", complaint.packId)
+      ))
+      userAppsSnap.docs.forEach(async (appDoc) => {
+        await updateDoc(appDoc.ref, { packId: "", status: "pending" })
+      })
+    }
+  }
+
   await updateDoc(doc(d, "complaints", complaintId), { status: action })
 }
 
@@ -567,7 +602,7 @@ export async function resolveComplaint(complaintId: string, action: "resolved" |
 export async function hasDayScreenshot(packId: string, uid: string, day: number): Promise<boolean> {
   const d = db!
   const snap = await getDocs(query(
-    collection(d, "testingScreenshots"),
+    collection(d, "screenshots"),
     where("packId", "==", packId),
     where("uid", "==", uid),
     where("day", "==", day),

@@ -28,6 +28,8 @@ export default function TestingPage() {
   const [error, setError] = useState("")
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({})
 
+  useEffect(() => { document.title = "Bugünkü Testler | PremiumPeek" }, [])
+
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
@@ -244,7 +246,7 @@ export default function TestingPage() {
                         />
                         {screenshotPreviews[app.id] ? (
                           <div className="relative inline-block">
-                            <img src={screenshotPreviews[app.id]} alt="Screenshot" className="h-32 rounded-xl object-cover border border-zinc-300 dark:border-zinc-600" />
+                            <img src={screenshotPreviews[app.id]} alt="Test ekran görüntüsü" className="h-32 rounded-xl object-cover border border-zinc-300 dark:border-zinc-600" />
                             <button
                               onClick={() => { setScreenshots(prev => ({ ...prev, [app.id]: null })); setScreenshotPreviews(prev => ({ ...prev, [app.id]: "" })) }}
                               className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-red-500 text-white flex items-center justify-center cursor-pointer"

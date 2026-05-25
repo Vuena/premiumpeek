@@ -16,6 +16,8 @@ export default function AppsPage() {
   const [apps, setApps] = useState<App[]>([])
   const [loading, setLoading] = useState(true)
 
+  useEffect(() => { document.title = "Uygulamalarım | PremiumPeek" }, [])
+
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }

@@ -1,10 +1,24 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ShieldCheck, ArrowRight, CheckCircle } from "lucide-react"
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Red mi Yedin? | PremiumPeek",
   description: "Google Play'den red yediysen endişelenme. PremiumPeek ile test sürecini tamamla ve yeniden başvur.",
+  alternates: { canonical: "https://www.premiumpeek.com/app-rejected" },
+  openGraph: {
+    title: "Red mi Yedin? | PremiumPeek",
+    description: "Google Play'den red yediysen endişelenme. PremiumPeek ile test sürecini tamamla ve yeniden başvur.",
+    url: "https://www.premiumpeek.com/app-rejected",
+    siteName: "PremiumPeek",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Red mi Yedin? | PremiumPeek",
+    description: "Google Play'den red yediysen endişelenme. PremiumPeek ile test sürecini tamamla ve yeniden başvur.",
+  },
 }
 
 export default function AppRejectedPage() {

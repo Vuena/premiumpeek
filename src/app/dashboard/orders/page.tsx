@@ -33,6 +33,8 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
+  useEffect(() => { document.title = "Siparişlerim | PremiumPeek" }, [])
+
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }

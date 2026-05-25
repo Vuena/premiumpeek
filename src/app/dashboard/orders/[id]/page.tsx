@@ -25,6 +25,8 @@ export default function OrderDetailPage() {
   const [order, setOrder] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
+  useEffect(() => { document.title = "Sipariş Detayı | PremiumPeek" }, [])
+
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
@@ -126,7 +128,7 @@ export default function OrderDetailPage() {
           <Card className="border-0 shadow-sm">
             <CardContent className="p-6">
               <h3 className="font-semibold mb-4">Günlük Test Durumu</h3>
-              <div className="grid grid-cols-8 gap-2">
+              <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
                 {Array.from({ length: order.totalDays }).map((_, i) => {
                   const day = i + 1
                   const done = day < (order.currentDay || 0)

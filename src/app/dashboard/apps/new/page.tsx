@@ -73,6 +73,8 @@ export default function NewAppPage() {
   const [setupAccepted, setSetupAccepted] = useState(false)
   const [showUrlHelp, setShowUrlHelp] = useState(false)
 
+  useEffect(() => { document.title = "Uygulama Yükle | PremiumPeek" }, [])
+
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
@@ -130,6 +132,7 @@ export default function NewAppPage() {
       }
 
       const extraNotes = [form.instructions, form.testEmail ? `Test girişi: ${form.testEmail} / ${form.testPassword}` : ""].filter(Boolean).join("\n")
+      await joinPack(targetPackId, user!)
       await submitApp({
         uid: user!.uid,
         appName: form.appName,
@@ -142,7 +145,6 @@ export default function NewAppPage() {
         packId: targetPackId,
         appIcon: appIcon || "",
       })
-      await joinPack(targetPackId, user!)
       setStep("done")
     } catch (err: any) {
       setError(err.message || "Uygulama gönderilirken hata oluştu")
@@ -296,7 +298,7 @@ export default function NewAppPage() {
                 <p className="text-xs text-zinc-400 mb-1">Testçilerin uygulamanı tanıması için kare bir görsel (PNG, JPG, max 5 MB).</p>
                 <div className="flex items-center gap-4">
                   {appIcon ? (
-                    <img src={appIcon} alt="Önizleme" className="h-16 w-16 rounded-xl object-cover border border-zinc-300 dark:border-zinc-600" />
+                    <img src={appIcon} alt="Uygulama ikonu önizlemesi" className="h-16 w-16 rounded-xl object-cover border border-zinc-300 dark:border-zinc-600" />
                   ) : (
                     <div className="flex h-16 w-16 items-center justify-center rounded-xl border-2 border-dashed border-zinc-300 dark:border-zinc-600 text-zinc-400 text-xs">Önizleme</div>
                   )}
@@ -345,7 +347,7 @@ export default function NewAppPage() {
             {/* Özet */}
             <div className="rounded-xl bg-zinc-50 dark:bg-zinc-900 p-4 mb-6 space-y-2">
               <div className="flex items-center gap-3">
-                {appIcon ? <img src={appIcon} alt="" className="h-10 w-10 rounded-lg object-cover" /> : <div className="h-10 w-10 rounded-lg bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center text-zinc-400"><Smartphone size={18} /></div>}
+                {appIcon ? <img src={appIcon} alt="Uygulama ikonu" className="h-10 w-10 rounded-lg object-cover" /> : <div className="h-10 w-10 rounded-lg bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center text-zinc-400"><Smartphone size={18} /></div>}
                 <div>
                   <p className="font-medium">{form.appName || "Uygulama Adı"}</p>
                   <p className="text-xs text-zinc-500">{form.platform}</p>
@@ -416,7 +418,7 @@ export default function NewAppPage() {
                 <CheckCircle className="h-8 w-8 text-green-600" />
               </div>
             </div>
-            <h2 className="text-xl font-bold mb-2">Uygulaman Gönderildi!</h2>
+            <h1 className="text-xl font-bold mb-2">Uygulaman Gönderildi!</h1>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6 max-w-md mx-auto">
               Uygulaman kaydedildi ve uygulamalar listene eklendi.
               Pack'ini aktif tutmak için her gün diğer uygulamaları test etmeyi unutma.

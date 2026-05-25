@@ -1,11 +1,21 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Users, ShieldCheck, Sparkles, Globe } from "lucide-react"
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Hakkımızda",
   description: "PremiumPeek, Google Play'de uygulama yayınlamak isteyen geliştiricilerin kapalı test şartını karşılaması için kurulmuş bir test topluluğudur.",
+  alternates: { canonical: "https://www.premiumpeek.com/about" },
   openGraph: {
+    title: "Hakkımızda | PremiumPeek",
+    description: "Google Play kapalı test şartını karşılamak için geliştirici topluluğu.",
+    url: "https://www.premiumpeek.com/about",
+    siteName: "PremiumPeek",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
     title: "Hakkımızda | PremiumPeek",
     description: "Google Play kapalı test şartını karşılamak için geliştirici topluluğu.",
   },

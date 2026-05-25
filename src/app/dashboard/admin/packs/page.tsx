@@ -17,6 +17,8 @@ export default function AdminPacksPage() {
   const [packs, setPacks] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
+  useEffect(() => { document.title = "Pack'ler | PremiumPeek" }, [])
+
   useEffect(() => {
     if (authLoading) return
     if (!user || (user as any).role !== "admin") { router.push("/dashboard"); return }

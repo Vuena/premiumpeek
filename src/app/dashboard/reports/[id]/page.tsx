@@ -18,6 +18,8 @@ export default function ReportDetailPage() {
   const [report, setReport] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
+  useEffect(() => { document.title = "Rapor Detayı | PremiumPeek" }, [])
+
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }

@@ -17,6 +17,8 @@ export default function TesterPage() {
   const [loading, setLoading] = useState(true)
   const [testedToday, setTestedToday] = useState<string[]>([])
 
+  useEffect(() => { document.title = "Testçi Paneli | PremiumPeek" }, [])
+
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }

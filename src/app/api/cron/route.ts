@@ -45,12 +45,10 @@ export async function GET() {
           await userRef.update({ missedDays })
 
           if (missedDays >= 3) {
-            const memberObj = pack.members.find((m: any) => m.uid === uid)
-            if (memberObj) {
-              await packDoc.ref.update({
-                members: [...pack.members.filter((m: any) => m.uid !== uid)],
-              })
-            }
+            await packDoc.ref.update({
+              members: pack.members.filter((m: any) => m.uid !== uid),
+            })
+
             await userRef.update({ missedDays: 0 })
 
             const userAppsSnap = await d.collection("apps").where("uid", "==", uid).where("packId", "==", packId).get()
@@ -82,7 +80,26 @@ export async function GET() {
         .get()
 
       const batch = d.batch()
-      screenshotsSnap.docs.forEach(doc => batch.delete(doc.ref))
+      for (const doc of screenshotsSnap.docs) {
+        const data = doc.data()
+        if (data.url) {
+          try {
+            // Parse Firebase Storage URL to get file path
+            const urlParts = data.url.split("/o/")
+            if (urlParts.length > 1) {
+              const encodedPath = urlParts[1].split("?")[0]
+              const filePath = decodeURIComponent(encodedPath)
+              // Delete from Storage using fetch (HTTP DELETE with admin token fallback)
+              const bucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || ""
+              if (bucket) {
+                const storageUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encodeURIComponent(filePath)}`
+                await fetch(storageUrl, { method: "DELETE" }).catch(() => {})
+              }
+            }
+          } catch {}
+        }
+        batch.delete(doc.ref)
+      }
       await batch.commit()
       screenshotsCleaned += screenshotsSnap.size
     }

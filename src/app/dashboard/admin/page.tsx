@@ -17,6 +17,8 @@ export default function AdminPage() {
   const [stats, setStats] = useState({ users: 0, packs: 0, apps: 0, activePacks: 0 })
   const [loading, setLoading] = useState(true)
 
+  useEffect(() => { document.title = "Admin Paneli | PremiumPeek" }, [])
+
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }

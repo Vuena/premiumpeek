@@ -17,6 +17,8 @@ export default function AdminAppsPage() {
   const [apps, setApps] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
+  useEffect(() => { document.title = "Uygulamalar | PremiumPeek" }, [])
+
   useEffect(() => {
     if (authLoading) return
     if (!user || (user as any).role !== "admin") { router.push("/dashboard"); return }

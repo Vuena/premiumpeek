@@ -21,6 +21,8 @@ export default function NewReportPage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState("")
 
+  useEffect(() => { document.title = "Rapor Oluştur | PremiumPeek" }, [])
+
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }

@@ -17,6 +17,8 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(false)
   const [saved, setSaved] = useState(false)
 
+  useEffect(() => { document.title = "Ayarlar | PremiumPeek" }, [])
+
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }

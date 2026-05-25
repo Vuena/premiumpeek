@@ -30,6 +30,8 @@ export default function PackDetailPage() {
 
   const isPremium = pack?.members.find(m => m.uid === user?.uid)?.type === "premium"
 
+  useEffect(() => { document.title = "Pack Detayı | PremiumPeek" }, [])
+
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
@@ -73,14 +75,7 @@ export default function PackDetailPage() {
       getUserApps(user.uid),
     ])
     if (!packData) { setLoading(false); return }
-    if (packData.status === "installing") {
-      await transitionInstallingToTesting(packData.id)
-      const fresh = await getPackById(packData.id)
-      if (fresh) setPack(fresh)
-      else setPack(packData)
-    } else {
-      setPack(packData)
-    }
+    setPack(packData)
     setApps(packApps)
     setMyApps(userApps.filter(a => a.packId === packId))
     setLoading(false)
@@ -294,7 +289,7 @@ export default function PackDetailPage() {
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
                 {installScreenshotPreview ? (
                   <div className="relative inline-block">
-                    <img src={installScreenshotPreview} alt="Install screenshot" className="h-24 rounded-xl object-cover border border-zinc-300 dark:border-zinc-600" />
+                    <img src={installScreenshotPreview} alt="Kurulum ekran görüntüsü" className="h-24 rounded-xl object-cover border border-zinc-300 dark:border-zinc-600" />
                     <button
                       onClick={() => { setInstallScreenshot(null); setInstallScreenshotPreview("") }}
                       className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-red-500 text-white flex items-center justify-center cursor-pointer text-xs"

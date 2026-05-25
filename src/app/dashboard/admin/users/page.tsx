@@ -18,6 +18,8 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
 
+  useEffect(() => { document.title = "Kullanıcılar | PremiumPeek" }, [])
+
   useEffect(() => {
     if (authLoading) return
     if (!user || (user as any).role !== "admin") { router.push("/dashboard"); return }
@@ -50,7 +52,7 @@ export default function AdminUsersPage() {
         <ArrowLeft size={16} /> Admin Paneli
       </Link>
 
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold">Kullanıcılar</h1>
           <p className="text-sm text-zinc-500">{users.length} kullanıcı</p>
@@ -61,7 +63,7 @@ export default function AdminUsersPage() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Ara..."
-            className="h-10 w-64 rounded-xl border border-zinc-300 dark:border-zinc-600 bg-transparent pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-400"
+            className="h-10 w-full sm:w-64 rounded-xl border border-zinc-300 dark:border-zinc-600 bg-transparent pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-400"
           />
         </div>
       </div>

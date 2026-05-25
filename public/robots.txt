@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /payment/
+
+Sitemap: https://www.premiumpeek.com/sitemap.xml

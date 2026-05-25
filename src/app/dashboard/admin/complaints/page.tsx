@@ -17,6 +17,8 @@ export default function AdminComplaintsPage() {
   const [loading, setLoading] = useState(true)
   const [processing, setProcessing] = useState<string | null>(null)
 
+  useEffect(() => { document.title = "Şikayetler | PremiumPeek" }, [])
+
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }

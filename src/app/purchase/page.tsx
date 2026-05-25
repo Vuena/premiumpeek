@@ -186,7 +186,7 @@ export default function PurchasePage() {
         <Card className="border-0 shadow-sm">
           <CardContent className="p-8">
             <div className="text-center mb-6">
-              <h2 className="text-xl font-bold mb-2">Ödeme Yap</h2>
+              <h1 className="text-xl font-bold mb-2">Ödeme Yap</h1>
               <p className="text-sm text-zinc-500">
                 Sipariş: <span className="font-mono font-bold">{orderData.orderId.slice(0, 8)}</span>
               </p>
@@ -246,7 +246,7 @@ export default function PurchasePage() {
                 <CheckCircle className="h-8 w-8 text-green-600" />
               </div>
             </div>
-            <h2 className="text-xl font-bold mb-2">Ödeme Kaydedildi</h2>
+            <h1 className="text-xl font-bold mb-2">Ödeme Kaydedildi</h1>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6">
               TX Hash'in kaydedildi. Bir pack'e premium üye olarak eklendin.
               Uygulaman 16-18 pack üyesi tarafından test edilecek.

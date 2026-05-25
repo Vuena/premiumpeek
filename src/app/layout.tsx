@@ -43,13 +43,11 @@ export const metadata: Metadata = {
     siteName: "PremiumPeek",
     locale: "tr_TR",
     type: "website",
-    images: [{ url: "/og-image.svg", width: 1200, height: 630 }],
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "PremiumPeek - Google Play Test Topluluğu",
     description: "18 geliştiriciden oluşan pack'lerle uygulamanı test et, Google Play'de yayınla.",
-    images: ["/og-image.svg"],
   },
   robots: {
     index: true,
