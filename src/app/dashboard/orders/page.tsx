@@ -96,7 +96,7 @@ export default function OrdersPage() {
       ) : (
         <div className="space-y-4">
           {orders.map((order: any) => (
-            <div key={order.id} className="relative group">
+            <div key={order.id}>
               <Link href={`/dashboard/orders/${order.id}`}>
                 <Card className="border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
                   <CardContent className="p-5">
@@ -112,22 +112,24 @@ export default function OrdersPage() {
                           <p className="text-xs text-zinc-500">{order.packageName}</p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusColors[order.status] || ""}`}>
-                          {statusLabels[order.status] || order.status}
-                        </span>
-                        <p className="text-xs text-zinc-400 mt-1">{order.amount} {order.currency}</p>
+                      <div className="flex items-center gap-3">
+                        <div className="text-right">
+                          <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusColors[order.status] || ""}`}>
+                            {statusLabels[order.status] || order.status}
+                          </span>
+                          <p className="text-xs text-zinc-400 mt-1">{order.amount} {order.currency}</p>
+                        </div>
+                        {(order.status === "awaiting_payment" || order.status === "paid") && (
+                          <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleDelete(order.id) }}
+                            className="flex h-11 w-11 items-center justify-center rounded-full bg-white dark:bg-zinc-800 shadow-sm border border-zinc-200 dark:border-zinc-700 text-zinc-400 hover:text-red-600 hover:border-red-300 transition-all shrink-0 cursor-pointer" title="Siparişi Sil">
+                            <Trash2 size={13} />
+                          </button>
+                        )}
                       </div>
                     </div>
                   </CardContent>
                 </Card>
               </Link>
-              {(order.status === "awaiting_payment" || order.status === "paid") && (
-                <button onClick={() => handleDelete(order.id)}
-                  className="absolute top-2 right-2 flex h-11 w-11 items-center justify-center rounded-full bg-white dark:bg-zinc-800 shadow-sm border border-zinc-200 dark:border-zinc-700 text-zinc-400 hover:text-red-600 hover:border-red-300 transition-all cursor-pointer" title="Siparişi Sil">
-                  <Trash2 size={13} />
-                </button>
-              )}
             </div>
           ))}
         </div>
