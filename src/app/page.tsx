@@ -70,19 +70,19 @@ export default function Home() {
               Google Play yayın şartlarını karşıla ve yayına geç. Ücretsiz başla.
             </p>
             <div className="mt-10 flex flex-col items-center gap-6">
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <div className="flex flex-row flex-wrap items-center justify-center gap-3">
                 <CtaButton>
-                  <Button size="lg" className="text-base gap-2 w-full sm:w-auto shadow-lg shadow-blue-600/20">
-                    Ücretsiz Başla <ArrowRight size={18} />
+                  <Button size="lg" className="text-sm sm:text-base gap-2 flex-1 sm:flex-none shadow-lg shadow-blue-600/20">
+                    Ücretsiz Başla <ArrowRight size={16} />
                   </Button>
                 </CtaButton>
                 <Link href="/#how-it-works">
-                  <Button variant="outline" size="lg" className="text-base w-full sm:w-auto border-zinc-300 dark:border-zinc-600">
+                  <Button variant="outline" size="lg" className="text-sm sm:text-base flex-1 sm:flex-none border-zinc-300 dark:border-zinc-600">
                     Nasıl Çalışır?
                   </Button>
                 </Link>
               </div>
-              <Link href="/purchase" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-medium px-5 py-3 text-sm shadow-lg shadow-green-500/30 transition-all hover:scale-105">
+              <Link href="/purchase" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold px-5 py-3 text-base sm:text-lg shadow-lg shadow-green-500/30 transition-all hover:scale-105">
                 <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-[10px] font-bold">$</span>
                 Uğraşmadan yayınla: $10 USDT premium
                 <ArrowRight size={16} />

@@ -29,7 +29,7 @@ export function Footer() {
             <h4 className="font-medium text-sm mb-3">Şirket</h4>
             <div className="space-y-2">
               <Link href="/about" className="block text-sm text-muted hover:text-foreground">Hakkımızda</Link>
-              <Link href="/app-rejected" className="block text-sm text-muted hover:text-foreground">App Rejected?</Link>
+              <Link href="/app-rejected" className="block text-sm text-muted hover:text-foreground">Red mi Yedin?</Link>
               <Link href="/blog" className="block text-sm text-muted hover:text-foreground">Blog</Link>
               <Link href="/contact" className="block text-sm text-muted hover:text-foreground">İletişim</Link>
             </div>
