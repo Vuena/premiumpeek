@@ -1,7 +1,18 @@
-export const metadata = {
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
   title: "Gizlilik Politikası",
   description: "PremiumPeek gizlilik politikası - hangi verileri topladığımız, nasıl kullandığımız ve haklarınız.",
+  alternates: { canonical: "https://www.premiumpeek.com/privacy" },
   openGraph: {
+    title: "Gizlilik Politikası | PremiumPeek",
+    description: "PremiumPeek gizlilik politikası ve veri işleme kuralları.",
+    url: "https://www.premiumpeek.com/privacy",
+    siteName: "PremiumPeek",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
     title: "Gizlilik Politikası | PremiumPeek",
     description: "PremiumPeek gizlilik politikası ve veri işleme kuralları.",
   },

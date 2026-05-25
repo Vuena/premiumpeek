@@ -74,7 +74,7 @@ export default function AdminOrdersPage() {
         <h1 className="text-2xl font-bold">Siparişler ({orders.length})</h1>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Ara..." className="h-10 w-full sm:w-64 rounded-xl border border-zinc-300 dark:border-zinc-600 bg-transparent pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-400" />
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Ara..." aria-label="Sipariş ara" className="h-10 w-full sm:w-64 rounded-xl border border-zinc-300 dark:border-zinc-600 bg-transparent pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-400" />
         </div>
       </div>
 
@@ -90,7 +90,7 @@ export default function AdminOrdersPage() {
               <th className="text-center px-4 py-3 font-medium">İşlem</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="hidden md:table-row-group">
             {filtered.map((o: any) => (
               <tr key={o.id} className="border-t border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
                 <td className="px-4 py-3">
@@ -140,6 +140,62 @@ export default function AdminOrdersPage() {
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="block md:hidden space-y-4">
+        {filtered.map((o: any) => (
+          <Card key={o.id} className="border-0 shadow-sm">
+            <CardContent className="p-4">
+              <div className="flex items-start justify-between mb-3">
+                <div className="min-w-0 flex-1 mr-2">
+                  <p className="font-medium truncate">{o.appName}</p>
+                  <p className="text-xs text-zinc-500 truncate">{o.packageName}</p>
+                </div>
+                <span className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 ${statusColors[o.status] || ""}`}>{statusLabels[o.status] || o.status}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-sm mb-3">
+                <div className="text-zinc-500">
+                  <span className="text-xs">Kullanıcı</span>
+                  <p className="font-medium text-xs truncate">{o.userEmail || o.uid?.slice(0, 8)}</p>
+                </div>
+                <div className="text-zinc-500">
+                  <span className="text-xs">Tutar</span>
+                  <p className="font-medium">${o.amount} {o.currency}</p>
+                </div>
+              </div>
+              {o.txHash && (
+                <div className="mb-3">
+                  <span className="text-xs text-zinc-500">TX:</span>
+                  <a href={`https://tronscan.org/#/transaction/${o.txHash}`} target="_blank" rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline inline-flex items-center gap-1 text-xs ml-1">
+                    {o.txHash.slice(0, 8)}... <ExternalLink size={10} />
+                  </a>
+                </div>
+              )}
+              <div className="flex items-center gap-1 pt-2 border-t border-zinc-100 dark:border-zinc-800">
+                {o.status === "awaiting_payment" && o.txHash && (
+                  <Button variant="ghost" size="sm" onClick={() => updateStatus(o.id, "paid")} title="Ödeme Onayla">
+                    <CreditCard size={14} className="text-blue-600" />
+                  </Button>
+                )}
+                {o.status === "paid" && (
+                  <Button variant="ghost" size="sm" onClick={() => handleAssignTesters(o.id)} title="Testçi Ata">
+                    <Users size={14} className="text-green-600" />
+                  </Button>
+                )}
+                {o.status === "testing" && (
+                  <Button variant="ghost" size="sm" onClick={() => updateStatus(o.id, "completed")} title="Tamamla">
+                    <CheckCircle2 size={14} className="text-green-600" />
+                  </Button>
+                )}
+                {o.status !== "refunded" && o.status !== "completed" && (
+                  <Button variant="ghost" size="sm" onClick={() => { if (confirm("İade et?")) updateStatus(o.id, "refunded") }} title="İade Et">
+                    <Ban size={14} className="text-red-600" />
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   )

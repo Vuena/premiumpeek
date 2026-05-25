@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { ArrowRight, ChevronUp } from "lucide-react"
+import { usePageMeta } from "@/lib/usePageMeta"
 
 export default function BlogPage() {
-  useEffect(() => { document.title = "Blog | PremiumPeek" }, [])
+  usePageMeta({ title: "Blog | PremiumPeek", description: "Google Play test süreci hakkında ipuçları ve rehberler.", canonical: "https://www.premiumpeek.com/blog" })
   const [expanded, setExpanded] = useState<number | null>(null)
 
   const posts = [

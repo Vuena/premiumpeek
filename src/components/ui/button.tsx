@@ -9,7 +9,7 @@ const Button = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HT
     destructive: "bg-red-600 text-white hover:bg-red-700",
   }
   const sizes: Record<string, string> = {
-    sm: "h-9 px-3 text-sm",
+    sm: "h-11 px-4 text-sm",
     default: "h-11 px-6 text-sm",
     lg: "h-12 px-8 text-base",
   }

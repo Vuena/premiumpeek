@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -5,6 +6,23 @@ import { CtaButton } from "@/components/ui/cta-button"
 import { TestimonialsSection } from "@/components/ui/TestimonialsSection"
 import { Users, Calendar, ShieldCheck, Clock, FileText, ArrowRight, Sparkles, Smartphone, CheckCircle, X, Check } from "lucide-react"
 import type { ReactNode } from "react"
+
+export const metadata: Metadata = {
+  alternates: { canonical: "https://www.premiumpeek.com" },
+  openGraph: {
+    title: "PremiumPeek - Google Play Test Topluluğu",
+    description: "18 geliştiriciden oluşan pack'lerle uygulamanı test et, Google Play'de yayınla.",
+    url: "https://www.premiumpeek.com",
+    siteName: "PremiumPeek",
+    locale: "tr_TR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PremiumPeek - Google Play Test Topluluğu",
+    description: "18 geliştiriciden oluşan pack'lerle uygulamanı test et, Google Play'de yayınla.",
+  },
+}
 
 export default function Home() {
   const stats = [

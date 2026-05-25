@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { getUserOrders } from "@/lib/firestore"
 import { auth } from "@/lib/firebase"
+import { useToast } from "@/context/ToastContext"
 import { Loader2, Clock, CheckCircle2, CreditCard, Trash2 } from "lucide-react"
 
 const statusLabels: Record<string, string> = {
@@ -30,6 +31,7 @@ const statusColors: Record<string, string> = {
 export default function OrdersPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
+  const { toast: addToast } = useToast()
   const [orders, setOrders] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -50,8 +52,9 @@ export default function OrdersPage() {
 
   const handleDelete = async (orderId: string) => {
     if (!confirm("Siparişi silmek istediğine emin misin?")) return
+    if (!auth?.currentUser) return
     try {
-      const token = await auth!.currentUser!.getIdToken()
+      const token = await auth.currentUser.getIdToken()
       const res = await fetch("/api/delete-order", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
@@ -63,7 +66,7 @@ export default function OrdersPage() {
       }
       setOrders(prev => prev.filter(o => o.id !== orderId))
     } catch (err: any) {
-      alert(err.message || "Silinirken hata oluştu")
+      addToast("error", err.message || "Silinirken hata oluştu")
     }
   }
 
@@ -119,7 +122,7 @@ export default function OrdersPage() {
               </Link>
               {(order.status === "awaiting_payment" || order.status === "paid") && (
                 <button onClick={() => handleDelete(order.id)}
-                  className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-white dark:bg-zinc-800 shadow-sm border border-zinc-200 dark:border-zinc-700 text-zinc-400 hover:text-red-600 hover:border-red-300 transition-all cursor-pointer" title="Siparişi Sil">
+                  className="absolute top-2 right-2 flex h-11 w-11 items-center justify-center rounded-full bg-white dark:bg-zinc-800 shadow-sm border border-zinc-200 dark:border-zinc-700 text-zinc-400 hover:text-red-600 hover:border-red-300 transition-all cursor-pointer" title="Siparişi Sil">
                   <Trash2 size={13} />
                 </button>
               )}

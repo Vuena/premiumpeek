@@ -63,6 +63,7 @@ export default function AdminUsersPage() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Ara..."
+            aria-label="Kullanıcı ara"
             className="h-10 w-full sm:w-64 rounded-xl border border-zinc-300 dark:border-zinc-600 bg-transparent pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-400"
           />
         </div>
@@ -79,7 +80,7 @@ export default function AdminUsersPage() {
                 <th className="text-right px-4 py-3 font-medium">İşlem</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="hidden md:table-row-group">
               {filtered.map((u: any) => (
                 <tr key={u.id} className="border-t border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
                   <td className="px-4 py-3">
@@ -112,6 +113,33 @@ export default function AdminUsersPage() {
           </table>
         </div>
       </Card>
+      <div className="block md:hidden space-y-3 mt-4">
+        {filtered.map((u: any) => (
+          <Card key={u.id} className="border-0 shadow-sm">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="h-8 w-8 rounded-full bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center text-xs font-medium shrink-0">
+                  {(u.displayName || "?")[0]}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">{u.displayName || "İsimsiz"}</p>
+                  <p className="text-xs text-zinc-500 truncate">{u.email}</p>
+                </div>
+                <span className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 ${
+                  u.role === "admin" ? "bg-purple-100 dark:bg-purple-950/30 text-purple-700 dark:text-purple-400" :
+                  u.role === "banned" ? "bg-red-100 dark:bg-red-950/30 text-red-700 dark:text-red-400" :
+                  "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400"
+                }`}>{u.role || "user"}</span>
+              </div>
+              <div className="flex justify-end">
+                <Button variant="ghost" size="sm" onClick={() => toggleBan(u.id, u.role)} title={u.role === "banned" ? "Banı kaldır" : "Banla"}>
+                  <Ban size={14} className={u.role === "banned" ? "text-green-600" : "text-red-600"} />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   )
 }

@@ -6,6 +6,6 @@ import { useRouter } from "next/navigation"
 
 export default function CreditsPage() {
   const router = useRouter()
-  useEffect(() => { router.replace("/dashboard") }, [router])
+  useEffect(() => { document.title = "Krediler | PremiumPeek"; router.replace("/dashboard") }, [router])
   return null
 }

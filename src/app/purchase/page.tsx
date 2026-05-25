@@ -12,12 +12,13 @@ import Link from "next/link"
 import { auth, db } from "@/lib/firebase"
 import { addDoc, collection, doc, updateDoc, getDoc, serverTimestamp } from "firebase/firestore"
 import { getFormingPacks, joinPack, submitApp } from "@/lib/firestore"
+import { usePageMeta } from "@/lib/usePageMeta"
 
 const USDT_WALLET = process.env.NEXT_PUBLIC_USDT_WALLET || ""
 const USDT_PRICE = parseInt(process.env.NEXT_PUBLIC_USDT_PRICE || "10")
 
 export default function PurchasePage() {
-  useEffect(() => { document.title = "Profesyonel Test Satın Al | PremiumPeek" }, [])
+  usePageMeta({ title: "Profesyonel Test Satın Al | PremiumPeek", description: "PremiumPeek'ten profesyonel test hizmeti satın alın.", canonical: "https://www.premiumpeek.com/purchase" })
 
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
@@ -272,6 +273,7 @@ export default function PurchasePage() {
       <div className="grid md:grid-cols-2 gap-8">
         <Card className="border-0 shadow-sm">
           <CardHeader>
+            <h1 className="sr-only">Premium Pack Satın Al</h1>
             <CardTitle className="text-xl">Premium Pack Satın Al</CardTitle>
             <CardDescription>16-18 testçi, 16 gün, $10 USDT</CardDescription>
           </CardHeader>

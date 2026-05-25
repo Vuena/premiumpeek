@@ -1,6 +1,9 @@
 "use client"
 
+import { useEffect } from "react"
+
 export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  useEffect(() => { document.title = "Hata | PremiumPeek" }, [])
   return (
     <div className="flex flex-1 items-center justify-center px-4 py-24">
       <div className="text-center">

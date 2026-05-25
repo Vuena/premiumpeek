@@ -47,12 +47,12 @@ export function Navbar() {
           <svg className="h-8 w-8" viewBox="0 0 32 32" fill="none">
             <defs>
               <linearGradient id="nav-logo" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#2563eb"/>
+                <stop offset="0%" stopColor="#2563eb"/>
                 <stop offset="100%" stop-color="#7c3aed"/>
               </linearGradient>
             </defs>
             <rect width="32" height="32" rx="7" fill="url(#nav-logo)"/>
-            <rect x="8" y="4" width="16" height="24" rx="3" stroke="white" stroke-width="1.8" fill="none"/>
+            <rect x="8" y="4" width="16" height="24" rx="3" stroke="white" strokeWidth="1.8" fill="none"/>
             <rect x="10.5" y="6" width="11" height="14" rx="1" fill="white" opacity="0.2"/>
             <rect x="14.5" y="21" width="3" height="1.5" rx="0.75" fill="white"/>
           </svg>
@@ -68,7 +68,7 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button onClick={toggleTheme} className="hidden md:flex h-9 w-9 items-center justify-center rounded-xl hover:bg-subtle transition-colors cursor-pointer">
+          <button onClick={toggleTheme} aria-label="Temayı değiştir" className="hidden md:flex h-9 w-9 items-center justify-center rounded-xl hover:bg-subtle transition-colors cursor-pointer">
             {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
           </button>
 
@@ -83,9 +83,9 @@ export function Navbar() {
               </button>
               {dropdown && (
                 <div className="absolute right-0 mt-2 w-48 rounded-xl border border-cardborder bg-card shadow-lg py-1">
-                  <Link href="/dashboard" className="block px-4 py-2 text-sm hover:bg-subtle" onClick={() => { setDropdown(false); window.scrollTo(0, 0) }}>Panel</Link>
-                  <Link href="/dashboard/orders" className="block px-4 py-2 text-sm hover:bg-subtle" onClick={() => setDropdown(false)}>Siparişlerim</Link>
-                  <button onClick={() => { logout(); setDropdown(false) }} className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-subtle cursor-pointer">Çıkış Yap</button>
+                  <Link href="/dashboard" className="block px-4 py-3 min-h-11 text-sm hover:bg-subtle" onClick={() => { setDropdown(false); window.scrollTo(0, 0) }}>Panel</Link>
+                  <Link href="/dashboard/orders" className="block px-4 py-3 min-h-11 text-sm hover:bg-subtle" onClick={() => setDropdown(false)}>Siparişlerim</Link>
+                  <button onClick={() => { logout(); setDropdown(false) }} className="block w-full text-left px-4 py-3 min-h-11 text-sm text-red-600 hover:bg-subtle cursor-pointer">Çıkış Yap</button>
                 </div>
               )}
             </div>
@@ -95,7 +95,7 @@ export function Navbar() {
             </Link>
           )}
 
-          <button onClick={() => setOpen(!open)} className="md:hidden h-11 w-11 flex items-center justify-center rounded-xl hover:bg-subtle cursor-pointer">
+          <button onClick={() => setOpen(!open)} aria-label={open ? "Menüyü kapat" : "Menüyü aç"} className="md:hidden h-11 w-11 flex items-center justify-center rounded-xl hover:bg-subtle cursor-pointer">
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
@@ -104,7 +104,7 @@ export function Navbar() {
       {open && (
         <div className="md:hidden border-t border-cardborder px-4 py-4 space-y-3 bg-background">
           {links.map((link) => (
-            <Link key={link.href} href={link.href} onClick={() => setOpen(false)} className="block text-sm text-muted hover:text-foreground">
+            <Link key={link.href} href={link.href} onClick={() => setOpen(false)} className="block py-3 text-sm text-muted hover:text-foreground">
               {link.label}
             </Link>
           ))}

@@ -8,11 +8,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { updateUserProfile, joinTesterPool, leaveTesterPool } from "@/lib/firestore"
+import { useToast } from "@/context/ToastContext"
 import { Settings, Loader2, CheckCircle2, Users } from "lucide-react"
 
 export default function SettingsPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
+  const { toast: addToast } = useToast()
   const [form, setForm] = useState({ displayName: "", country: "", bio: "", devAccountLink: "" })
   const [loading, setLoading] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -39,7 +41,7 @@ export default function SettingsPage() {
       setSaved(true)
       setTimeout(() => setSaved(false), 3000)
     } catch (err: any) {
-      alert(err.message)
+      addToast("error", err.message)
     } finally {
       setLoading(false)
     }

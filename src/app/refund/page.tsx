@@ -1,7 +1,18 @@
-export const metadata = {
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
   title: "Para İadesi Politikası",
   description: "PremiumPeek para iadesi garantisi - Google Play üretim erişiminiz reddedilirse ödediğiniz $10 USDT'yi koşulsuz iade ediyoruz.",
+  alternates: { canonical: "https://www.premiumpeek.com/refund" },
   openGraph: {
+    title: "Para İadesi Politikası | PremiumPeek",
+    description: "$10 USDT para iadesi garantisi - Google Play reddinde koşulsuz iade.",
+    url: "https://www.premiumpeek.com/refund",
+    siteName: "PremiumPeek",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
     title: "Para İadesi Politikası | PremiumPeek",
     description: "$10 USDT para iadesi garantisi - Google Play reddinde koşulsuz iade.",
   },

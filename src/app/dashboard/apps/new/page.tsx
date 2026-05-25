@@ -208,6 +208,7 @@ export default function NewAppPage() {
       {step === "setup" && (
         <Card className="border-0 shadow-sm">
           <CardHeader>
+            <h1 className="sr-only">Google Play Konsol Kurulumu</h1>
             <CardTitle className="text-xl flex items-center gap-2"><ShieldCheck className="h-6 w-6 text-blue-600" /> Google Play Konsol Kurulumu</CardTitle>
             <CardDescription>Test sürecini başlatmak için önce Google Play Console'da aşağıdaki adımları tamamla.</CardDescription>
           </CardHeader>
@@ -262,6 +263,7 @@ export default function NewAppPage() {
       {step === "details" && (
         <Card className="border-0 shadow-sm">
           <CardHeader>
+            <h1 className="sr-only">Uygulamanı Yükle</h1>
             <CardTitle className="text-xl">Uygulamanı Yükle</CardTitle>
             <CardDescription>18 pack üyesi tarafından 16 gün boyunca test edilmek üzere uygulamanı gönder.</CardDescription>
           </CardHeader>
@@ -313,7 +315,7 @@ export default function NewAppPage() {
               <div>
                 <label className="block text-sm font-medium mb-1.5">Test Giriş Bilgileri</label>
                 <p className="text-xs text-zinc-400 mb-1">Uygulaman giriş gerektiriyorsa testçiler için bir hesap oluştur.</p>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <Input value={form.testEmail} onChange={(e) => setForm({ ...form, testEmail: e.target.value })} placeholder="test@ornek.com" />
                   <Input value={form.testPassword} onChange={(e) => setForm({ ...form, testPassword: e.target.value })} placeholder="Şifre" />
                 </div>
@@ -338,6 +340,7 @@ export default function NewAppPage() {
       {step === "review" && (
         <Card className="border-0 shadow-sm">
           <CardHeader>
+            <h1 className="sr-only">Onayla ve Gönder</h1>
             <CardTitle className="text-xl">Onayla &amp; Gönder</CardTitle>
             <CardDescription>Uygulama bilgilerini kontrol et ve nasıl devam etmek istediğini seç.</CardDescription>
           </CardHeader>

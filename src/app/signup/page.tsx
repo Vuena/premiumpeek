@@ -8,8 +8,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { User, Loader2 } from "lucide-react"
+import { usePageMeta } from "@/lib/usePageMeta"
 
 export default function SignupPage() {
+  usePageMeta({ title: "Kayıt Ol | PremiumPeek", description: "PremiumPeek'e ücretsiz kaydolun.", canonical: "https://www.premiumpeek.com/signup" })
   const { signUpWithEmail, signInWithGoogle } = useAuth()
   const router = useRouter()
   const [name, setName] = useState("")
@@ -17,8 +19,6 @@ export default function SignupPage() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
-
-  useEffect(() => { document.title = "Kayıt Ol | PremiumPeek" }, [])
 
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -54,9 +54,9 @@ export default function SignupPage() {
         <CardHeader className="text-center">
           <Link href="/" className="flex items-center justify-center gap-2 font-bold text-lg mb-2">
             <svg className="h-7 w-7" viewBox="0 0 32 32" fill="none">
-              <defs><linearGradient id="signup-logo" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2563eb"/><stop offset="100%" stop-color="#7c3aed"/></linearGradient></defs>
+              <defs><linearGradient id="signup-logo" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#2563eb"/><stop offset="100%" stopColor="#7c3aed"/></linearGradient></defs>
               <rect width="32" height="32" rx="7" fill="url(#signup-logo)"/>
-              <rect x="8" y="4" width="16" height="24" rx="3" stroke="white" stroke-width="1.8" fill="none"/>
+              <rect x="8" y="4" width="16" height="24" rx="3" stroke="white" strokeWidth="1.8" fill="none"/>
               <rect x="10.5" y="6" width="11" height="14" rx="1" fill="white" opacity="0.2"/>
               <rect x="14.5" y="21" width="3" height="1.5" rx="0.75" fill="white"/>
             </svg>

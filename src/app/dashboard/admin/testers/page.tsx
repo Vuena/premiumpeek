@@ -47,7 +47,7 @@ export default function AdminTestersPage() {
         <h1 className="text-2xl font-bold">Testçi Havuzu ({testers.length})</h1>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Ara..." className="h-10 w-full sm:w-64 rounded-xl border border-zinc-300 dark:border-zinc-600 bg-transparent pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-400" />
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Ara..." aria-label="Testçi ara" className="h-10 w-full sm:w-64 rounded-xl border border-zinc-300 dark:border-zinc-600 bg-transparent pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-400" />
         </div>
       </div>
 
@@ -60,7 +60,7 @@ export default function AdminTestersPage() {
               <th className="text-center px-4 py-3 font-medium">Katılma</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="hidden md:table-row-group">
             {filtered.map((t: any) => (
               <tr key={t.uid} className="border-t border-zinc-100 dark:border-zinc-800">
                 <td className="px-4 py-3 font-medium">{t.displayName || "İsimsiz"}</td>
@@ -72,6 +72,26 @@ export default function AdminTestersPage() {
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="block md:hidden space-y-3 mt-4">
+        {filtered.map((t: any) => (
+          <Card key={t.uid} className="border-0 shadow-sm">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-full bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center text-xs font-medium shrink-0">
+                  {(t.displayName || "?")[0]}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">{t.displayName || "İsimsiz"}</p>
+                  <p className="text-xs text-zinc-500 truncate">{t.email || "-"}</p>
+                </div>
+                <span className="text-xs text-zinc-500 shrink-0">
+                  {t.testerSince?.toDate?.()?.toLocaleDateString("tr-TR") || "-"}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   )

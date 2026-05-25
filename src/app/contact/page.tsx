@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Mail, MessageSquare, Clock, Loader2, CheckCircle2 } from "lucide-react"
+import { usePageMeta } from "@/lib/usePageMeta"
 
 export default function ContactPage() {
-  useEffect(() => { document.title = "İletişim | PremiumPeek" }, [])
+  usePageMeta({ title: "İletişim | PremiumPeek", description: "PremiumPeek ile iletişime geçin.", canonical: "https://www.premiumpeek.com/contact" })
   const [form, setForm] = useState({ name: "", email: "", message: "" })
   const [sending, setSending] = useState(false)
   const [status, setStatus] = useState<{ type: "success" | "error"; text: string } | null>(null)

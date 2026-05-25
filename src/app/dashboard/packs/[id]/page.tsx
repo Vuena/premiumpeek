@@ -11,6 +11,7 @@ import { getPackById, getUserApps, getPackApps, leavePack, confirmInstall, trans
 import { storage } from "@/lib/firebase"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import type { Timestamp } from "firebase/firestore"
+import { useToast } from "@/context/ToastContext"
 import { ArrowLeft, Users, Clock, Calendar, CheckCircle2, Loader2, LogOut, ExternalLink, Smartphone, Hourglass, Trophy } from "lucide-react"
 import Link from "next/link"
 
@@ -29,6 +30,7 @@ export default function PackDetailPage() {
   const [installError, setInstallError] = useState("")
 
   const isPremium = pack?.members.find(m => m.uid === user?.uid)?.type === "premium"
+  const { toast: addToast } = useToast()
 
   useEffect(() => { document.title = "Pack Detayı | PremiumPeek" }, [])
 
@@ -45,7 +47,7 @@ export default function PackDetailPage() {
         await transitionInstallingToTesting(pack.id)
         const fresh = await getPackById(pack.id)
         if (fresh && fresh.status !== pack.status) setPack(fresh)
-      } catch {}
+      } catch (err) { console.error("Failed to load pack data:", err) }
     }
     doTransition()
     const interval = setInterval(doTransition, 30000)
@@ -91,7 +93,7 @@ export default function PackDetailPage() {
       await leavePack(pack.id, user.uid)
       router.push("/dashboard")
     } catch (err: any) {
-      alert(err.message)
+      addToast("error", err.message)
     } finally {
       setActionLoading(false)
     }
@@ -292,7 +294,7 @@ export default function PackDetailPage() {
                     <img src={installScreenshotPreview} alt="Kurulum ekran görüntüsü" className="h-24 rounded-xl object-cover border border-zinc-300 dark:border-zinc-600" />
                     <button
                       onClick={() => { setInstallScreenshot(null); setInstallScreenshotPreview("") }}
-                      className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-red-500 text-white flex items-center justify-center cursor-pointer text-xs"
+                      className="absolute -top-2 -right-2 h-8 w-8 rounded-full bg-red-500 text-white flex items-center justify-center cursor-pointer text-xs"
                     >X</button>
                   </div>
                 ) : (

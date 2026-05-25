@@ -1,4 +1,12 @@
+import type { Metadata } from "next"
 import Link from "next/link"
+
+export const metadata: Metadata = {
+  title: "Sayfa Bulunamadı | PremiumPeek",
+  description: "Aradığınız sayfa bulunamadı.",
+  alternates: { canonical: "https://www.premiumpeek.com" },
+  robots: { index: false, follow: false },
+}
 
 export default function NotFound() {
   return (

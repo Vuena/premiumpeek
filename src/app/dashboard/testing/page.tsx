@@ -9,11 +9,13 @@ import { Button } from "@/components/ui/button"
 import { getUserPacks, getPackApps, recordTestingActivity, addComplaint, hasDayScreenshot, recordScreenshot, type Pack, type App } from "@/lib/firestore"
 import { storage } from "@/lib/firebase"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
+import { useToast } from "@/context/ToastContext"
 import { Clock, CheckCircle2, ExternalLink, Loader2, Smartphone, Camera, AlertTriangle, X } from "lucide-react"
 
 export default function TestingPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
+  const { toast: addToast } = useToast()
   const [appsToTest, setAppsToTest] = useState<App[]>([])
   const [packsMap, setPacksMap] = useState<Record<string, Pack>>({})
   const [loading, setLoading] = useState(true)
@@ -111,6 +113,7 @@ export default function TestingPage() {
       await recordTestingActivity(packId, user.uid, day, fb)
     } catch (err) {
       console.error("Failed to record testing activity:", err)
+      addToast("error", "Test kaydedilemedi")
       setError("Screenshot yüklenirken hata oluştu"); setTimeout(() => setError(""), 4000)
     } finally {
       setUploading(prev => ({ ...prev, [appId]: false }))
@@ -140,6 +143,7 @@ export default function TestingPage() {
       setComplaintReason("")
     } catch (err) {
       console.error("Complaint failed:", err)
+      addToast("error", "Şikayet gönderilemedi")
     } finally {
       setComplaintSubmitting(false)
     }
@@ -209,7 +213,7 @@ export default function TestingPage() {
                       </div>
                       <div>
                         <h3 className={`font-medium ${tested ? "line-through text-zinc-400" : ""}`}>{app.appName}</h3>
-                        <p className="text-xs text-zinc-500">{app.description?.slice(0, 80) || app.packageName}</p>
+                        <p className="text-sm text-zinc-500">{app.description?.slice(0, 80) || app.packageName}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -249,7 +253,7 @@ export default function TestingPage() {
                             <img src={screenshotPreviews[app.id]} alt="Test ekran görüntüsü" className="h-32 rounded-xl object-cover border border-zinc-300 dark:border-zinc-600" />
                             <button
                               onClick={() => { setScreenshots(prev => ({ ...prev, [app.id]: null })); setScreenshotPreviews(prev => ({ ...prev, [app.id]: "" })) }}
-                              className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-red-500 text-white flex items-center justify-center cursor-pointer"
+                              className="absolute -top-2 -right-2 h-8 w-8 rounded-full bg-red-500 text-white flex items-center justify-center cursor-pointer"
                             >
                               <X size={12} />
                             </button>
@@ -269,13 +273,12 @@ export default function TestingPage() {
                         value={feedbacks[app.id] || ""}
                         onChange={(e) => setFeedbacks({ ...feedbacks, [app.id]: e.target.value })}
                         placeholder="Yorum yap..."
-                        className="w-full rounded-xl border border-zinc-300 dark:border-zinc-600 bg-transparent px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                        className="w-full rounded-xl border border-zinc-300 dark:border-zinc-600 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-400"
                         rows={2}
                       />
                     </div>
                   )}
 
-                  {/* Complaint panel */}
                   {complaintOpen === app.id && !tested && (
                     <div className="mt-3 ml-14 p-3 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800">
                       <p className="text-xs font-medium text-red-700 dark:text-red-400 mb-2">Uygulama çalışmıyor, sorunu açıkla:</p>
@@ -283,7 +286,7 @@ export default function TestingPage() {
                         value={complaintReason}
                         onChange={(e) => setComplaintReason(e.target.value)}
                         placeholder="Örn: Google Play sayfası açılmıyor, hata veriyor..."
-                        className="w-full rounded-lg border border-red-300 dark:border-red-700 bg-transparent px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-red-400 mb-2"
+                        className="w-full rounded-lg border border-red-300 dark:border-red-700 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 mb-2"
                         rows={2}
                       />
                       <div className="flex gap-2">

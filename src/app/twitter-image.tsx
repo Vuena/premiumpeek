@@ -23,7 +23,7 @@ export default function TwitterImage() {
           width: 80, height: 130, borderRadius: 20, background: "#2563eb",
           display: "flex", alignItems: "center", justifyContent: "center",
         }}>
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
             <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
             <line x1="12" y1="18" x2="12.01" y2="18" />
           </svg>
