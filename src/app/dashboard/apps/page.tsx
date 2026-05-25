@@ -9,14 +9,14 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { getUserApps, type App } from "@/lib/firestore"
 import { ArrowLeft, Plus, FileText, ExternalLink, Clock, CheckCircle2, AlertCircle, Loader2 } from "lucide-react"
+import { usePageMeta } from "@/lib/usePageMeta"
 
 export default function AppsPage() {
+  usePageMeta({ title: "Uygulamalarım | PremiumPeek" })
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const [apps, setApps] = useState<App[]>([])
   const [loading, setLoading] = useState(true)
-
-  useEffect(() => { document.title = "Uygulamalarım | PremiumPeek" }, [])
 
   useEffect(() => {
     if (authLoading) return

@@ -10,15 +10,15 @@ import { getComplaints, resolveComplaint, type Complaint } from "@/lib/firestore
 import { logAudit } from "@/lib/useAuditLog"
 import { Loader2, Shield, CheckCircle2, XCircle, AlertTriangle, ExternalLink } from "lucide-react"
 import Link from "next/link"
+import { usePageMeta } from "@/lib/usePageMeta"
 
 export default function AdminComplaintsPage() {
+  usePageMeta({ title: "Şikayetler | PremiumPeek" })
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const [complaints, setComplaints] = useState<Complaint[]>([])
   const [loading, setLoading] = useState(true)
   const [processing, setProcessing] = useState<string | null>(null)
-
-  useEffect(() => { document.title = "Şikayetler | PremiumPeek" }, [])
 
   useEffect(() => {
     if (authLoading) return
@@ -31,8 +31,7 @@ export default function AdminComplaintsPage() {
     try {
       const data = await getComplaints()
       setComplaints(data)
-    } catch (err) {
-      console.error("Failed to load complaints:", err)
+    } catch {
     } finally {
       setLoading(false)
     }
@@ -45,8 +44,7 @@ export default function AdminComplaintsPage() {
       await resolveComplaint(complaintId, action)
       await logAudit("complaint_resolve", { complaintId, action, appName: complaint?.appName || "" })
       setComplaints(prev => prev.map(c => c.id === complaintId ? { ...c, status: action } : c))
-    } catch (err) {
-      console.error("Failed to resolve complaint:", err)
+    } catch {
     } finally {
       setProcessing(null)
     }

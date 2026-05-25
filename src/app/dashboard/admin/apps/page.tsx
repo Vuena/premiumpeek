@@ -11,6 +11,7 @@ import { db } from "@/lib/firebase"
 import { logAudit } from "@/lib/useAuditLog"
 import { Loader2, ArrowLeft, Trash2, ExternalLink, Clock, CheckCircle2, Hourglass } from "lucide-react"
 import Link from "next/link"
+import { usePageMeta } from "@/lib/usePageMeta"
 
 export default function AdminAppsPage() {
   const { user, loading: authLoading } = useAuth()
@@ -18,7 +19,7 @@ export default function AdminAppsPage() {
   const [apps, setApps] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => { document.title = "Uygulamalar | PremiumPeek" }, [])
+  usePageMeta({ title: "Uygulamalar | PremiumPeek" })
 
   useEffect(() => {
     if (authLoading) return

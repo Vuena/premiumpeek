@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { getOrderById } from "@/lib/firestore"
 import { Loader2, ArrowLeft, Clock, CheckCircle2, CreditCard } from "lucide-react"
+import { usePageMeta } from "@/lib/usePageMeta"
 
 const statusLabels: Record<string, string> = {
   awaiting_payment: "Ödeme Bekliyor",
@@ -19,13 +20,12 @@ const statusLabels: Record<string, string> = {
 }
 
 export default function OrderDetailPage() {
+  usePageMeta({ title: "Sipariş Detayı | PremiumPeek" })
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const params = useParams()
   const [order, setOrder] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-
-  useEffect(() => { document.title = "Sipariş Detayı | PremiumPeek" }, [])
 
   useEffect(() => {
     if (authLoading) return

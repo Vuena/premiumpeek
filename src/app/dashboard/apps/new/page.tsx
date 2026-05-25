@@ -10,6 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { submitApp, joinPack, getUserPacks, getFormingPacks, type Pack } from "@/lib/firestore"
 import { FileText, Loader2, ArrowLeft, CheckCircle, Smartphone, Users, Clock, ShieldCheck, HelpCircle, X, Copy } from "lucide-react"
 import Link from "next/link"
+import { useToast } from "@/context/ToastContext"
+import { usePageMeta } from "@/lib/usePageMeta"
 
 type Step = "setup" | "details" | "review" | "done"
 
@@ -49,6 +51,8 @@ export default function NewAppPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { toast: addToast } = useToast()
+  usePageMeta({ title: "Uygulama Yükle | PremiumPeek" })
   const urlPackId = searchParams.get("packId")
   const [step, setStep] = useState<Step>(urlPackId ? "details" : "setup")
   const [packs, setPacks] = useState<Pack[]>([])
@@ -72,8 +76,6 @@ export default function NewAppPage() {
   const [selectedOption, setSelectedOption] = useState<"free" | "paid" | null>(null)
   const [setupAccepted, setSetupAccepted] = useState(false)
   const [showUrlHelp, setShowUrlHelp] = useState(false)
-
-  useEffect(() => { document.title = "Uygulama Yükle | PremiumPeek" }, [])
 
   useEffect(() => {
     if (authLoading) return
@@ -228,7 +230,7 @@ export default function NewAppPage() {
                       <div className="rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 p-3">
                         <div className="flex items-center justify-between mb-1">
                           <p className="text-xs text-zinc-500">Google Group e-postası:</p>
-                          <button onClick={() => { navigator.clipboard.writeText(s.grup); alert("Kopyalandı!") }}
+                          <button onClick={() => { navigator.clipboard.writeText(s.grup); addToast("success", "Kopyalandı!") }}
                             className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 transition-colors cursor-pointer">
                             <Copy size={12} /> Kopyala
                           </button>

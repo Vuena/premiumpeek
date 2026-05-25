@@ -154,8 +154,8 @@ export default function PurchasePage() {
               appIcon: order.appIcon || form.appIcon || "",
             })
             await updateDoc(orderRef, { packId, appId })
-          } catch (err: any) {
-            console.error("Premium pack join error:", err.message)
+          } catch (err) {
+            // Silently fail — pack join is best-effort after payment
           }
         }
       }

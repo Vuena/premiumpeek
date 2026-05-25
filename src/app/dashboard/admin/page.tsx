@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore"
 import { db, auth } from "@/lib/firebase"
 import { Users, Layers, FileText, Loader2, ArrowRight, Shield, CreditCard, UserCheck, AlertTriangle, Mail, History } from "lucide-react"
+import { usePageMeta } from "@/lib/usePageMeta"
 
 const actionLabels: Record<string, string> = {
   user_ban_toggle: "Ban/Unban",
@@ -31,7 +32,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true)
   const [recentLogs, setRecentLogs] = useState<any[]>([])
 
-  useEffect(() => { document.title = "Admin Paneli | PremiumPeek" }, [])
+  usePageMeta({ title: "Admin Paneli | PremiumPeek" })
 
   useEffect(() => {
     if (authLoading) return
@@ -66,7 +67,9 @@ export default function AdminPage() {
       })
       const data = await res.json()
       setRecentLogs(data.logs || [])
-    } catch {}
+    } catch (e) {
+      console.error("Failed to load audit logs:", e)
+    }
   }
 
   if (loading) return <div className="flex items-center justify-center min-h-[40vh]"><Loader2 className="h-8 w-8 animate-spin text-zinc-400" /></div>

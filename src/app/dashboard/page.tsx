@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { getUserPacks, getUserApps, getFormingPacks, createPack, joinPackWithApp, type Pack, type App } from "@/lib/firestore"
 import { Users, Clock, FileText, Plus, ArrowRight, Loader2, Smartphone, Settings, Layers, LogIn, X, CheckCircle } from "lucide-react"
+import { usePageMeta } from "@/lib/usePageMeta"
 
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth()
@@ -21,7 +22,7 @@ export default function DashboardPage() {
   const [joinLoading, setJoinLoading] = useState(false)
   const [joinError, setJoinError] = useState("")
 
-  useEffect(() => { document.title = "Panel | PremiumPeek" }, [])
+  usePageMeta({ title: "Panel | PremiumPeek" })
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
@@ -52,8 +53,11 @@ export default function DashboardPage() {
   const activePacks = packs.filter(p => p.status === "testing" || p.status === "installing")
   const currentPack = packs[0]
 
-  const testedStr = typeof window !== "undefined" ? localStorage.getItem(`tested_${new Date().toDateString()}`) : null
-  const testedCount = testedStr ? JSON.parse(testedStr).length : 0
+  let testedCount = 0
+  try {
+    const testedStr = typeof window !== "undefined" ? localStorage.getItem(`tested_${new Date().toDateString()}`) : null
+    if (testedStr) testedCount = JSON.parse(testedStr).length
+  } catch {}
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
@@ -234,11 +238,11 @@ export default function DashboardPage() {
       </div>
       {/* App Selection Modal */}
       {joinPackId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4" onClick={() => setJoinPackId(null)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4" onClick={() => setJoinPackId(null)} role="dialog" aria-modal="true" aria-label="Pack'e katıl">
           <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-xl max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-lg">Pack'e Katıl</h3>
-              <button onClick={() => setJoinPackId(null)} className="cursor-pointer"><X size={20} /></button>
+              <button onClick={() => setJoinPackId(null)} aria-label="Kapat" className="cursor-pointer"><X size={20} /></button>
             </div>
 
             {joinError && (

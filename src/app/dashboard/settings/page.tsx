@@ -10,16 +10,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { updateUserProfile, joinTesterPool, leaveTesterPool } from "@/lib/firestore"
 import { useToast } from "@/context/ToastContext"
 import { Settings, Loader2, CheckCircle2, Users } from "lucide-react"
+import { usePageMeta } from "@/lib/usePageMeta"
 
 export default function SettingsPage() {
+  usePageMeta({ title: "Ayarlar | PremiumPeek" })
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const { toast: addToast } = useToast()
   const [form, setForm] = useState({ displayName: "", country: "", bio: "", devAccountLink: "" })
   const [loading, setLoading] = useState(false)
   const [saved, setSaved] = useState(false)
-
-  useEffect(() => { document.title = "Ayarlar | PremiumPeek" }, [])
+  const [isTester, setIsTester] = useState(false)
 
   useEffect(() => {
     if (authLoading) return
@@ -30,6 +31,7 @@ export default function SettingsPage() {
       bio: (user as any).bio || "",
       devAccountLink: (user as any).devAccountLink || "",
     })
+    setIsTester(!!(user as any).isTester)
   }, [user, authLoading])
 
   const handleSave = async (e: React.FormEvent) => {
@@ -101,12 +103,12 @@ export default function SettingsPage() {
           <p className="text-sm text-zinc-500 mb-4">
             Testçi havuzuna katılarak ücretli test siparişlerinde görev alabilirsin.
           </p>
-          {(user as any).isTester ? (
-            <Button variant="outline" onClick={async () => { await leaveTesterPool(user.uid); window.location.reload() }}>
+          {isTester ? (
+            <Button variant="outline" onClick={async () => { try { await leaveTesterPool(user.uid); setIsTester(false); addToast("success", "Testçi havuzundan ayrıldın") } catch { addToast("error", "Ayrılma başarısız") } }}>
               Testçi Havuzundan Ayrıl
             </Button>
           ) : (
-            <Button onClick={async () => { await joinTesterPool(user.uid); window.location.reload() }}>
+            <Button onClick={async () => { try { await joinTesterPool(user.uid); setIsTester(true); addToast("success", "Testçi havuzuna katıldın") } catch { addToast("error", "Katılma başarısız") } }}>
               <Users className="h-4 w-4 mr-2" /> Testçi Ol
             </Button>
           )}

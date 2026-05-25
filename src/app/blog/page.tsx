@@ -86,12 +86,12 @@ export default function BlogPage() {
               {expanded === i ? (
                 <div>
                   <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-3">{post.content}</p>
-                  <button onClick={() => setExpanded(null)} className="inline-flex items-center gap-1 text-sm text-blue-600 hover:underline cursor-pointer">
+                  <button onClick={() => setExpanded(null)} aria-label="Gizle" className="inline-flex items-center gap-1 text-sm text-blue-600 hover:underline cursor-pointer">
                     Gizle <ChevronUp size={14} />
                   </button>
                 </div>
               ) : (
-                <button onClick={() => setExpanded(i)} className="inline-flex items-center gap-1 text-sm text-blue-600 hover:underline cursor-pointer">
+                <button onClick={() => setExpanded(i)} aria-label="Devamını oku" className="inline-flex items-center gap-1 text-sm text-blue-600 hover:underline cursor-pointer">
                   Devamını Oku <ArrowRight size={14} />
                 </button>
               )}

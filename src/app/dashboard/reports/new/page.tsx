@@ -10,18 +10,20 @@ import { Card, CardContent } from "@/components/ui/card"
 import { collection, getDocs, query, where, addDoc, serverTimestamp } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { ArrowLeft, Loader2, Download, Plus, Trash2, Save } from "lucide-react"
+import { useToast } from "@/context/ToastContext"
+import { usePageMeta } from "@/lib/usePageMeta"
 
 export default function NewReportPage() {
+  usePageMeta({ title: "Rapor Oluştur | PremiumPeek" })
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
+  const { toast: addToast } = useToast()
   const [apps, setApps] = useState<any[]>([])
   const [selectedApp, setSelectedApp] = useState("")
   const [loading, setLoading] = useState(true)
   const [items, setItems] = useState<{ type: string; description: string }[]>([])
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState("")
-
-  useEffect(() => { document.title = "Rapor Oluştur | PremiumPeek" }, [])
 
   useEffect(() => {
     if (authLoading) return
@@ -87,7 +89,7 @@ export default function NewReportPage() {
       setItems([])
       router.push("/dashboard/reports")
     } catch (err: any) {
-      alert("Hata: " + err.message)
+      addToast("error", "Rapor kaydedilemedi: " + (err instanceof Error ? err.message : "Bilinmeyen hata"))
     } finally { setSaving(false) }
   }
 

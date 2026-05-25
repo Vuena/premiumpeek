@@ -12,6 +12,7 @@ import { db, auth } from "@/lib/firebase"
 import { logAudit } from "@/lib/useAuditLog"
 import { Loader2, ArrowLeft, Trash2, Clock, CheckCircle2, AlertCircle, Settings, ChevronUp, Plus, X } from "lucide-react"
 import Link from "next/link"
+import { usePageMeta } from "@/lib/usePageMeta"
 
 const validStatuses = ["forming", "installing", "testing", "completed"]
 
@@ -35,6 +36,7 @@ const statusIcon = (s: string) => {
 }
 
 export default function AdminPacksPage() {
+  usePageMeta({ title: "Pack'ler | PremiumPeek" })
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const [packs, setPacks] = useState<any[]>([])
@@ -45,8 +47,6 @@ export default function AdminPacksPage() {
   const [removeUid, setRemoveUid] = useState("")
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [actionError, setActionError] = useState("")
-
-  useEffect(() => { document.title = "Pack'ler | PremiumPeek" }, [])
 
   useEffect(() => {
     if (authLoading) return

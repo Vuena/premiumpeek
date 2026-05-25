@@ -8,6 +8,7 @@ import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { auth } from "@/lib/firebase"
 import { Loader2, ArrowLeft, Search } from "lucide-react"
+import { usePageMeta } from "@/lib/usePageMeta"
 
 const actionLabels: Record<string, string> = {
   user_ban_toggle: "Kullanıcı Ban/Unban",
@@ -29,7 +30,7 @@ export default function AdminAuditPage() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
 
-  useEffect(() => { document.title = "Denetim Kaydı | PremiumPeek" }, [])
+  usePageMeta({ title: "Denetim Kaydı | PremiumPeek" })
 
   useEffect(() => {
     if (authLoading) return
@@ -45,8 +46,7 @@ export default function AdminAuditPage() {
       })
       const data = await res.json()
       setLogs(data.logs || [])
-    } catch (err) {
-      console.error("Failed to load audit logs:", err)
+    } catch {
     } finally {
       setLoading(false)
     }

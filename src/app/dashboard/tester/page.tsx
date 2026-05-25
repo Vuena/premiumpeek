@@ -9,15 +9,15 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { getTesterTasks, recordOrderTesterActivity } from "@/lib/firestore"
 import { Loader2, Clock, CheckCircle2, ExternalLink, Smartphone } from "lucide-react"
+import { usePageMeta } from "@/lib/usePageMeta"
 
 export default function TesterPage() {
+  usePageMeta({ title: "Testçi Paneli | PremiumPeek" })
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const [tasks, setTasks] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [testedToday, setTestedToday] = useState<string[]>([])
-
-  useEffect(() => { document.title = "Testçi Paneli | PremiumPeek" }, [])
 
   useEffect(() => {
     if (authLoading) return

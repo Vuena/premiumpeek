@@ -8,15 +8,15 @@ import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { getAvailableTesters } from "@/lib/firestore"
 import { Loader2, ArrowLeft, Users, Search } from "lucide-react"
+import { usePageMeta } from "@/lib/usePageMeta"
 
 export default function AdminTestersPage() {
+  usePageMeta({ title: "Testçi Havuzu | PremiumPeek" })
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const [testers, setTesters] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
-
-  useEffect(() => { document.title = "Testçi Havuzu | PremiumPeek" }, [])
 
   useEffect(() => {
     if (authLoading) return

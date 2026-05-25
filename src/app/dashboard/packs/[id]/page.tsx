@@ -14,8 +14,10 @@ import type { Timestamp } from "firebase/firestore"
 import { useToast } from "@/context/ToastContext"
 import { ArrowLeft, Users, Clock, Calendar, CheckCircle2, Loader2, LogOut, ExternalLink, Smartphone, Hourglass, Trophy } from "lucide-react"
 import Link from "next/link"
+import { usePageMeta } from "@/lib/usePageMeta"
 
 export default function PackDetailPage() {
+  usePageMeta({ title: "Pack Detayı | PremiumPeek" })
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const packId = useParams().id as string
@@ -32,8 +34,6 @@ export default function PackDetailPage() {
   const isPremium = pack?.members.find(m => m.uid === user?.uid)?.type === "premium"
   const { toast: addToast } = useToast()
 
-  useEffect(() => { document.title = "Pack Detayı | PremiumPeek" }, [])
-
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
@@ -47,7 +47,7 @@ export default function PackDetailPage() {
         await transitionInstallingToTesting(pack.id)
         const fresh = await getPackById(pack.id)
         if (fresh && fresh.status !== pack.status) setPack(fresh)
-      } catch (err) { console.error("Failed to load pack data:", err) }
+        } catch {}
     }
     doTransition()
     const interval = setInterval(doTransition, 30000)
@@ -122,7 +122,7 @@ export default function PackDetailPage() {
       await confirmInstall(pack.id, user.uid)
       const fresh = await getPackById(pack.id)
       if (fresh) setPack(fresh)
-      alert("Tüm uygulamalar yüklendi! Pack başlıyor...")
+      addToast("success", "Tüm uygulamalar yüklendi! Pack başlıyor...")
     } catch (err: any) {
       setInstallError(err.message || "Bir hata oluştu")
     } finally {

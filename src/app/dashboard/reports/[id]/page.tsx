@@ -10,15 +10,15 @@ import { Card, CardContent } from "@/components/ui/card"
 import { doc, getDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { ArrowLeft, Loader2, Download } from "lucide-react"
+import { usePageMeta } from "@/lib/usePageMeta"
 
 export default function ReportDetailPage() {
+  usePageMeta({ title: "Rapor Detayı | PremiumPeek" })
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const params = useParams()
   const [report, setReport] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-
-  useEffect(() => { document.title = "Rapor Detayı | PremiumPeek" }, [])
 
   useEffect(() => {
     if (authLoading) return

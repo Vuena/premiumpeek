@@ -10,15 +10,15 @@ import { getAllOrdersAdmin, updateOrderStatus, assignTestersToOrder } from "@/li
 import { logAudit } from "@/lib/useAuditLog"
 import { Loader2, ArrowLeft, CreditCard, CheckCircle2, Ban, Search, Users, ExternalLink } from "lucide-react"
 import Link from "next/link"
+import { usePageMeta } from "@/lib/usePageMeta"
 
 export default function AdminOrdersPage() {
+  usePageMeta({ title: "Siparişler | PremiumPeek" })
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const [orders, setOrders] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
-
-  useEffect(() => { document.title = "Siparişler | PremiumPeek" }, [])
 
   useEffect(() => {
     if (authLoading) return

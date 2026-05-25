@@ -11,15 +11,15 @@ import { db } from "@/lib/firebase"
 import { Loader2, ArrowLeft, Ban, Search } from "lucide-react"
 import { logAudit } from "@/lib/useAuditLog"
 import Link from "next/link"
+import { usePageMeta } from "@/lib/usePageMeta"
 
 export default function AdminUsersPage() {
+  usePageMeta({ title: "Kullanıcılar | PremiumPeek" })
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const [users, setUsers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
-
-  useEffect(() => { document.title = "Kullanıcılar | PremiumPeek" }, [])
 
   useEffect(() => {
     if (authLoading) return

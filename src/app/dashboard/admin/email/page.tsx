@@ -10,8 +10,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { auth } from "@/lib/firebase"
 import { Loader2, ArrowLeft, Send, Mail } from "lucide-react"
+import { usePageMeta } from "@/lib/usePageMeta"
 
 export default function AdminEmailPage() {
+  usePageMeta({ title: "E-posta Gönder | PremiumPeek" })
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const [subject, setSubject] = useState("")
@@ -20,8 +22,6 @@ export default function AdminEmailPage() {
   const [sending, setSending] = useState(false)
   const [result, setResult] = useState<{ sent: number; failed: number } | null>(null)
   const [error, setError] = useState("")
-
-  useEffect(() => { document.title = "E-posta Gönder | PremiumPeek" }, [])
 
   useEffect(() => {
     if (authLoading) return

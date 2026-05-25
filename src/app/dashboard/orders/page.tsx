@@ -11,6 +11,7 @@ import { getUserOrders } from "@/lib/firestore"
 import { auth } from "@/lib/firebase"
 import { useToast } from "@/context/ToastContext"
 import { Loader2, Clock, CheckCircle2, CreditCard, Trash2 } from "lucide-react"
+import { usePageMeta } from "@/lib/usePageMeta"
 
 const statusLabels: Record<string, string> = {
   awaiting_payment: "Ödeme Bekliyor",
@@ -29,13 +30,12 @@ const statusColors: Record<string, string> = {
 }
 
 export default function OrdersPage() {
+  usePageMeta({ title: "Siparişlerim | PremiumPeek" })
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const { toast: addToast } = useToast()
   const [orders, setOrders] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-
-  useEffect(() => { document.title = "Siparişlerim | PremiumPeek" }, [])
 
   useEffect(() => {
     if (authLoading) return

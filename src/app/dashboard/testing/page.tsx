@@ -11,8 +11,10 @@ import { storage } from "@/lib/firebase"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import { useToast } from "@/context/ToastContext"
 import { Clock, CheckCircle2, ExternalLink, Loader2, Smartphone, Camera, AlertTriangle, X } from "lucide-react"
+import { usePageMeta } from "@/lib/usePageMeta"
 
 export default function TestingPage() {
+  usePageMeta({ title: "Bugünkü Testler | PremiumPeek" })
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const { toast: addToast } = useToast()
@@ -29,8 +31,6 @@ export default function TestingPage() {
   const [complaintSubmitting, setComplaintSubmitting] = useState(false)
   const [error, setError] = useState("")
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({})
-
-  useEffect(() => { document.title = "Bugünkü Testler | PremiumPeek" }, [])
 
   useEffect(() => {
     if (authLoading) return
@@ -111,8 +111,7 @@ export default function TestingPage() {
 
       const fb = feedbacks[appId] || ""
       await recordTestingActivity(packId, user.uid, day, fb)
-    } catch (err) {
-      console.error("Failed to record testing activity:", err)
+    } catch {
       addToast("error", "Test kaydedilemedi")
       setError("Screenshot yüklenirken hata oluştu"); setTimeout(() => setError(""), 4000)
     } finally {
@@ -141,8 +140,7 @@ export default function TestingPage() {
       })
       setComplaintOpen(null)
       setComplaintReason("")
-    } catch (err) {
-      console.error("Complaint failed:", err)
+    } catch {
       addToast("error", "Şikayet gönderilemedi")
     } finally {
       setComplaintSubmitting(false)
