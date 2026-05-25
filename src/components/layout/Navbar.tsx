@@ -91,7 +91,7 @@ export const Navbar = memo(function Navbar() {
                   {(user as any).role === "admin" && (
                     <Link href="/dashboard/admin" onClick={() => setDropdown(false)} className="block px-4 py-3 min-h-11 text-sm text-blue-600 hover:bg-subtle">Admin Paneli</Link>
                   )}
-                  <button onClick={() => { logout(); setDropdown(false) }} className="block w-full text-left px-4 py-3 min-h-11 text-sm text-red-600 hover:bg-subtle cursor-pointer">Çıkış Yap</button>
+                  <button onClick={async () => { if (!confirm("Çıkış yapmak istediğine emin misin?")) return; try { await logout() } catch {}; setDropdown(false) }} className="block w-full text-left px-4 py-3 min-h-11 text-sm text-red-600 hover:bg-subtle cursor-pointer">Çıkış Yap</button>
                 </div>
               )}
             </div>

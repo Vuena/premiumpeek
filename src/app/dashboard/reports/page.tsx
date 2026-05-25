@@ -22,7 +22,15 @@ export default function ReportsPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
-    loadReports().catch(console.error)
+    ;(async () => {
+      try {
+        await loadReports()
+      } catch (err) {
+        console.error("Failed to load:", err)
+      } finally {
+        setLoading(false)
+      }
+    })()
   }, [user, authLoading, router])
 
   const loadReports = async () => {

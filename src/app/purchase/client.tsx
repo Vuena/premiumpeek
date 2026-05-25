@@ -182,7 +182,7 @@ export default function PurchaseClient() {
     if (!user) router.push("/login")
   }, [user, router])
 
-  if (authLoading) return null
+  if (authLoading) return <div className="flex items-center justify-center min-h-[40vh]"><Loader2 className="h-8 w-8 animate-spin text-zinc-400" /></div>
   if (!user) return null
 
   const benefits = [

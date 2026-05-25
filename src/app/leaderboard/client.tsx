@@ -16,7 +16,15 @@ const LeaderboardClient = memo(function LeaderboardClient() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    loadLeaderboard().catch(console.error)
+    ;(async () => {
+      try {
+        await loadLeaderboard()
+      } catch (err) {
+        console.error("Failed to load:", err)
+      } finally {
+        setLoading(false)
+      }
+    })()
   }, [])
 
   const loadLeaderboard = async () => {

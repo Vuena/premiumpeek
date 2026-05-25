@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { getUserPacks, getUserApps, getFormingPacks, createPack, joinPackWithApp, type Pack, type App } from "@/lib/firestore"
 import { Users, Clock, FileText, Plus, ArrowRight, Loader2, Smartphone, Settings, Layers, LogIn, X, CheckCircle } from "lucide-react"
 import { usePageMeta } from "@/lib/usePageMeta"
+import { useToast } from "@/context/ToastContext"
 
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth()
@@ -18,6 +19,7 @@ export default function DashboardPage() {
   const [formingPacks, setFormingPacks] = useState<Pack[]>([])
   const [apps, setApps] = useState<App[]>([])
   const [loading, setLoading] = useState(true)
+  const { toast: addToast } = useToast()
   const [joinPackId, setJoinPackId] = useState<string | null>(null)
   const [joinLoading, setJoinLoading] = useState(false)
   const [joinError, setJoinError] = useState("")
@@ -26,7 +28,15 @@ export default function DashboardPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
-    loadData().catch(console.error)
+    ;(async () => {
+      try {
+        await loadData()
+      } catch (err) {
+        console.error("Failed to load:", err)
+      } finally {
+        setLoading(false)
+      }
+    })()
   }, [user, authLoading, router])
 
   const loadData = async () => {
@@ -275,6 +285,7 @@ export default function DashboardPage() {
                           await joinPackWithApp(joinPackId, app.id, user!)
                           setJoinPackId(null)
                           loadData()
+                          addToast("success", "Pack'e katıldın!")
                         } catch (err: any) {
                           setJoinError(err.message || "Katılırken hata oluştu")
                         } finally {

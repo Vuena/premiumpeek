@@ -11,9 +11,11 @@ import { auth, db } from "@/lib/firebase"
 import { Loader2, ArrowLeft, Trash2, ExternalLink, Clock, CheckCircle2, Hourglass } from "lucide-react"
 import Link from "next/link"
 import { usePageMeta } from "@/lib/usePageMeta"
+import { useToast } from "@/context/ToastContext"
 
 export default function AdminAppsPage() {
   const { user, loading: authLoading } = useAuth()
+  const { toast: addToast } = useToast()
   const router = useRouter()
   const [apps, setApps] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -23,7 +25,15 @@ export default function AdminAppsPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user || (user as any).role !== "admin") { router.push("/dashboard"); return }
-    loadApps().catch(console.error)
+    ;(async () => {
+      try {
+        await loadApps()
+      } catch (err) {
+        console.error("Failed to load:", err)
+      } finally {
+        setLoading(false)
+      }
+    })()
   }, [user, authLoading, router])
 
   const loadApps = async () => {
@@ -46,11 +56,12 @@ export default function AdminAppsPage() {
       })
       if (!res.ok) {
         const result = await res.json()
-        console.error(result.error)
+        addToast("error", result.error)
       }
+      addToast("success", "Uygulama silindi.")
       loadApps()
     } catch (err) {
-      console.error(err)
+      addToast("error", "Silme işlemi başarısız")
     }
   }
 

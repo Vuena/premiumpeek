@@ -32,7 +32,15 @@ export default function OrderDetailPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
-    loadOrder().catch(console.error)
+    ;(async () => {
+      try {
+        await loadOrder()
+      } catch (err) {
+        console.error("Failed to load:", err)
+      } finally {
+        setLoading(false)
+      }
+    })()
   }, [user, authLoading, router])
 
   const loadOrder = async () => {

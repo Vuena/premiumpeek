@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { getTesterTasks, recordOrderTesterActivity } from "@/lib/firestore"
 import { Loader2, Clock, CheckCircle2, ExternalLink, Smartphone } from "lucide-react"
 import { usePageMeta } from "@/lib/usePageMeta"
+import { useToast } from "@/context/ToastContext"
 
 export default function TesterPage() {
   usePageMeta({ title: "Testçi Paneli | PremiumPeek" })
@@ -23,7 +24,15 @@ export default function TesterPage() {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
     if (!(user as any).isTester) { router.push("/dashboard"); return }
-    loadTasks()
+    ;(async () => {
+      try {
+        await loadTasks()
+      } catch (err) {
+        console.error("Failed to load:", err)
+      } finally {
+        setLoading(false)
+      }
+    })()
   }, [user, authLoading])
 
   const loadTasks = async () => {
@@ -36,15 +45,22 @@ export default function TesterPage() {
     if (stored) setTestedToday(JSON.parse(stored))
   }
 
+  const { toast: addToast } = useToast()
+
   const markDone = async (orderId: string, createdAt: any) => {
     if (!user) return
-    const updated = [...testedToday, orderId]
-    setTestedToday(updated)
-    localStorage.setItem(`tester_tested_${new Date().toDateString()}`, JSON.stringify(updated))
+    try {
+      const updated = [...testedToday, orderId]
+      setTestedToday(updated)
+      localStorage.setItem(`tester_tested_${new Date().toDateString()}`, JSON.stringify(updated))
 
-    const start = createdAt?.toDate?.() || new Date(createdAt || Date.now())
-    const day = Math.floor((Date.now() - start.getTime()) / 86400000) + 1
-    await recordOrderTesterActivity(orderId, user.uid, day)
+      const start = createdAt?.toDate?.() || new Date(createdAt || Date.now())
+      const day = Math.floor((Date.now() - start.getTime()) / 86400000) + 1
+      await recordOrderTesterActivity(orderId, user.uid, day)
+      addToast("success", "Test tamamlandı!")
+    } catch {
+      addToast("error", "Hata oluştu")
+    }
   }
 
   if (loading) return <div className="flex items-center justify-center min-h-[40vh]"><Loader2 className="h-8 w-8 animate-spin text-zinc-400" /></div>

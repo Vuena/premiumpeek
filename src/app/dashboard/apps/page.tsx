@@ -21,7 +21,15 @@ export default function AppsPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
-    loadApps()
+    ;(async () => {
+      try {
+        await loadApps()
+      } catch (err) {
+        console.error("Failed to load:", err)
+      } finally {
+        setLoading(false)
+      }
+    })()
   }, [user, authLoading])
 
   const loadApps = async () => {

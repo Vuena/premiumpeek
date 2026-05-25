@@ -11,10 +11,12 @@ import { auth, db } from "@/lib/firebase"
 import { Loader2, ArrowLeft, Ban, Search } from "lucide-react"
 import Link from "next/link"
 import { usePageMeta } from "@/lib/usePageMeta"
+import { useToast } from "@/context/ToastContext"
 
 export default function AdminUsersPage() {
   usePageMeta({ title: "Kullanıcılar | PremiumPeek" })
   const { user, loading: authLoading } = useAuth()
+  const { toast: addToast } = useToast()
   const router = useRouter()
   const [users, setUsers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -23,7 +25,15 @@ export default function AdminUsersPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user || (user as any).role !== "admin") { router.push("/dashboard"); return }
-    loadUsers().catch(console.error)
+    ;(async () => {
+      try {
+        await loadUsers()
+      } catch (err) {
+        console.error("Failed to load:", err)
+      } finally {
+        setLoading(false)
+      }
+    })()
   }, [user, authLoading, router])
 
   const loadUsers = async () => {
@@ -35,6 +45,7 @@ export default function AdminUsersPage() {
   }
 
   const toggleBan = async (uid: string, currentRole: string) => {
+    if (!confirm("Bu kullanıcıyı banlamak istediğine emin misin?")) return
     try {
       const token = await auth?.currentUser?.getIdToken()
       if (!token) return
@@ -46,11 +57,12 @@ export default function AdminUsersPage() {
       })
       if (!res.ok) {
         const result = await res.json()
-        console.error(result.error)
+        addToast("error", result.error)
       }
+      addToast("success", "İşlem başarılı.")
       loadUsers()
     } catch (err) {
-      console.error(err)
+      addToast("error", "İşlem başarısız")
     }
   }
 

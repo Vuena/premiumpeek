@@ -12,6 +12,7 @@ import { db, auth } from "@/lib/firebase"
 import { Loader2, ArrowLeft, Trash2, Clock, CheckCircle2, AlertCircle, Settings, Plus, X } from "lucide-react"
 import Link from "next/link"
 import { usePageMeta } from "@/lib/usePageMeta"
+import { useToast } from "@/context/ToastContext"
 
 const validStatuses = ["forming", "installing", "testing", "completed"]
 
@@ -37,6 +38,7 @@ const statusIcon = (s: string) => {
 export default function AdminPacksPage() {
   usePageMeta({ title: "Pack'ler | PremiumPeek" })
   const { user, loading: authLoading } = useAuth()
+  const { toast: addToast } = useToast()
   const router = useRouter()
   const [packs, setPacks] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -50,7 +52,15 @@ export default function AdminPacksPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user || (user as any).role !== "admin") { router.push("/dashboard"); return }
-    loadPacks().catch(console.error)
+    ;(async () => {
+      try {
+        await loadPacks()
+      } catch (err) {
+        console.error("Failed to load:", err)
+      } finally {
+        setLoading(false)
+      }
+    })()
   }, [user, authLoading, router])
 
   const loadPacks = async () => {
@@ -78,10 +88,12 @@ export default function AdminPacksPage() {
         body: JSON.stringify({ packId, action, data }),
       })
       const result = await res.json()
-      if (!res.ok) { setActionError(result.error || "İşlem başarısız"); return }
+      if (!res.ok) { setActionError(result.error || "İşlem başarısız"); addToast("error", result.error || "İşlem başarısız"); return }
+      addToast("success", "İşlem başarılı.")
       loadPacks()
     } catch (err: any) {
       setActionError(err.message || "Bir hata oluştu")
+      addToast("error", err.message || "Bir hata oluştu")
     } finally {
       setActionLoading(null)
     }

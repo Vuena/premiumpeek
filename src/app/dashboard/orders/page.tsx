@@ -44,7 +44,15 @@ export default function OrdersPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
-    loadOrders().catch(() => setLoading(false))
+    ;(async () => {
+      try {
+        await loadOrders()
+      } catch {
+        setOrders([])
+      } finally {
+        setLoading(false)
+      }
+    })()
   }, [user, authLoading, router])
 
   const loadOrders = async () => {

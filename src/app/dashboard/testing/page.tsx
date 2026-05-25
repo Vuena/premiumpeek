@@ -35,7 +35,15 @@ export default function TestingPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
-    loadTesting().catch(console.error)
+    ;(async () => {
+      try {
+        await loadTesting()
+      } catch (err) {
+        console.error("Failed to load:", err)
+      } finally {
+        setLoading(false)
+      }
+    })()
   }, [user, authLoading, router])
 
   const [isPremium, setIsPremium] = useState(false)
@@ -112,6 +120,7 @@ export default function TestingPage() {
 
       const fb = feedbacks[appId] || ""
       await recordTestingActivity(packId, user.uid, day, fb)
+      addToast("success", "Test kaydedildi!")
     } catch (err) { console.error("Failed to record test activity:", err)
       addToast("error", "Test kaydedilemedi")
       setError("Screenshot yüklenirken hata oluştu"); setTimeout(() => setError(""), 4000)
