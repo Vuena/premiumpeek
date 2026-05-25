@@ -7,8 +7,8 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { getUserPacks, getUserApps, getFormingPacks, createPack, type Pack, type App } from "@/lib/firestore"
-import { Users, Clock, FileText, Plus, ArrowRight, Loader2, Smartphone, Settings, Layers, LogIn } from "lucide-react"
+import { getUserPacks, getUserApps, getFormingPacks, createPack, joinPackWithApp, type Pack, type App } from "@/lib/firestore"
+import { Users, Clock, FileText, Plus, ArrowRight, Loader2, Smartphone, Settings, Layers, LogIn, X, CheckCircle } from "lucide-react"
 
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth()
@@ -17,6 +17,9 @@ export default function DashboardPage() {
   const [formingPacks, setFormingPacks] = useState<Pack[]>([])
   const [apps, setApps] = useState<App[]>([])
   const [loading, setLoading] = useState(true)
+  const [joinPackId, setJoinPackId] = useState<string | null>(null)
+  const [joinLoading, setJoinLoading] = useState(false)
+  const [joinError, setJoinError] = useState("")
 
   useEffect(() => {
     if (authLoading) return
@@ -163,11 +166,9 @@ export default function DashboardPage() {
                       <p className="text-xs text-muted">{p.members.length}/18 üye</p>
                     </div>
                   </div>
-                  <Link href={`/dashboard/apps/new?packId=${p.id}`}>
-                    <Button size="sm" className="gap-2">
-                      <LogIn size={16} /> Katıl & Uygulama Yükle
-                    </Button>
-                  </Link>
+                  <Button size="sm" className="gap-2" onClick={() => setJoinPackId(p.id)}>
+                    <LogIn size={16} /> Katıl
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -230,6 +231,74 @@ export default function DashboardPage() {
           </Card>
         </div>
       </div>
+      {/* App Selection Modal */}
+      {joinPackId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4" onClick={() => setJoinPackId(null)}>
+          <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-xl max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-lg">Pack'e Katıl</h3>
+              <button onClick={() => setJoinPackId(null)} className="cursor-pointer"><X size={20} /></button>
+            </div>
+
+            {joinError && (
+              <div className="mb-4 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 p-3 text-sm text-red-600 dark:text-red-400">{joinError}</div>
+            )}
+
+            {apps.filter(a => !a.packId).length > 0 ? (
+              <>
+                <p className="text-sm text-zinc-500 mb-4">Hangi uygulamanı bu pack'e eklemek istersin?</p>
+                <div className="space-y-2 mb-4">
+                  {apps.filter(a => !a.packId).map(app => (
+                    <div key={app.id} className="flex items-center justify-between p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
+                      <div className="flex items-center gap-3 min-w-0">
+                        {app.appIcon ? (
+                          <img src={app.appIcon} alt="" className="h-9 w-9 rounded-lg object-cover shrink-0" />
+                        ) : (
+                          <div className="h-9 w-9 rounded-lg bg-blue-100 dark:bg-blue-950/30 flex items-center justify-center text-blue-600 text-xs font-bold shrink-0">
+                            {app.appName[0]?.toUpperCase() || "?"}
+                          </div>
+                        )}
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium truncate">{app.appName}</p>
+                          <p className="text-xs text-zinc-500 truncate">{app.packageName}</p>
+                        </div>
+                      </div>
+                      <Button size="sm" onClick={async () => {
+                        setJoinLoading(true)
+                        setJoinError("")
+                        try {
+                          await joinPackWithApp(joinPackId, app.id, user!)
+                          setJoinPackId(null)
+                          loadData()
+                        } catch (err: any) {
+                          setJoinError(err.message || "Katılırken hata oluştu")
+                        } finally {
+                          setJoinLoading(false)
+                        }
+                      }} disabled={joinLoading}>
+                        {joinLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <CheckCircle size={14} />}
+                        Seç
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+                <div className="border-t border-zinc-200 dark:border-zinc-700 pt-4">
+                  <Link href={`/dashboard/apps/new?packId=${joinPackId}`} onClick={() => setJoinPackId(null)}>
+                    <Button variant="outline" className="w-full gap-2"><Plus size={16} /> Yeni Uygulama Ekle</Button>
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="text-sm text-zinc-500 mb-4">Henüz yüklediğin bir uygulama yok. Önce uygulamanı ekle, sonra pack'e katıl.</p>
+                <Link href={`/dashboard/apps/new?packId=${joinPackId}`} onClick={() => setJoinPackId(null)}>
+                  <Button className="w-full gap-2"><Plus size={16} /> Uygulama Yükle</Button>
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

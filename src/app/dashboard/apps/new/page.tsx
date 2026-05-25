@@ -43,7 +43,7 @@ function isValidPlayUrl(url: string): boolean {
          /^https:\/\/play\.google\.com\/store\/apps\/details\?id=.+/.test(t)
 }
 
-const MAX_ICON_SIZE = 5 * 1024 * 1024
+const MAX_ICON_SIZE = 5_000_000
 
 export default function NewAppPage() {
   const { user, loading: authLoading } = useAuth()
@@ -94,7 +94,7 @@ export default function NewAppPage() {
     const file = e.target.files?.[0]
     if (!file) return
     if (file.size > MAX_ICON_SIZE) {
-      setIconError("Görsel boyutu en fazla 5 MB olabilir.")
+      setIconError("Görsel boyutu en fazla 5 MB olabilir. (" + (file.size / 1024 / 1024).toFixed(1) + " MB yüklemeye çalıştın)")
       setTimeout(() => setIconError(""), 4000)
       return
     }
@@ -305,7 +305,7 @@ export default function NewAppPage() {
                   <label className="cursor-pointer">
                     <span className="text-sm text-blue-600 hover:underline">Dosya seç</span>
                     <input type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={handleIconUpload} />
-                    <p className="text-xs text-zinc-400 mt-1">PNG, JPEG veya WebP (max. 5MB)</p>
+                    <p className="text-xs text-zinc-400 mt-1">PNG, JPEG veya WebP (max 5 MB)</p>
                   </label>
                 </div>
                 {iconError && <p className="text-xs text-red-500 mt-1">{iconError}</p>}

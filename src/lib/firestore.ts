@@ -59,6 +59,7 @@ export interface App {
   language: string
   googlePlayLink: string
   instructions: string
+  appIcon?: string
   status: "pending" | "testing" | "completed"
   packId?: string
   screenshots: string[]
@@ -83,6 +84,12 @@ export async function createPack(name: string, user?: User) {
   }
   const packRef = await addDoc(collection(d, "packs"), data)
   return { id: packRef.id }
+}
+
+export async function joinPackWithApp(packId: string, appId: string, user: User) {
+  const d = db!
+  await updateDoc(doc(d, "apps", appId), { packId, status: "pending" })
+  return joinPack(packId, user, "free")
 }
 
 export async function joinPack(packId: string, user: User, memberType: "free" | "premium" = "free") {
