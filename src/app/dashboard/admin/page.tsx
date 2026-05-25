@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { collection, getDocs, query, orderBy, limit } from "firebase/firestore"
+import { collection, getDocs, getCountFromServer, query, orderBy, limit, where } from "firebase/firestore"
 import { db, auth } from "@/lib/firebase"
 import { Users, Layers, FileText, Loader2, ArrowRight, Shield, CreditCard, UserCheck, AlertTriangle, Mail, History } from "lucide-react"
 import { usePageMeta } from "@/lib/usePageMeta"
@@ -45,16 +45,16 @@ export default function AdminPage() {
   const loadStats = async () => {
     if (!db) { return }
     const d = db
-    const [usersSnap, packsSnap, appsSnap, activePacksSnap] = await Promise.all([
-      getDocs(query(collection(d, "users"), limit(1000))),
-      getDocs(query(collection(d, "packs"), limit(1000))),
-      getDocs(query(collection(d, "apps"), limit(1000))),
-      getDocs(query(collection(d, "packs"), limit(1000))),
+    const [usersCount, packsCount, appsCount, activePacksSnap] = await Promise.all([
+      getCountFromServer(collection(d, "users")).then(s => s.data().count),
+      getCountFromServer(collection(d, "packs")).then(s => s.data().count),
+      getCountFromServer(collection(d, "apps")).then(s => s.data().count),
+      getDocs(query(collection(d, "packs"), where("status", "in", ["testing", "installing"]), limit(1000))),
     ])
     setStats({
-      users: usersSnap.size,
-      packs: packsSnap.size,
-      apps: appsSnap.size,
+      users: usersCount,
+      packs: packsCount,
+      apps: appsCount,
       activePacks: activePacksSnap.docs.filter(d => d.data().status === "testing" || d.data().status === "installing").length,
     })
     setLoading(false)
