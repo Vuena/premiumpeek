@@ -60,17 +60,6 @@ export interface App {
   createdAt: Timestamp
 }
 
-export interface CreditTransaction {
-  id: string
-  uid: string
-  amount: number
-  type: "earned" | "spent"
-  reason: "test" | "post" | "bonus" | "referral" | "penalty"
-  referenceId?: string
-  note?: string
-  createdAt: Timestamp
-}
-
 export interface DailyActivity {
   id: string
   packId: string
@@ -84,16 +73,6 @@ export interface DailyActivity {
 }
 
 // ==================== PACK FUNCTIONS ====================
-
-const CODES = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
-
-function generatePackCode(): string {
-  let code = ""
-  for (let i = 0; i < 6; i++) {
-    code += CODES[Math.floor(Math.random() * CODES.length)]
-  }
-  return code
-}
 
 export async function createPack(name: string, user: User) {
   const d = db!
@@ -117,20 +96,6 @@ export async function createPack(name: string, user: User) {
   }
   const packRef = await addDoc(collection(d, "packs"), data)
   return { id: packRef.id }
-}
-
-export async function joinPackByCode(code: string, user: User) {
-  const d = db!
-  const packsRef = collection(d, "packs")
-  const q = query(packsRef, where("code", "==", code.toUpperCase()), where("status", "==", "forming"), limit(1))
-  const snapshot = await getDocs(q)
-
-  if (snapshot.empty) {
-    throw new Error("Geçerli bir pack kodu bulunamadı. Kod hatalı veya pack dolu olabilir.")
-  }
-
-  const packDoc = snapshot.docs[0]
-  return doJoinPack(d, packDoc.id, packDoc.data(), user)
 }
 
 export async function joinPack(packId: string, user: User) {

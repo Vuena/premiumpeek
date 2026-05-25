@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { sendEmail, dailyReminderHtml, packInviteHtml, warningHtml, removedHtml } from "@/lib/email"
+import { sendEmail, dailyReminderHtml, warningHtml, removedHtml } from "@/lib/email"
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,10 +13,6 @@ export async function POST(req: NextRequest) {
       case "daily-reminder":
         subject = "📱 Bugün test etmen gereken uygulamalar var!"
         html = dailyReminderHtml(data.userName, data.appCount, data.packName, data.testingLink)
-        break
-      case "pack-invite":
-        subject = `📱 ${data.inviterName} seni bir pack'e davet etti!`
-        html = packInviteHtml(data.packName, data.code, data.inviterName, data.joinLink)
         break
       case "warning":
         subject = `⚠️ ${data.daysMissed}. gün uyarısı - ${data.packName}`

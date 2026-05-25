@@ -26,26 +26,6 @@ export async function sendDailyReminder({ to, userName }: EmailOptions, appCount
   }
 }
 
-export async function sendPackInvite({ to, userName }: EmailOptions, packName: string, code: string, inviterName: string) {
-  try {
-    await fetch(`${API_URL}/api/email`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type: "pack-invite",
-        to,
-        userName,
-        packName,
-        code,
-        inviterName,
-        joinLink: `${API_URL}/dashboard/packs/join`,
-      }),
-    })
-  } catch (err) {
-    console.error("Failed to send email:", err)
-  }
-}
-
 export async function sendWarning({ to, userName }: EmailOptions, daysMissed: number, packName: string) {
   try {
     await fetch(`${API_URL}/api/email`, {

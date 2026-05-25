@@ -25,7 +25,7 @@ export default function BlogPage() {
     },
     {
       title: "Pack Sistemi Nasıl Çalışır?",
-      desc: "16 geliştiriciden oluşan pack'lerle test sürecinizi nasıl hızlandıracağınızı öğrenin.",
+      desc: "25 geliştiriciden oluşan pack'lerle test sürecinizi nasıl hızlandıracağınızı öğrenin.",
       date: "Mart 2026",
     },
   ]

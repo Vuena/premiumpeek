@@ -92,7 +92,7 @@ export default function DashboardPage() {
                   <p className="text-sm">Henüz aktif pack'in yok</p>
                   <div className="flex justify-center gap-2 mt-4">
                     <Link href="/dashboard/packs/new"><Button size="sm">Pack Oluştur</Button></Link>
-                    <Link href="/dashboard/packs/join"><Button size="sm" variant="outline">Kodla Katıl</Button></Link>
+                    <Link href="/dashboard/packs/join"><Button size="sm" variant="outline">Pack'lere Göz At</Button></Link>
                   </div>
                 </div>
               ) : (
@@ -122,7 +122,7 @@ export default function DashboardPage() {
               <div className="grid sm:grid-cols-2 gap-3">
                 {[
                   { icon: Plus, label: "Yeni Pack", href: "/dashboard/packs/new", desc: "25 kişilik grup kur", color: "text-blue-600" },
-                  { icon: Users, label: "Pack'e Katıl", href: "/dashboard/packs/join", desc: "Davet kodu gir", color: "text-indigo-600" },
+                  { icon: Users, label: "Pack'e Katıl", href: "/dashboard/packs/join", desc: "Aktif pack'leri gör", color: "text-indigo-600" },
                   { icon: FileText, label: "Uygulama Yükle", href: "/dashboard/apps/new", desc: "Pack'ine ekle", color: "text-purple-600" },
                   { icon: Clock, label: "Bugünkü Testler", href: "/dashboard/testing", desc: "Testlerini yap", color: "text-green-600" },
                   { icon: FileText, label: "Raporlar", href: "/dashboard/reports", desc: "Test raporlarını gör", color: "text-orange-600" },

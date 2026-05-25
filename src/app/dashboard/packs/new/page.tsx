@@ -100,7 +100,6 @@ export default function NewPackPage() {
             </Button>
           </form>
           <p className="mt-4 text-center text-sm text-zinc-500">
-            Davet kodun mu var?{" "}
             <Link href="/dashboard/packs/join" className="text-blue-600 hover:underline font-medium">Aktif Pack'lere Katıl</Link>
           </p>
         </CardContent>

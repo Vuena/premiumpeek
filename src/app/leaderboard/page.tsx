@@ -50,7 +50,6 @@ export default function LeaderboardPage() {
                 <th className="text-left px-4 py-3 font-medium">Kullanıcı</th>
                 <th className="text-center px-4 py-3 font-medium">Test Edilen</th>
                 <th className="text-center px-4 py-3 font-medium">Yayınlanan</th>
-                <th className="text-center px-4 py-3 font-medium">Kredi</th>
               </tr>
             </thead>
             <tbody>
@@ -76,7 +75,6 @@ export default function LeaderboardPage() {
                   </td>
                   <td className="text-center px-4 py-3 font-bold">{u.totalTested || 0}</td>
                   <td className="text-center px-4 py-3">{u.totalPosted || 0}</td>
-                  <td className="text-center px-4 py-3 font-bold">{u.credits || 0}</td>
                 </tr>
               ))}
             </tbody>
