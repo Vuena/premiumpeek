@@ -1,7 +1,7 @@
 "use client"
 export const dynamic = "force-dynamic"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, memo } from "react"
 import { useAuth } from "@/context/AuthContext"
 import { Card, CardContent } from "@/components/ui/card"
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore"
@@ -9,7 +9,7 @@ import { db } from "@/lib/firebase"
 import { Trophy, Medal, Loader2 } from "lucide-react"
 import { usePageMeta } from "@/lib/usePageMeta"
 
-export default function LeaderboardClient() {
+const LeaderboardClient = memo(function LeaderboardClient() {
   usePageMeta({ title: "Liderlik Tablosu | PremiumPeek", description: "En çok test yapan kullanıcılar.", canonical: "https://www.premiumpeek.com/leaderboard" })
   const { user } = useAuth()
   const [topUsers, setTopUsers] = useState<any[]>([])
@@ -121,4 +121,6 @@ export default function LeaderboardClient() {
       </div>
     </div>
   )
-}
+})
+
+export default LeaderboardClient

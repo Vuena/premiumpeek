@@ -94,6 +94,22 @@ export default function ContactClient() {
       <p className="text-xs text-muted text-center mt-8">
         Veya doğrudan <a href="mailto:premiumpeektest@gmail.com" className="text-blue-600 hover:underline">premiumpeektest@gmail.com</a> adresine e-posta gönder.
       </p>
+
+      <div className="mt-12">
+        <h2 className="text-xl font-bold mb-6 text-center">Sık Sorulan Sorular</h2>
+        <div className="space-y-3">
+          {[
+            { q: "Ne kadar sürede dönüş alırım?", a: "Genellikle 1-2 saat içinde yanıtlıyoruz. Hafta sonları biraz daha uzun sürebilir." },
+            { q: "Hangi konularda yardım alabilirim?", a: "Pack sistemi, test süreci, ödeme ve teknik sorunlar dahil her konuda bize ulaşabilirsiniz." },
+            { q: "İş birliği teklifi göndermek istiyorum.", a: "İş birliği ve ortaklık tekliflerinizi de aynı adres üzerinden iletebilirsiniz." },
+          ].map(item => (
+            <details key={item.q} className="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4 group">
+              <summary className="font-medium cursor-pointer text-sm">{item.q}</summary>
+              <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">{item.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }

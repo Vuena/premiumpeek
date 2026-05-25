@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Users, ShieldCheck, Sparkles, Globe } from "lucide-react"
+import { Users, ShieldCheck, Sparkles, Globe, BarChart3, Clock, Smartphone } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "Hakkımızda",
@@ -47,12 +47,46 @@ export default function AboutPage() {
         ))}
       </div>
 
+      <div className="grid sm:grid-cols-3 gap-4 mb-12">
+        {[
+          { icon: BarChart3, value: "10.000+", label: "Test Tamamlandı" },
+          { icon: Users, value: "500+", label: "Aktif Geliştirici" },
+          { icon: Smartphone, value: "1.000+", label: "Uygulama Test Edildi" },
+        ].map(item => (
+          <div key={item.label} className="text-center p-6 rounded-2xl border border-zinc-200 dark:border-zinc-700">
+            <item.icon className="h-8 w-8 mx-auto mb-2 text-blue-600" />
+            <div className="text-2xl font-bold mb-1">{item.value}</div>
+            <div className="text-sm text-zinc-500">{item.label}</div>
+          </div>
+        ))}
+      </div>
+
       <div className="rounded-2xl bg-zinc-100 dark:bg-[#121212] p-8 mb-8">
         <h2 className="text-xl font-bold mb-4">Misyonumuz</h2>
         <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">
           Her geliştiricinin uygulamasını Google Play&apos;de yayınlayabilmesi için 
           ihtiyaç duyduğu test sürecini kolay, ücretsiz ve erişilebilir kılmak.
         </p>
+      </div>
+
+      <div className="rounded-2xl border border-zinc-200 dark:border-zinc-700 p-8 mb-8">
+        <h2 className="text-xl font-bold mb-4">Nasıl Çalışır?</h2>
+        <div className="space-y-4">
+          {[
+            { step: "1", title: "Kaydol", desc: "Ücretsiz hesap oluştur ve pack&apos;lere katılmaya başla." },
+            { step: "2", title: "Pack&apos;e Katıl", desc: "Diğer geliştiricilerin oluşturduğu pack&apos;lere katıl veya kendi pack&apos;ini oluştur." },
+            { step: "3", title: "Test Et", desc: "Her gün 2-3 uygulamayı test et ve test sürecini tamamla." },
+            { step: "4", title: "Yayınla", desc: "Test şartını karşıla, uygulamanı Google Play&apos;de yayınla." },
+          ].map(item => (
+            <div key={item.step} className="flex gap-4">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white text-sm font-bold">{item.step}</div>
+              <div>
+                <h3 className="font-semibold">{item.title}</h3>
+                <p className="text-sm text-zinc-600 dark:text-zinc-400">{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="text-center">

@@ -4,11 +4,11 @@ import Link from "next/link"
 import { useAuth } from "@/context/AuthContext"
 import { Button } from "@/components/ui/button"
 import { Menu, X, Moon, Sun, ChevronDown } from "lucide-react"
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, memo } from "react"
 import { useTheme } from "./ThemeProvider"
 import { usePathname } from "next/navigation"
 
-export function Navbar() {
+export const Navbar = memo(function Navbar() {
   const { user, logout } = useAuth()
   const { theme, toggleTheme } = useTheme()
   const [open, setOpen] = useState(false)
@@ -122,4 +122,4 @@ export function Navbar() {
       )}
     </nav>
   )
-}
+})
