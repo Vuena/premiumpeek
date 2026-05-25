@@ -141,36 +141,57 @@ export async function joinPackByCode(code: string, user: User) {
   }
 
   const packDoc = snapshot.docs[0]
-  const packData = packDoc.data() as Omit<Pack, "id">
+  return doJoinPack(d, packDoc.id, packDoc.data(), user)
+}
 
-  if (packData.members.length >= packData.maxMembers) {
-    throw new Error("Bu pack dolu (16/16).")
-  }
+export async function joinPack(packId: string, user: User) {
+  const d = db!
+  const snap = await getDoc(doc(d, "packs", packId))
+  if (!snap.exists()) throw new Error("Pack bulunamadı.")
+  return doJoinPack(d, packId, snap.data(), user)
+}
 
-  if (packData.members.some((m) => m.uid === user.uid)) {
-    throw new Error("Zaten bu pack'in üyesisin.")
-  }
+async function doJoinPack(d: any, packId: string, packData: any, user: User) {
+  if (packData.status !== "forming") throw new Error("Bu pack artık yeni üye kabul etmiyor.")
+  if (packData.members.length >= packData.maxMembers) throw new Error("Bu pack dolu (16/16).")
+  if (packData.members.some((m: any) => m.uid === user.uid)) throw new Error("Zaten bu pack'in üyesisin.")
 
+  let started = false
   await runTransaction(d, async (transaction) => {
-    const ref = doc(d, "packs", packDoc.id)
+    const ref = doc(d, "packs", packId)
     const snap = await transaction.get(ref)
     if (!snap.exists()) throw new Error("Pack bulunamadı.")
     const current = snap.data()
+    if (current.status !== "forming") throw new Error("Bu pack artık yeni üye kabul etmiyor.")
     if (current.members.length >= current.maxMembers) throw new Error("Pack doldu.")
     if (current.members.some((m: any) => m.uid === user.uid)) throw new Error("Zaten üyesin.")
 
-    transaction.update(ref, {
-      members: arrayUnion({
-        uid: user.uid,
-        displayName: user.displayName || user.email || "İsimsiz",
-        photoURL: user.photoURL || "",
-        joinedAt: new Date(),
-      }),
-      memberUids: arrayUnion(user.uid),
-    })
+    const newMember = {
+      uid: user.uid,
+      displayName: user.displayName || user.email || "İsimsiz",
+      photoURL: user.photoURL || "",
+      joinedAt: new Date(),
+    }
+
+    const newMemberCount = current.members.length + 1
+    if (newMemberCount >= current.maxMembers) {
+      transaction.update(ref, {
+        members: arrayUnion(newMember),
+        memberUids: arrayUnion(user.uid),
+        status: "active",
+        startDate: new Date(),
+        currentDay: 1,
+      })
+      started = true
+    } else {
+      transaction.update(ref, {
+        members: arrayUnion(newMember),
+        memberUids: arrayUnion(user.uid),
+      })
+    }
   })
 
-  return { packId: packDoc.id, packName: packData.name }
+  return { packId, packName: packData.name, started }
 }
 
 export async function leavePack(packId: string, uid: string) {
@@ -201,6 +222,17 @@ export async function getUserPacks(uid: string) {
   )
   const snapshot = await getDocs(q)
   return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Pack))
+}
+
+export async function getFormingPacks() {
+  const d = db!
+  const q = query(
+    collection(d, "packs"),
+    where("status", "==", "forming"),
+    orderBy("createdAt", "desc")
+  )
+  const snap = await getDocs(q)
+  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Pack))
 }
 
 export async function getPackById(packId: string) {

@@ -1,82 +1,119 @@
 "use client"
 export const dynamic = "force-dynamic"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useAuth } from "@/context/AuthContext"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { joinPackByCode } from "@/lib/firestore"
-import { Users, Loader2, ArrowRight } from "lucide-react"
+import { getFormingPacks, joinPack, type Pack } from "@/lib/firestore"
+import { Users, Loader2, Plus, UserCheck, Clock, ArrowRight } from "lucide-react"
 import Link from "next/link"
 
 export default function JoinPackPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
-  const [code, setCode] = useState("")
+  const [packs, setPacks] = useState<(Pack & { id: string })[]>([])
+  const [loading, setLoading] = useState(true)
+  const [joining, setJoining] = useState<string | null>(null)
   const [error, setError] = useState("")
-  const [loading, setLoading] = useState(false)
 
-  if (authLoading) return null
-  if (!user) { router.push("/login"); return null }
+  useEffect(() => {
+    if (authLoading) return
+    if (!user) { router.push("/login"); return }
+    load()
+  }, [user, authLoading])
 
-  const handleJoin = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const load = async () => {
+    const data = await getFormingPacks()
+    setPacks(data)
+    setLoading(false)
+  }
+
+  const handleJoin = async (packId: string) => {
+    if (!user) return
     setError("")
-    if (!code.trim()) { setError("Davet kodu gerekli"); return }
-    setLoading(true)
+    setJoining(packId)
     try {
-      const result = await joinPackByCode(code.trim(), user)
+      const result = await joinPack(packId, user)
       router.push(`/dashboard/packs/${result.packId}`)
     } catch (err: any) {
-      setError(err.message || "Pack'e katılırken hata oluştu")
-    } finally {
-      setLoading(false)
+      setError(err.message)
+      setJoining(null)
     }
   }
 
+  if (authLoading) return null
+  if (!user) return null
+
   return (
-    <div className="flex items-center justify-center px-4 py-16">
-      <Card className="w-full max-w-md border-0 shadow-sm">
-        <CardHeader className="text-center">
-          <div className="flex justify-center mb-2">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/30">
-              <Users className="h-6 w-6 text-blue-600" />
-            </div>
-          </div>
-          <CardTitle className="text-xl">Pack&apos;e Katıl</CardTitle>
-          <CardDescription>
-            Bir arkadaşının davet kodunu gir ve pack&apos;ine katıl.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {error && (
-            <div className="mb-4 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 p-3 text-sm text-red-600 dark:text-red-400">{error}</div>
-          )}
-          <form onSubmit={handleJoin} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-1.5">Davet Kodu</label>
-              <Input
-                value={code}
-                onChange={(e) => setCode(e.target.value.toUpperCase())}
-                placeholder="Örn: ABC123"
-                className="text-center text-lg font-mono tracking-widest uppercase"
-                required
-                maxLength={6}
-              />
-            </div>
-            <Button type="submit" disabled={loading} className="w-full gap-2">
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight size={18} />}
-              Pack&apos;e Katıl
-            </Button>
-          </form>
-          <p className="mt-4 text-center text-sm text-zinc-500">
-            Kendi pack&apos;ini oluşturmak ister misin?{" "}
-            <Link href="/dashboard/packs/new" className="text-blue-600 hover:underline font-medium">Pack Oluştur</Link>
-          </p>
-        </CardContent>
-      </Card>
+    <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
+      <Link href="/dashboard/packs" className="inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white mb-6">
+        <ArrowRight size={16} className="rotate-180" /> Pack'lerim
+      </Link>
+
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-2xl font-bold">Pack'e Katıl</h1>
+          <p className="text-sm text-zinc-500 mt-1">Aşağıdaki açık pack'lerden birine katıl, yeterli kişiye ulaşınca testler başlasın.</p>
+        </div>
+        <Link href="/dashboard/packs/new">
+          <Button className="gap-2"><Plus size={16} />Pack Oluştur</Button>
+        </Link>
+      </div>
+
+      {error && (
+        <div className="mb-4 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 p-3 text-sm text-red-600 dark:text-red-400">{error}</div>
+      )}
+
+      {loading ? (
+        <div className="flex justify-center py-16"><Loader2 className="h-8 w-8 animate-spin text-zinc-400" /></div>
+      ) : packs.length === 0 ? (
+        <Card className="border-0 shadow-sm">
+          <CardContent className="p-12 text-center">
+            <Users className="h-12 w-12 mx-auto mb-4 text-zinc-300 dark:text-zinc-600" />
+            <h2 className="text-lg font-semibold mb-2">Aktif pack bulunamadı</h2>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">
+              Şu anda katılabileceğin açık bir pack yok. İlk pack'i sen oluştur!
+            </p>
+            <Link href="/dashboard/packs/new"><Button>Pack Oluştur</Button></Link>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid sm:grid-cols-2 gap-4">
+          {packs.map((pack) => {
+            const dolu = pack.members.length >= pack.maxMembers
+            return (
+              <Card key={pack.id} className={`border-0 shadow-sm hover:shadow-md transition-shadow ${dolu ? "opacity-60" : ""}`}>
+                <CardContent className="p-5">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h3 className="font-semibold">{pack.name}</h3>
+                      <p className="text-xs text-zinc-500 mt-0.5">Oluşturan: {pack.members[0]?.displayName || "İsimsiz"}</p>
+                    </div>
+                    <div className="flex items-center gap-1 text-sm font-bold text-blue-600">
+                      <UserCheck size={16} />
+                      {pack.members.length}/{pack.maxMembers}
+                    </div>
+                  </div>
+                  <div className="h-2 rounded-full bg-zinc-200 dark:bg-zinc-700 overflow-hidden mb-3">
+                    <div className="h-full bg-blue-500 transition-all" style={{ width: `${(pack.members.length / pack.maxMembers) * 100}%` }} />
+                  </div>
+                  <Button
+                    onClick={() => handleJoin(pack.id)}
+                    disabled={joining === pack.id || dolu}
+                    className="w-full gap-2 text-sm"
+                    size="sm"
+                    variant={dolu ? "outline" : "default"}
+                  >
+                    {joining === pack.id ? <Loader2 className="h-4 w-4 animate-spin" /> : dolu ? "Dolu" : "Katıl"}
+                  </Button>
+                </CardContent>
+              </Card>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
