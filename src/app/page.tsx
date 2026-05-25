@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Users, Calendar, ShieldCheck, Clock, FileText, Star, ArrowRight, Sparkles, Smartphone, CheckCircle } from "lucide-react"
-import { CREDIT_COST_POST, CREDIT_EARN_PER_TEST, CREDIT_SIGNUP_BONUS } from "@/lib/firestore"
+import { CREDIT_COST_POST, CREDIT_EARN_PER_TEST, CREDIT_EARN_BONUS_FEEDBACK, CREDIT_SIGNUP_BONUS } from "@/lib/firestore"
 
 export default function Home() {
   const stats = [
@@ -39,7 +39,7 @@ export default function Home() {
     { q: "Google Play'in şartı ne?", a: "Yeni hesaplar, yayın öncesinde 12 gerçek kullanıcı tarafından 14 ardışık gün test edilmelidir." },
     { q: "Kaç kişi bir pack'te yer alır?", a: "Her pack 16 geliştiriciden oluşur. 16 gün boyunca birbirinizin uygulamalarını test eder ve Google Play şartını karşılarsınız." },
     { q: "Ya birisi test etmezse?", a: "3 gün üst üste test etmeyen pack'ten atılır. Bu sayede herkesin aktif kalması sağlanır." },
-    { q: "Kaç kredi kazanabilirim?", a: "Her test ettiğin uygulama için +4🪙 kazanırsın. Günde 15 uygulama × 4🪙 = 60🪙. 16 günde toplam 960🪙." },
+    { q: "Kaç kredi kazanabilirim?", a: `Her test ettiğin uygulama için +${CREDIT_EARN_PER_TEST}🪙 kazanırsın. Detaylı yorum yazarsan +${CREDIT_EARN_BONUS_FEEDBACK}🪙 bonus. Günde 15 uygulama ile 75🪙, 16 günde 1.200🪙'a kadar kazanç.` },
     { q: "Uygulamam her dilde test edilebilir mi?", a: "Evet. Tüm dillerdeki uygulamalar desteklenir. Geri bildirimler Türkçe veya İngilizce verilir." },
   ]
 
