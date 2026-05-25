@@ -136,7 +136,7 @@ export default function PackDetailPage() {
   if (!isMember) { router.push("/dashboard"); return null }
   if (myApps.length === 0 && !isPremium && pack.status === "testing") { router.push("/dashboard/apps/new"); return null }
 
-  const daysCompleted = pack.status === "testing" ? pack.currentDay - 1 : pack.status === "completed" ? pack.totalDays : 0
+  const daysCompleted = pack.status === "testing" ? Math.max(0, pack.currentDay - 1) : pack.status === "completed" ? pack.totalDays : 0
 
   const myMemberInfo = pack.members.find(m => m.uid === user?.uid)
   const myInstallConfirmed = myMemberInfo?.installConfirmed

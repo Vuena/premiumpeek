@@ -68,7 +68,7 @@ export interface App {
 
 // ==================== PACK FUNCTIONS ====================
 
-export async function createPack(name: string, user?: User) {
+export async function createPack(name: string) {
   const d = db!
   const data = {
     name,
