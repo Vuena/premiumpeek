@@ -1,13 +1,15 @@
 "use client"
 export const dynamic = "force-dynamic"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useAuth } from "@/context/AuthContext"
 import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { getUserPacks, getPackApps, recordTestingActivity, type Pack, type App, type PackMember } from "@/lib/firestore"
-import { Clock, CheckCircle2, ExternalLink, Loader2, Smartphone } from "lucide-react"
+import { getUserPacks, getPackApps, recordTestingActivity, addComplaint, hasDayScreenshot, recordScreenshot, type Pack, type App } from "@/lib/firestore"
+import { storage } from "@/lib/firebase"
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
+import { Clock, CheckCircle2, ExternalLink, Loader2, Smartphone, Camera, AlertTriangle, X } from "lucide-react"
 
 export default function TestingPage() {
   const { user, loading: authLoading } = useAuth()
@@ -17,6 +19,14 @@ export default function TestingPage() {
   const [loading, setLoading] = useState(true)
   const [testedToday, setTestedToday] = useState<string[]>([])
   const [feedbacks, setFeedbacks] = useState<Record<string, string>>({})
+  const [screenshots, setScreenshots] = useState<Record<string, File | null>>({})
+  const [screenshotPreviews, setScreenshotPreviews] = useState<Record<string, string>>({})
+  const [uploading, setUploading] = useState<Record<string, boolean>>({})
+  const [complaintOpen, setComplaintOpen] = useState<string | null>(null)
+  const [complaintReason, setComplaintReason] = useState("")
+  const [complaintSubmitting, setComplaintSubmitting] = useState(false)
+  const [error, setError] = useState("")
+  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({})
 
   useEffect(() => {
     if (authLoading) return
@@ -51,19 +61,85 @@ export default function TestingPage() {
     if (stored) setTestedToday(JSON.parse(stored))
   }
 
-  const markTested = async (appId: string, packId: string) => {
-    const updated = [...testedToday, appId]
-    setTestedToday(updated)
-    localStorage.setItem(`tested_${new Date().toDateString()}`, JSON.stringify(updated))
+  const handleScreenshotSelect = (appId: string, file: File | null) => {
+    if (!file) {
+      setScreenshots(prev => ({ ...prev, [appId]: null }))
+      setScreenshotPreviews(prev => ({ ...prev, [appId]: "" }))
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Dosya boyutu 5MB'ı geçemez"); setTimeout(() => setError(""), 4000)
+      return
+    }
+    if (!file.type.startsWith("image/")) {
+      setError("Sadece resim dosyası yükleyebilirsin"); setTimeout(() => setError(""), 4000)
+      return
+    }
+    setScreenshots(prev => ({ ...prev, [appId]: file }))
+    const reader = new FileReader()
+    reader.onload = (e) => setScreenshotPreviews(prev => ({ ...prev, [appId]: e.target?.result as string }))
+    reader.readAsDataURL(file)
+  }
 
-    const pack = packsMap[packId]
-    if (pack && user) {
-      try {
-        const fb = feedbacks[appId] || ""
-        await recordTestingActivity(packId, user.uid, pack.currentDay, fb)
-      } catch (err) {
-        console.error("Failed to record testing activity:", err)
-      }
+  const markTested = async (appId: string, packId: string) => {
+    const file = screenshots[appId]
+    if (!file) {
+      setError("Test kanıtı olarak screenshot yüklemelisin"); setTimeout(() => setError(""), 4000)
+      return
+    }
+
+    setUploading(prev => ({ ...prev, [appId]: true }))
+    try {
+      const pack = packsMap[packId]
+      if (!pack || !user) return
+
+      const day = pack.currentDay
+      const storagePath = `screenshots/tests/${packId}/${user.uid}/${day}_${Date.now()}.jpg`
+      const storageRef = ref(storage!, storagePath)
+      await uploadBytes(storageRef, file)
+      const url = await getDownloadURL(storageRef)
+
+      await recordScreenshot(packId, user.uid, day, url, "test")
+
+      const updated = [...testedToday, appId]
+      setTestedToday(updated)
+      localStorage.setItem(`tested_${new Date().toDateString()}`, JSON.stringify(updated))
+
+      const fb = feedbacks[appId] || ""
+      await recordTestingActivity(packId, user.uid, day, fb)
+    } catch (err) {
+      console.error("Failed to record testing activity:", err)
+      setError("Screenshot yüklenirken hata oluştu"); setTimeout(() => setError(""), 4000)
+    } finally {
+      setUploading(prev => ({ ...prev, [appId]: false }))
+    }
+  }
+
+  const submitComplaint = async (appId: string) => {
+    if (!complaintReason.trim() || !user) return
+    setComplaintSubmitting(true)
+    try {
+      const app = appsToTest.find(a => a.id === appId)
+      if (!app) return
+      const pack = packsMap[app.packId || ""]
+      if (!pack) return
+      const targetMember = pack.members.find(m => m.uid === app.uid)
+      await addComplaint({
+        packId: pack.id,
+        appId: app.id,
+        appName: app.appName,
+        complainedBy: user.uid,
+        complainedByName: user.displayName || user.email || "İsimsiz",
+        targetUid: app.uid,
+        targetName: targetMember?.displayName || "Bilinmiyor",
+        reason: complaintReason,
+      })
+      setComplaintOpen(null)
+      setComplaintReason("")
+    } catch (err) {
+      console.error("Complaint failed:", err)
+    } finally {
+      setComplaintSubmitting(false)
     }
   }
 
@@ -77,6 +153,10 @@ export default function TestingPage() {
           {new Date().toLocaleDateString("tr-TR", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
         </p>
       </div>
+
+      {error && (
+        <div className="mb-4 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 p-3 text-sm text-red-600 dark:text-red-400">{error}</div>
+      )}
 
       {isPremium && (
         <Card className="border-0 shadow-sm mb-6 border-l-4 border-l-amber-500">
@@ -111,6 +191,8 @@ export default function TestingPage() {
 
           {appsToTest.map((app) => {
             const tested = testedToday.includes(app.id)
+            const pack = packsMap[app.packId || ""]
+            const currentDay = pack?.currentDay || 0
             return (
               <Card key={app.id} className={`border-0 shadow-sm transition-all ${tested ? "opacity-60" : ""}`}>
                 <CardContent className="p-5">
@@ -129,16 +211,58 @@ export default function TestingPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
+                      {!tested && (
+                        <button
+                          onClick={() => setComplaintOpen(complaintOpen === app.id ? null : app.id)}
+                          className="h-9 w-9 flex items-center justify-center rounded-xl text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer"
+                          title="Uygulama çalışmıyor"
+                        >
+                          <AlertTriangle size={16} />
+                        </button>
+                      )}
                       <a href={app.googlePlayLink} target="_blank" rel="noopener noreferrer">
                         <Button variant="ghost" size="sm"><ExternalLink size={16} /></Button>
                       </a>
                       {!tested && (
-                        <Button size="sm" onClick={() => markTested(app.id, app.packId || "")}>Test Edildi</Button>
+                        <Button size="sm" onClick={() => markTested(app.id, app.packId || "")} disabled={uploading[app.id]}>
+                          {uploading[app.id] ? <Loader2 className="h-4 w-4 animate-spin" /> : "Test Edildi"}
+                        </Button>
                       )}
                     </div>
                   </div>
+
                   {!tested && (
-                    <div className="mt-3 ml-14">
+                    <div className="mt-3 ml-14 space-y-3">
+                      {/* Screenshot upload */}
+                      <div>
+                        <input
+                          ref={el => { fileInputRefs.current[app.id] = el }}
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => handleScreenshotSelect(app.id, e.target.files?.[0] || null)}
+                        />
+                        {screenshotPreviews[app.id] ? (
+                          <div className="relative inline-block">
+                            <img src={screenshotPreviews[app.id]} alt="Screenshot" className="h-32 rounded-xl object-cover border border-zinc-300 dark:border-zinc-600" />
+                            <button
+                              onClick={() => { setScreenshots(prev => ({ ...prev, [app.id]: null })); setScreenshotPreviews(prev => ({ ...prev, [app.id]: "" })) }}
+                              className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-red-500 text-white flex items-center justify-center cursor-pointer"
+                            >
+                              <X size={12} />
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => fileInputRefs.current[app.id]?.click()}
+                            className="flex items-center gap-2 text-xs text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors cursor-pointer"
+                          >
+                            <Camera size={14} />
+                            Screenshot ekle (kanıt)
+                          </button>
+                        )}
+                      </div>
+
                       <textarea
                         value={feedbacks[app.id] || ""}
                         onChange={(e) => setFeedbacks({ ...feedbacks, [app.id]: e.target.value })}
@@ -146,6 +270,26 @@ export default function TestingPage() {
                         className="w-full rounded-xl border border-zinc-300 dark:border-zinc-600 bg-transparent px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-zinc-400"
                         rows={2}
                       />
+                    </div>
+                  )}
+
+                  {/* Complaint panel */}
+                  {complaintOpen === app.id && !tested && (
+                    <div className="mt-3 ml-14 p-3 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800">
+                      <p className="text-xs font-medium text-red-700 dark:text-red-400 mb-2">Uygulama çalışmıyor, sorunu açıkla:</p>
+                      <textarea
+                        value={complaintReason}
+                        onChange={(e) => setComplaintReason(e.target.value)}
+                        placeholder="Örn: Google Play sayfası açılmıyor, hata veriyor..."
+                        className="w-full rounded-lg border border-red-300 dark:border-red-700 bg-transparent px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-red-400 mb-2"
+                        rows={2}
+                      />
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="destructive" onClick={() => submitComplaint(app.id)} disabled={complaintSubmitting || !complaintReason.trim()}>
+                          {complaintSubmitting ? <Loader2 className="h-3 w-3 animate-spin" /> : "Bildir"}
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => { setComplaintOpen(null); setComplaintReason("") }}>İptal</Button>
+                      </div>
                     </div>
                   )}
                 </CardContent>

@@ -7,7 +7,9 @@ import { useRouter } from "next/navigation"
 import { useParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { getPackById, getUserApps, getPackApps, leavePack, confirmInstall, transitionInstallingToTesting, type Pack, type App } from "@/lib/firestore"
+import { getPackById, getUserApps, getPackApps, leavePack, confirmInstall, transitionInstallingToTesting, recordScreenshot, type Pack, type App } from "@/lib/firestore"
+import { storage } from "@/lib/firebase"
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import type { Timestamp } from "firebase/firestore"
 import { ArrowLeft, Users, Clock, Calendar, CheckCircle2, Loader2, LogOut, ExternalLink, Smartphone, Hourglass, Trophy } from "lucide-react"
 import Link from "next/link"
@@ -22,6 +24,9 @@ export default function PackDetailPage() {
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState(false)
   const [installTimeLeft, setInstallTimeLeft] = useState("")
+  const [installScreenshot, setInstallScreenshot] = useState<File | null>(null)
+  const [installScreenshotPreview, setInstallScreenshotPreview] = useState("")
+  const [installError, setInstallError] = useState("")
 
   const isPremium = pack?.members.find(m => m.uid === user?.uid)?.type === "premium"
 
@@ -97,16 +102,32 @@ export default function PackDetailPage() {
     }
   }
 
+  const handleInstallScreenshot = (file: File | null) => {
+    if (!file) { setInstallScreenshot(null); setInstallScreenshotPreview(""); return }
+    if (file.size > 5 * 1024 * 1024) { setInstallError("Dosya boyutu 5MB'ı geçemez"); setTimeout(() => setInstallError(""), 4000); return }
+    if (!file.type.startsWith("image/")) { setInstallError("Sadece resim dosyası yükleyebilirsin"); setTimeout(() => setInstallError(""), 4000); return }
+    setInstallScreenshot(file)
+    const reader = new FileReader()
+    reader.onload = (e) => setInstallScreenshotPreview(e.target?.result as string)
+    reader.readAsDataURL(file)
+  }
+
   const handleConfirmInstall = async () => {
-    if (!pack || !user) return
+    if (!pack || !user || !installScreenshot) return
     setActionLoading(true)
+    setInstallError("")
     try {
+      const storagePath = `screenshots/installs/${pack.id}/${user.uid}/${Date.now()}.jpg`
+      const storageRef = ref(storage!, storagePath)
+      await uploadBytes(storageRef, installScreenshot)
+      const url = await getDownloadURL(storageRef)
+      await recordScreenshot(pack.id, user.uid, 0, url, "install")
       await confirmInstall(pack.id, user.uid)
       const fresh = await getPackById(pack.id)
       if (fresh) setPack(fresh)
       alert("Tüm uygulamalar yüklendi! Pack başlıyor...")
     } catch (err: any) {
-      alert(err.message)
+      setInstallError(err.message || "Bir hata oluştu")
     } finally {
       setActionLoading(false)
     }
@@ -266,11 +287,45 @@ export default function PackDetailPage() {
               </div>
             )}
 
+            {installError && (
+              <p className="text-sm text-red-600 mb-3">{installError}</p>
+            )}
             {apps.length > 0 && (
-              <Button onClick={handleConfirmInstall} disabled={actionLoading} className="gap-2 w-full sm:w-auto">
-                {actionLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 size={16} />}
-                Hepsi Yüklendi
-              </Button>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                {installScreenshotPreview ? (
+                  <div className="relative inline-block">
+                    <img src={installScreenshotPreview} alt="Install screenshot" className="h-24 rounded-xl object-cover border border-zinc-300 dark:border-zinc-600" />
+                    <button
+                      onClick={() => { setInstallScreenshot(null); setInstallScreenshotPreview("") }}
+                      className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-red-500 text-white flex items-center justify-center cursor-pointer text-xs"
+                    >X</button>
+                  </div>
+                ) : (
+                  <input
+                    id="install-ss"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => handleInstallScreenshot(e.target.files?.[0] || null)}
+                  />
+                )}
+                <div className="flex gap-2">
+                  {!installScreenshotPreview && (
+                    <label htmlFor="install-ss" className="cursor-pointer">
+                      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-zinc-300 dark:border-zinc-600 text-sm hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
+                        <Smartphone size={16} />
+                        Ekran Görüntüsü Ekle
+                      </div>
+                    </label>
+                  )}
+                  {installScreenshotPreview && (
+                    <Button onClick={handleConfirmInstall} disabled={actionLoading} className="gap-2">
+                      {actionLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 size={16} />}
+                      Hepsi Yüklendi
+                    </Button>
+                  )}
+                </div>
+              </div>
             )}
           </CardContent>
         </Card>

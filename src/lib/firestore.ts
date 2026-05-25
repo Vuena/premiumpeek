@@ -17,6 +17,7 @@ import {
   runTransaction,
   arrayUnion,
   arrayRemove,
+  writeBatch,
   type Timestamp,
 } from "firebase/firestore"
 import type { User } from "firebase/auth"
@@ -497,4 +498,108 @@ export async function getUserProfile(uid: string) {
 export async function updateUserProfile(uid: string, data: Partial<{ displayName: string; country: string; bio: string; devAccountLink: string }>) {
   const d = db!
   await updateDoc(doc(d, "users", uid), data)
+}
+
+// ==================== COMPLAINT FUNCTIONS ====================
+
+export interface Complaint {
+  id: string
+  packId: string
+  appId: string
+  appName: string
+  complainedBy: string
+  complainedByName: string
+  targetUid: string
+  targetName: string
+  reason: string
+  status: "pending" | "resolved" | "dismissed"
+  createdAt: Timestamp
+}
+
+export async function addComplaint(data: {
+  packId: string
+  appId: string
+  appName: string
+  complainedBy: string
+  complainedByName: string
+  targetUid: string
+  targetName: string
+  reason: string
+}) {
+  const d = db!
+  const ref = await addDoc(collection(d, "complaints"), {
+    ...data,
+    status: "pending",
+    createdAt: serverTimestamp(),
+  })
+  return ref.id
+}
+
+export async function getComplaints() {
+  const d = db!
+  const q = query(collection(d, "complaints"), orderBy("createdAt", "desc"))
+  const snap = await getDocs(q)
+  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Complaint))
+}
+
+export async function resolveComplaint(complaintId: string, action: "resolved" | "dismissed") {
+  const d = db!
+  await updateDoc(doc(d, "complaints", complaintId), { status: action })
+}
+
+// ==================== SCREENSHOT HELPERS ====================
+
+export async function hasDayScreenshot(packId: string, uid: string, day: number): Promise<boolean> {
+  const d = db!
+  const snap = await getDocs(query(
+    collection(d, "testingScreenshots"),
+    where("packId", "==", packId),
+    where("uid", "==", uid),
+    where("day", "==", day),
+    limit(1)
+  ))
+  return !snap.empty
+}
+
+export async function recordScreenshot(packId: string, uid: string, day: number, url: string, type: "test" | "install") {
+  const d = db!
+  await addDoc(collection(d, "screenshots"), {
+    packId, uid, day, url, type,
+    createdAt: serverTimestamp(),
+  })
+}
+
+export async function getScreenshotsForPack(packId: string) {
+  const d = db!
+  const q = query(
+    collection(d, "screenshots"),
+    where("packId", "==", packId),
+    orderBy("createdAt", "asc")
+  )
+  const snap = await getDocs(q)
+  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+}
+
+export async function getOldCompletedPacks(daysOld: number) {
+  const d = db!
+  const cutoff = new Date(Date.now() - daysOld * 24 * 60 * 60 * 1000)
+  const q = query(
+    collection(d, "packs"),
+    where("status", "==", "completed"),
+    where("endDate", "<=", cutoff)
+  )
+  const snap = await getDocs(q)
+  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Pack))
+}
+
+export async function deleteScreenshotsForPack(packId: string) {
+  const d = db!
+  const snap = await getDocs(query(
+    collection(d, "screenshots"),
+    where("packId", "==", packId)
+  ))
+  if (snap.empty) return
+  const batch = writeBatch(d)
+  snap.docs.forEach(doc => batch.delete(doc.ref))
+  await batch.commit()
 }

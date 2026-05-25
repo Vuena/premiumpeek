@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore"
 import { db } from "@/lib/firebase"
-import { Users, Layers, FileText, Loader2, ArrowRight, Shield, CreditCard, UserCheck } from "lucide-react"
+import { Users, Layers, FileText, Loader2, ArrowRight, Shield, CreditCard, UserCheck, AlertTriangle } from "lucide-react"
 
 export default function AdminPage() {
   const { user, loading: authLoading } = useAuth()
@@ -87,6 +87,7 @@ export default function AdminPage() {
           { icon: FileText, label: "Uygulamaları Yönet", desc: "Onayla, reddet", href: "/dashboard/admin/apps" },
           { icon: CreditCard, label: "Siparişleri Yönet", desc: "Ödemeler, iadeler", href: "/dashboard/admin/orders" },
           { icon: UserCheck, label: "Testçi Havuzu", desc: "Testçileri görüntüle", href: "/dashboard/admin/testers" },
+          { icon: AlertTriangle, label: "Şikayetler", desc: "Uygulama şikayetlerini yönet", href: "/dashboard/admin/complaints" },
         ].map(item => (
           <Link key={item.label} href={item.href}>
             <Card className="border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer">

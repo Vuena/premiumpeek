@@ -13,6 +13,7 @@ export async function GET() {
     const now = new Date()
     const packsSnap = await d.collection("packs").where("status", "==", "testing").get()
     let processed = 0
+    let screenshotsCleaned = 0
 
     for (const packDoc of packsSnap.docs) {
       const pack = packDoc.data()
@@ -67,7 +68,26 @@ export async function GET() {
       processed++
     }
 
-    return NextResponse.json({ processed, message: "Cron job completed" })
+    // Clean up old screenshots (completed packs, 5+ days old)
+    const fiveDaysAgo = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000)
+    const oldPacksSnap = await d.collection("packs")
+      .where("status", "==", "completed")
+      .where("endDate", "<=", fiveDaysAgo)
+      .get()
+
+    for (const packDoc of oldPacksSnap.docs) {
+      const packId = packDoc.id
+      const screenshotsSnap = await d.collection("screenshots")
+        .where("packId", "==", packId)
+        .get()
+
+      const batch = d.batch()
+      screenshotsSnap.docs.forEach(doc => batch.delete(doc.ref))
+      await batch.commit()
+      screenshotsCleaned += screenshotsSnap.size
+    }
+
+    return NextResponse.json({ processed, screenshotsCleaned, message: "Cron job completed" })
   } catch (error: any) {
     console.error("Cron job error:", error)
     return NextResponse.json({ error: error.message }, { status: 500 })
