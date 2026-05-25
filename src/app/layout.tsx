@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "PremiumPeek - Google Play Test Topluluğu",
     description: "18 geliştiriciden oluşan pack'lerle uygulamanı test et, Google Play'de yayınla.",
   },

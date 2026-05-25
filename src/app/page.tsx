@@ -24,18 +24,18 @@ export default function Home() {
   const features = [
     { icon: Users, title: "18 Gerçek Testçi", desc: "Google'ın istediği 12'den fazla. Herkes gerçek bir geliştirici." },
     { icon: Calendar, title: "16 Gün Süreç", desc: "Google Play'in 14 günlük test şartını fazlasıyla karşıla. +2 gün garanti." },
-    { icon: Clock, title: "Günlük Aktivite", desc: "Pack üyeleri her gün uygulamanı açar. Pasif yükleme değil, gerçek kullanım." },
+    { icon: Clock, title: "Günlük Aktivite", desc: "Pack üyeleri her gün uygulamanı açar ve ekran görüntüsü yükler. Pasif yükleme değil, gerçek kullanım." },
     { icon: FileText, title: "Geri Bildirim", desc: "Her testçi yorum yapar, hataları raporlar. Uygulamanı iyileştir." },
     { icon: ShieldCheck, title: "Sorumluluk", desc: "Aksatma halinde atılma + 1 ay pack yasağı. Herkes taahhüdünü yerine getirir." },
   ]
 
   const faqs: { q: string; a: string | ReactNode }[] = [
-    { q: "Pack sistemi nedir?", a: "Pack, 18 geliştiriciden oluşan ve 16 gün boyunca birbirlerinin uygulamalarını test etmeyi taahhüt eden gruptur. Her üye diğer 17 uygulamayı her gün açar ve geri bildirim verir. Google, 12 testçi ve 14 gün istiyor — biz 18 testçi ve 16 gün ile garantili hizmet sunuyoruz." },
+    { q: "Pack sistemi nedir?", a: "Pack, 18 geliştiriciden oluşan ve 4 aşamalı süreçle çalışan test grubudur: Oluşma (18 üye toplanır) → Yükleme (24 saat, kurulum kanıtı istenir) → Test (16 gün, günlük ekran görüntüsü) → Tamamlanma. Google, 12 testçi ve 14 gün istiyor — biz 18 testçi ve 16 gün ile garantili hizmet sunuyoruz." },
     { q: "Google Play'in şartı ne?", a: "Yeni hesaplar, yayın öncesinde 12 gerçek kullanıcı tarafından 14 ardışık gün test edilmelidir." },
     { q: "Kaç kişi bir pack'te yer alır?", a: "Her pack 18 geliştiriciden oluşur. 16 gün boyunca birbirinizin uygulamalarını test eder ve Google Play şartını karşılarsınız. Biri test etmezse bile 17 testçiniz olur — Google'ın istediği 12'den hala fazla." },
     { q: "Ya birisi test etmezse?", a: "Aksatma halinde pack'ten atılır ve 1 ay boyunca yeni bir pack'e katılamaz. Bu sayede herkesin aktif kalması sağlanır." },
     { q: "Ücretli ve ücretsiz test arasındaki fark nedir?", a: "Ücretsiz pack'te 18 geliştirici karşılıklı test yapar, sıra beklemeniz gerekebilir. Profesyonel test ($10 USDT) ile pack'e premium üye olarak eklenirsin, 16 gün test edilirsin ve Google Play reddinde koşulsuz iade garantisi sunarız." },
-    { q: "Ödeme sonrası test ne zaman başlar?", a: "Profesyonel test hizmetimizde ödeme onaylandıktan sonra pack'e premium üye olarak eklenirsin. Ücretsiz pack'te ise pack dolduğunda (18 üye) otomatik başlar." },
+    { q: "Ödeme sonrası test ne zaman başlar?", a: "Profesyonel test hizmetimizde ödeme onaylandıktan sonra pack'e premium üye olarak eklenirsin. Ücretsiz pack'te ise 18 üye dolduğunda otomatik olarak yükleme aşamasına geçer (24 saat), ardından 16 günlük test başlar." },
     { q: "Testçiler uygulamamı kaldırırsa ne olur?", a: "Google politikasına göre, bir testçi uygulamanızı yükledikten sonra kaldırsa bile 14 gün boyunca 'test ediyor' olarak sayılır. Bu nedenle endişelenmenize gerek yok." },
     { q: "Her uygulama için ayrı test gerekli mi?", a: "Evet, Google Play'de yayınlamak istediğiniz her yeni uygulama için ayrı bir kapalı test süreci tamamlamanız gerekir. Bir uygulama için test yapmak diğer uygulamaları kapsamaz." },
     { q: "Ücretli hizmet ne kadar?", a: "Profesyonel test hizmetimiz $10 USDT (TRC-20). 18 pack üyesi uygulamanızı test eder, üstelik Google Play reddinde koşulsuz iade garantisi." },
