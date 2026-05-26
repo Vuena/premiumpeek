@@ -48,23 +48,22 @@ export default function LoginClient() {
       setLoading(false)
     }, 30000)
     try {
-      await signInWithGoogle()
+      const result = await signInWithGoogle()
       clearLoadingTimeout()
+      if (result === "redirect") {
+        return
+      }
+      if (result === "closed") {
+        setLoading(false)
+        return
+      }
       setLoading(false)
       router.push("/dashboard")
     } catch (err: any) {
       clearLoadingTimeout()
-      if (err?.code === "auth/popup-closed-by-user") {
-        setLoading(false)
-        return
-      }
-      if (err?.code === "auth/popup-blocked") {
-        setError(t("popupBlocked"))
-      } else {
-        const msg = err?.code ? `${err.code}: ${err.message}` : (err.message || t("errorGoogle"))
-        console.error("Google login error:", err)
-        setError(msg)
-      }
+      const msg = err?.code ? `${err.code}: ${err.message}` : (err.message || t("errorGoogle"))
+      console.error("Google login error:", err)
+      setError(msg)
       setLoading(false)
     }
   }

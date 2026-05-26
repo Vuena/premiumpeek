@@ -22,7 +22,7 @@ interface AuthUser extends User {
 interface AuthContextType {
   user: AuthUser | null
   loading: boolean
-  signInWithGoogle: () => Promise<void>
+  signInWithGoogle: () => Promise<"popup" | "redirect" | "closed">
   signInWithEmail: (email: string, password: string) => Promise<void>
   signUpWithEmail: (email: string, password: string, name: string) => Promise<void>
   logout: () => Promise<void>
@@ -75,7 +75,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (result) {
         createUserDocument(result.user).then(() => {
           const locale = window.location.pathname.split("/")[1]
-          window.location.href = `/${locale}/dashboard`
+          const safeLocale = locale === "__" || !locale ? "en" : locale
+          window.location.href = `/${safeLocale}/dashboard`
         }).catch((err) => {
           console.error("Redirect sign-in doc error:", err)
         })
@@ -108,16 +109,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return auth
   }
 
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = async (): Promise<"popup" | "redirect" | "closed"> => {
     const provider = new GoogleAuthProvider()
     const a = getFirebaseAuth()
     try {
       const result = await signInWithPopup(a, provider)
       await createUserDocument(result.user)
+      return "popup"
     } catch (err: any) {
-      if (err?.code === "auth/popup-blocked" || err?.code === "auth/popup-closed-by-user") {
-        signInWithRedirect(a, provider)
-        return
+      if (err?.code === "auth/popup-blocked") {
+        setLoading(true)
+        await signInWithRedirect(a, provider)
+        return "redirect"
+      }
+      if (err?.code === "auth/popup-closed-by-user") {
+        return "closed"
       }
       throw err
     }
