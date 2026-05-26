@@ -18,6 +18,7 @@ export default function SignupClient() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
@@ -25,13 +26,13 @@ export default function SignupClient() {
     e.preventDefault()
     setError("")
     if (password.length < 6) { setError(t("passwordLengthError")); return }
+    if (password !== confirmPassword) { setError(t("passwordMismatch")); return }
     setLoading(true)
     try {
       await signUpWithEmail(email, password, name)
       router.push("/dashboard")
     } catch (err: any) {
       setError(err.message || t("errorSignup"))
-    } finally {
       setLoading(false)
     }
   }
@@ -43,8 +44,11 @@ export default function SignupClient() {
       await signInWithGoogle()
       router.push("/dashboard")
     } catch (err: any) {
-      setError(err.message || t("errorGoogle"))
-    } finally {
+      if (err?.code === "auth/popup-blocked") {
+        setError(t("popupBlocked"))
+      } else {
+        setError(err.message || t("errorGoogle"))
+      }
       setLoading(false)
     }
   }
@@ -103,6 +107,10 @@ export default function SignupClient() {
             <div>
               <label className="block text-sm font-medium mb-1.5">{t("password")}</label>
               <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t("passwordPlaceholder")} required minLength={6} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1.5">{t("confirmPassword")}</label>
+              <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder={t("confirmPasswordPlaceholder")} required />
             </div>
             <Button type="submit" disabled={loading} className="w-full gap-2">
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <User size={18} />}

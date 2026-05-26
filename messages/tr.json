@@ -365,8 +365,9 @@
     "ctaDesc": "5.000+ geliştiricinin kullandığı sistemi sen de dene. Ücretsiz başla.",
     "ctaButton": "Hemen Başla"
   },
-  "LoginPage": {
+    "LoginPage": {
     "title": "Giriş Yap",
+    "popupBlocked": "Pop-up engellendi. Lütfen tarayıcı ayarlarından pop-up'lara izin verin.",
     "welcome": "Hoş Geldin",
     "subtitle": "Google Play test yolculuğuna devam et",
     "email": "E-posta",
@@ -391,6 +392,9 @@
     "emailPlaceholder": "ornek@email.com",
     "password": "Şifre",
     "passwordPlaceholder": "En az 6 karakter",
+    "confirmPassword": "Şifre Tekrar",
+    "confirmPasswordPlaceholder": "Şifreni tekrar gir",
+    "passwordMismatch": "Şifreler eşleşmiyor",
     "signupButton": "Hesap Oluştur",
     "signupGoogle": "Google ile Kayıt Ol",
     "or": "veya",
@@ -398,7 +402,8 @@
     "login": "Giriş Yap",
     "passwordLengthError": "Şifre en az 6 karakter olmalıdır",
     "errorSignup": "Kayıt olurken bir hata oluştu",
-    "errorGoogle": "Google ile kayıt olurken bir hata oluştu"
+    "errorGoogle": "Google ile kayıt olurken bir hata oluştu",
+    "popupBlocked": "Pop-up engellendi. Lütfen tarayıcı ayarlarından pop-up'lara izin verin."
   },
   "DashboardMain": {
     "pageTitle": "Panel | PremiumPeek",

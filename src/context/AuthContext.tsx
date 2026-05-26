@@ -95,30 +95,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signInWithGoogle = async () => {
-    try {
-      const provider = new GoogleAuthProvider()
-      const result = await signInWithPopup(getFirebaseAuth(), provider)
-      await createUserDocument(result.user)
-    } catch (err) {
-      console.error("signInWithGoogle error:", err)
-    }
+    const provider = new GoogleAuthProvider()
+    const result = await signInWithPopup(getFirebaseAuth(), provider)
+    await createUserDocument(result.user)
   }
 
   const signInWithEmail = async (email: string, password: string) => {
-    try {
-      await signInWithEmailAndPassword(getFirebaseAuth(), email, password)
-    } catch (err) {
-      console.error("signInWithEmail error:", err)
-    }
+    await signInWithEmailAndPassword(getFirebaseAuth(), email, password)
   }
 
   const signUpWithEmail = async (email: string, password: string, name: string) => {
-    try {
-      const result = await createUserWithEmailAndPassword(getFirebaseAuth(), email, password)
-      await createUserDocument(result.user, name)
-    } catch (err) {
-      console.error("signUpWithEmail error:", err)
-    }
+    const result = await createUserWithEmailAndPassword(getFirebaseAuth(), email, password)
+    await createUserDocument(result.user, name)
   }
 
   const logout = async () => {

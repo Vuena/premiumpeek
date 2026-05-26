@@ -365,8 +365,9 @@
     "ctaDesc": "Try the system used by 5,000+ developers. Start free.",
     "ctaButton": "Get Started"
   },
-  "LoginPage": {
+    "LoginPage": {
     "title": "Log In",
+    "popupBlocked": "Pop-up blocked. Please allow pop-ups in your browser settings.",
     "welcome": "Welcome Back",
     "subtitle": "Continue your Google Play testing journey",
     "email": "Email",
@@ -391,6 +392,9 @@
     "emailPlaceholder": "you@example.com",
     "password": "Password",
     "passwordPlaceholder": "At least 6 characters",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Re-enter your password",
+    "passwordMismatch": "Passwords do not match",
     "signupButton": "Create Account",
     "signupGoogle": "Sign up with Google",
     "or": "or",
@@ -398,7 +402,8 @@
     "login": "Log In",
     "passwordLengthError": "Password must be at least 6 characters",
     "errorSignup": "An error occurred while signing up",
-    "errorGoogle": "An error occurred while signing up with Google"
+    "errorGoogle": "An error occurred while signing up with Google",
+    "popupBlocked": "Pop-up blocked. Please allow pop-ups in your browser settings."
   },
   "DashboardMain": {
     "pageTitle": "Dashboard | PremiumPeek",

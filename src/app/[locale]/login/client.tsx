@@ -29,7 +29,6 @@ export default function LoginClient() {
       router.push("/dashboard")
     } catch (err: any) {
       setError(err.message || t("errorLogin"))
-    } finally {
       setLoading(false)
     }
   }
@@ -41,8 +40,11 @@ export default function LoginClient() {
       await signInWithGoogle()
       router.push("/dashboard")
     } catch (err: any) {
-      setError(err.message || t("errorGoogle"))
-    } finally {
+      if (err?.code === "auth/popup-blocked") {
+        setError(t("popupBlocked"))
+      } else {
+        setError(err.message || t("errorGoogle"))
+      }
       setLoading(false)
     }
   }
