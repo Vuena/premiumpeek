@@ -9,5 +9,5 @@ export default function PaymentSuccessPage() {
   const router = useRouter()
   const t = useTranslations("PaymentPage")
   useEffect(() => { document.title = `${t("successTitle")} | PremiumPeek`; router.replace("/dashboard") }, [router, t])
-  return null
+  return <div className="flex items-center justify-center min-h-screen text-muted">{t("redirecting")}</div>
 }

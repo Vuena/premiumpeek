@@ -256,34 +256,8 @@ export async function getFormingPacks() {
       where("status", "==", "forming")
     )
     const snap = await getDocs(q)
-    let packs = snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Pack))
+    return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Pack))
       .sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0))
-
-    // Ensure consistent naming
-    packs = packs.map(p => ({ ...p, name: "Waiting for Developers" }))
-
-    if (packs.length === 0) {
-      await runTransaction(d, async (transaction) => {
-        const newPackRef = doc(collection(d, "packs"))
-        transaction.set(newPackRef, {
-          name: "Waiting for Developers",
-          status: "forming",
-          currentDay: 0,
-          maxMembers: 18,
-          totalDays: 16,
-          members: [],
-          memberUids: [],
-          createdBy: "",
-          createdAt: serverTimestamp(),
-          installDeadline: null,
-        })
-      })
-      const snap2 = await getDocs(q)
-      packs = snap2.docs.map(doc => ({ id: doc.id, ...doc.data() } as Pack))
-        .sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0))
-    }
-
-    return packs
   } catch (err) {
     console.error("getFormingPacks failed:", err)
     return []

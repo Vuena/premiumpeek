@@ -76,7 +76,7 @@ export default function PackDetailPage() {
       const h = Math.floor(remaining / 3600000)
       const m = Math.floor((remaining % 3600000) / 60000)
       const s = Math.floor((remaining % 60000) / 1000)
-      setInstallTimeLeft(`${h}s ${m}d ${s}s`)
+      setInstallTimeLeft(`${h}h ${m}m ${s}s`)
     }
     updateTimer()
     const interval = setInterval(updateTimer, 1000)

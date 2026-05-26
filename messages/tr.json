@@ -992,7 +992,8 @@
   },
   "PaymentPage": {
     "cancelTitle": "Ödeme İptal Edildi",
-    "successTitle": "Ödeme Başarılı"
+    "successTitle": "Ödeme Başarılı",
+    "redirecting": "Panele yönlendiriliyor..."
   },
   "BlogPage": {
     "title": "Blog",

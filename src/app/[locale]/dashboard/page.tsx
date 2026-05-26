@@ -7,7 +7,7 @@ import { useRouter } from "@/i18n/navigation"
 import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { getUserPacks, getUserApps, getFormingPacks, createPack, joinPackWithApp, type Pack, type App } from "@/lib/firestore"
+import { getUserPacks, getUserApps, getFormingPacks, joinPackWithApp, type Pack, type App } from "@/lib/firestore"
 import { Users, Clock, FileText, Plus, ArrowRight, Loader2, Smartphone, Settings, Layers, LogIn, X, CheckCircle } from "lucide-react"
 import { usePageMeta } from "@/lib/usePageMeta"
 import { useToast } from "@/context/ToastContext"
@@ -43,14 +43,9 @@ export default function DashboardPage() {
 
   const loadData = async () => {
     if (!user) return
-    let userPacks = await getUserPacks(user.uid)
+    const userPacks = await getUserPacks(user.uid)
     const userApps = await getUserApps(user.uid)
-    let avail = await getFormingPacks()
-    if (userPacks.length === 0 && avail.length === 0) {
-      await createPack("Waiting for Developers")
-      avail = await getFormingPacks()
-      userPacks = await getUserPacks(user.uid)
-    }
+    const avail = await getFormingPacks()
     setPacks(userPacks)
     setFormingPacks(avail.filter(p => !p.members.some(m => m.uid === user.uid)))
     setApps(userApps)
@@ -65,11 +60,13 @@ export default function DashboardPage() {
   const activePacks = packs.filter(p => p.status === "testing" || p.status === "installing")
   const currentPack = packs[0]
 
-  let testedCount = 0
-  try {
-    const testedStr = typeof window !== "undefined" ? localStorage.getItem(`tested_${new Date().toDateString()}`) : null
-    if (testedStr) testedCount = JSON.parse(testedStr).length
-  } catch (err) { console.error("Failed to parse localStorage tested data:", err) }
+  const [testedCount, setTestedCount] = useState(0)
+  useEffect(() => {
+    try {
+      const testedStr = localStorage.getItem(`tested_${new Date().toDateString()}`)
+      if (testedStr) setTestedCount(JSON.parse(testedStr).length)
+    } catch (err) { console.error("Failed to parse localStorage tested data:", err) }
+  }, [])
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">

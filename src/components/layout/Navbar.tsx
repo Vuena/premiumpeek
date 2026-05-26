@@ -78,7 +78,7 @@ export const Navbar = memo(function Navbar() {
             <button
               onClick={() => setLangOpen(!langOpen)}
               className="hidden md:flex items-center gap-1.5 h-9 px-2 rounded-xl hover:bg-subtle transition-colors text-sm cursor-pointer"
-              aria-label={t("themeToggle")}
+              aria-label={t("language")}
             >
               <Globe size={16} />
               <span className="uppercase font-medium">{locale}</span>
@@ -97,7 +97,7 @@ export const Navbar = memo(function Navbar() {
                     }}
                     className={`flex items-center gap-2 w-full px-4 py-3 min-h-11 text-sm hover:bg-subtle cursor-pointer ${code === locale ? "font-medium text-blue-600" : "text-muted"}`}
                   >
-                    <span className="text-base">{code === "tr" ? "🇹🇷" : "🇬🇧"}</span>
+                    <span className="text-base font-semibold w-6 text-center">{code.toUpperCase()}</span>
                     {label}
                   </button>
                 ))}
@@ -163,7 +163,7 @@ export const Navbar = memo(function Navbar() {
                 }}
                 className={`flex items-center gap-2 w-full py-3 text-sm cursor-pointer min-h-11 ${code === locale ? "font-medium text-blue-600" : "text-muted"}`}
               >
-                <span className="text-base">{code === "tr" ? "🇹🇷" : "🇬🇧"}</span>
+                <span className="text-base font-semibold w-6 text-center">{code.toUpperCase()}</span>
                 {label}
               </button>
             ))}

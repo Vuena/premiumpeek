@@ -3,11 +3,14 @@
 import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Star, ChevronDown } from "lucide-react"
-import { useTranslations } from "next-intl"
-import allReviews from "@/lib/reviews.json"
+import { useTranslations, useLocale } from "next-intl"
+import trReviews from "@/lib/reviews.json"
+import enReviews from "@/lib/reviews-en.json"
 
 export function TestimonialsSection() {
   const [showAll, setShowAll] = useState(false)
+  const locale = useLocale()
+  const allReviews = locale === "tr" ? trReviews : enReviews
   const visible = showAll ? allReviews : allReviews.slice(0, 6)
   const t = useTranslations("HomePage")
 
@@ -17,11 +20,11 @@ export function TestimonialsSection() {
         __html: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Product",
-          name: "PremiumPeek Google Play Test Hizmeti",
+          name: locale === "tr" ? "PremiumPeek Google Play Test Hizmeti" : "PremiumPeek Google Play Testing Service",
           aggregateRating: {
             "@type": "AggregateRating",
             ratingValue: "5",
-            reviewCount: "51",
+            reviewCount: allReviews.length.toString(),
             bestRating: "5",
             worstRating: "1",
           },
