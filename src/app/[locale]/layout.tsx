@@ -27,16 +27,16 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     title: {
       default: locale === "en"
-        ? "PremiumPeek - Google Play Testing Community"
-        : "PremiumPeek - Google Play Test Topluluğu",
+        ? "Free Google Play Testing Community - PremiumPeek"
+        : "Ücretsiz Google Play Test Topluluğu - PremiumPeek",
       template: "%s | PremiumPeek",
     },
     description: locale === "en"
-      ? "Test your app with packs of 18 developers to meet Google Play publishing requirements. Free community and professional testing service."
-      : "Google Play yayın şartlarını karşılamak için 18 geliştiriciden oluşan pack'lerle uygulamanızı test edin. Ücretsiz topluluk ve profesyonel test hizmeti.",
+      ? "Free Google Play testing community. Test your app with 18 developers, meet publishing requirements, and go live. No credit card required."
+      : "Ücretsiz Google Play test topluluğu. 18 geliştiriciyle uygulamanızı test edin, yayın şartlarını karşılayın ve yayına geçin. Kredi kartı gerekmez.",
     keywords: locale === "en"
-      ? ["google play testing", "closed testing", "12 testers", "production access", "app testing", "premiumpeek"]
-      : ["google play testing", "closed testing", "12 testers", "production access", "app testing", "google play test kullanıcısı", "premiumpeek", "google play test topluluğu"],
+      ? ["free google play testing", "google play testing community", "closed testing", "12 testers", "production access", "app testing", "premiumpeek"]
+      : ["ücretsiz google play test", "google play test topluluğu", "google play testing", "closed testing", "12 testers", "production access", "app testing", "google play test kullanıcısı", "premiumpeek"],
     authors: [{ name: "PremiumPeek" }],
     metadataBase: new URL(siteUrl),
     alternates: {
@@ -51,10 +51,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       apple: "/icon.svg",
     },
     openGraph: {
-      title: locale === "en" ? "PremiumPeek - Google Play Testing Community" : "PremiumPeek - Google Play Test Topluluğu",
+      title: locale === "en" ? "Free Google Play Testing Community - PremiumPeek" : "Ücretsiz Google Play Test Topluluğu - PremiumPeek",
       description: locale === "en"
-        ? "Test your app with packs of 18 developers and publish on Google Play."
-        : "18 geliştiriciden oluşan pack'lerle uygulamanı test et, Google Play'de yayınla.",
+        ? "Free Google Play testing community. Test your app with 18 developers and go live. No credit card required."
+        : "Ücretsiz Google Play test topluluğu. 18 geliştiriciyle uygulamanı test et, yayına geç. Kredi kartı gerekmez.",
       url: siteUrl,
       siteName: "PremiumPeek",
       locale: locale === "en" ? "en_US" : "tr_TR",
@@ -62,10 +62,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     },
     twitter: {
       card: "summary_large_image",
-      title: locale === "en" ? "PremiumPeek - Google Play Testing Community" : "PremiumPeek - Google Play Test Topluluğu",
+      title: locale === "en" ? "Free Google Play Testing Community - PremiumPeek" : "Ücretsiz Google Play Test Topluluğu - PremiumPeek",
       description: locale === "en"
-        ? "Test your app with packs of 18 developers and publish on Google Play."
-        : "18 geliştiriciden oluşan pack'lerle uygulamanı test et, Google Play'de yayınla.",
+        ? "Free Google Play testing community. Test your app with 18 developers and go live."
+        : "Ücretsiz Google Play test topluluğu. 18 geliştiriciyle uygulamanı test et, yayına geç.",
     },
     robots: {
       index: true,
