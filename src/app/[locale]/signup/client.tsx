@@ -56,8 +56,16 @@ export default function SignupClient() {
       router.push("/dashboard")
     } catch (err: any) {
       pendingRef.current = false
-      const msg = err?.code ? `${err.code}: ${err.message}` : (err.message || t("errorGoogle"))
-      console.error("Google signup error:", err)
+      console.error("Google signup error:", err, "keys:", Object.keys(err ?? {}), "toString:", err?.toString?.())
+      try { console.error("JSON:", JSON.stringify(err)) } catch {}
+      let msg = t("errorGoogle")
+      if (err?.code && err?.message) {
+        msg = `${err.code}: ${err.message}`
+      } else if (err?.message) {
+        msg = err.message
+      } else if (typeof err === "string") {
+        msg = err
+      }
       setError(msg)
       setLoading(false)
     }

@@ -115,11 +115,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const provider = new GoogleAuthProvider()
     const a = getFirebaseAuth()
     try {
-      const result = await signInWithPopup(a, provider)
+      const result = await Promise.race([
+        signInWithPopup(a, provider),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error("POPUP_TIMEOUT")), 20000)
+        ),
+      ])
       await createUserDocument(result.user)
       return "popup"
     } catch (err: any) {
-      if (err?.code === "auth/popup-blocked") {
+      if (err?.code === "auth/popup-blocked" || err?.message === "POPUP_TIMEOUT") {
         setLoading(true)
         await signInWithRedirect(a, provider)
         return "redirect"
