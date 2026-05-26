@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { useAuth } from "@/context/AuthContext"
 import { useRouter, Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
@@ -19,6 +19,11 @@ export default function LoginClient() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const clearLoadingTimeout = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+  }
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -26,8 +31,10 @@ export default function LoginClient() {
     setLoading(true)
     try {
       await signInWithEmail(email, password)
+      setLoading(false)
       router.push("/dashboard")
     } catch (err: any) {
+      console.error("Email login error:", err)
       setError(err.message || t("errorLogin"))
       setLoading(false)
     }
@@ -36,10 +43,17 @@ export default function LoginClient() {
   const handleGoogleLogin = async () => {
     setError("")
     setLoading(true)
+    timeoutRef.current = setTimeout(() => {
+      setError(t("errorGoogle"))
+      setLoading(false)
+    }, 30000)
     try {
       await signInWithGoogle()
+      clearLoadingTimeout()
+      setLoading(false)
       router.push("/dashboard")
     } catch (err: any) {
+      clearLoadingTimeout()
       if (err?.code === "auth/popup-closed-by-user") {
         setLoading(false)
         return
@@ -47,7 +61,9 @@ export default function LoginClient() {
       if (err?.code === "auth/popup-blocked") {
         setError(t("popupBlocked"))
       } else {
-        setError(err.message || t("errorGoogle"))
+        const msg = err?.code ? `${err.code}: ${err.message}` : (err.message || t("errorGoogle"))
+        console.error("Google login error:", err)
+        setError(msg)
       }
       setLoading(false)
     }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { useAuth } from "@/context/AuthContext"
 import { useRouter, Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
@@ -21,6 +21,11 @@ export default function SignupClient() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const clearLoadingTimeout = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+  }
 
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -30,8 +35,10 @@ export default function SignupClient() {
     setLoading(true)
     try {
       await signUpWithEmail(email, password, name)
+      setLoading(false)
       router.push("/dashboard")
     } catch (err: any) {
+      console.error("Email signup error:", err)
       setError(err.message || t("errorSignup"))
       setLoading(false)
     }
@@ -40,10 +47,17 @@ export default function SignupClient() {
   const handleGoogleSignup = async () => {
     setError("")
     setLoading(true)
+    timeoutRef.current = setTimeout(() => {
+      setError(t("errorGoogle"))
+      setLoading(false)
+    }, 30000)
     try {
       await signInWithGoogle()
+      clearLoadingTimeout()
+      setLoading(false)
       router.push("/dashboard")
     } catch (err: any) {
+      clearLoadingTimeout()
       if (err?.code === "auth/popup-closed-by-user") {
         setLoading(false)
         return
@@ -51,7 +65,9 @@ export default function SignupClient() {
       if (err?.code === "auth/popup-blocked") {
         setError(t("popupBlocked"))
       } else {
-        setError(err.message || t("errorGoogle"))
+        const msg = err?.code ? `${err.code}: ${err.message}` : (err.message || t("errorGoogle"))
+        console.error("Google signup error:", err)
+        setError(msg)
       }
       setLoading(false)
     }
