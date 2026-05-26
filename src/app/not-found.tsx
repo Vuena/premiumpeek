@@ -1,22 +1,13 @@
-import type { Metadata } from "next"
-import Link from "next/link"
+import { Link } from "@/i18n/navigation"
 
-export const metadata: Metadata = {
-  title: "Sayfa Bulunamadı | PremiumPeek",
-  description: "Aradığınız sayfa bulunamadı.",
-  alternates: { canonical: "https://www.premiumpeek.com" },
-  robots: { index: false, follow: false },
-}
-
-export default function NotFound() {
+export default function RootNotFound() {
   return (
-    <div className="flex flex-1 items-center justify-center px-4 py-24">
-      <div className="text-center">
-        <div className="text-6xl font-bold text-zinc-300 dark:text-zinc-700 mb-4">404</div>
-        <h1 className="text-2xl font-bold mb-2">Sayfa Bulunamadı</h1>
-        <p className="text-muted text-sm mb-6">Aradığın sayfa mevcut değil.</p>
-        <Link href="/" className="inline-flex h-11 items-center justify-center rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 px-6 text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors">Ana Sayfa</Link>
-      </div>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-white dark:bg-zinc-950 text-center px-4">
+      <h1 className="text-6xl font-bold text-zinc-900 dark:text-white mb-4">404</h1>
+      <p className="text-lg text-zinc-600 dark:text-zinc-400 mb-8">Page not found</p>
+      <Link href="/" className="inline-flex items-center justify-center rounded-xl bg-zinc-900 dark:bg-white px-6 py-2.5 text-sm font-medium text-white dark:text-zinc-900 transition-colors hover:bg-zinc-800 dark:hover:bg-zinc-200">
+        Go Home
+      </Link>
     </div>
   )
 }

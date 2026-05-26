@@ -1,11 +1,10 @@
 import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
+
+export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://www.premiumpeek.com"),
+}
 import "./globals.css"
-import { AuthProvider } from "@/context/AuthContext"
-import { ThemeProvider } from "@/components/layout/ThemeProvider"
-import { ToastProvider } from "@/context/ToastContext"
-import { Navbar } from "@/components/layout/Navbar"
-import { Footer } from "@/components/layout/Footer"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -20,51 +19,13 @@ export const viewport: Viewport = {
   themeColor: "#18181b",
 }
 
-export const metadata: Metadata = {
-  title: {
-    default: "PremiumPeek - Google Play Test Topluluğu",
-    template: "%s | PremiumPeek",
-  },
-  description: "Google Play yayın şartlarını karşılamak için 18 geliştiriciden oluşan pack'lerle uygulamanızı test edin. Ücretsiz topluluk ve profesyonel test hizmeti.",
-  keywords: ["google play testing", "closed testing", "12 testers", "production access", "app testing", "google play test kullanıcısı", "premiumpeek", "google play test topluluğu"],
-  authors: [{ name: "PremiumPeek" }],
-  metadataBase: new URL(siteUrl),
-  alternates: {
-    canonical: siteUrl,
-    languages: {
-      "tr": siteUrl,
-    },
-  },
-  icons: {
-    icon: "/favicon.svg",
-    apple: "/icon.svg",
-  },
-  openGraph: {
-    title: "PremiumPeek - Google Play Test Topluluğu",
-    description: "18 geliştiriciden oluşan pack'lerle uygulamanı test et, Google Play'de yayınla.",
-    url: siteUrl,
-    siteName: "PremiumPeek",
-    locale: "tr_TR",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "PremiumPeek - Google Play Test Topluluğu",
-    description: "18 geliştiriciden oluşan pack'lerle uygulamanı test et, Google Play'de yayınla.",
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-}
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
-    <html lang="tr" suppressHydrationWarning className={inter.variable}>
+    <html suppressHydrationWarning className={inter.variable}>
       <head>
         <script dangerouslySetInnerHTML={{
           __html: `
@@ -83,7 +44,7 @@ export default function RootLayout({
             name: "PremiumPeek",
             url: siteUrl,
             logo: `${siteUrl}/favicon.svg`,
-            description: "Google Play yayın şartlarını karşılamak için test topluluğu",
+            description: "Testing community for Google Play publishing requirements",
             sameAs: [
               "https://twitter.com/premiumpeek",
               "https://linkedin.com/company/premiumpeek",
@@ -97,29 +58,12 @@ export default function RootLayout({
             "@type": "WebSite",
             name: "PremiumPeek",
             url: siteUrl,
-            description: "Google Play Test Topluluğu - Uygulamanızı 18 geliştiriciyle test edin, Google Play'de yayınlayın.",
-            inLanguage: "tr",
-            potentialAction: {
-              "@type": "SearchAction",
-              target: {
-                "@type": "EntryPoint",
-                urlTemplate: `${siteUrl}/search?q={search_term_string}`,
-              },
-              "query-input": "required name=search_term_string",
-            },
+            description: "Test your app with 18 developers and publish on Google Play.",
           }),
         }} />
       </head>
       <body className="min-h-screen flex flex-col antialiased">
-        <ThemeProvider>
-          <AuthProvider>
-            <ToastProvider>
-              <Navbar />
-              <main className="flex-1">{children}</main>
-              <Footer />
-            </ToastProvider>
-          </AuthProvider>
-        </ThemeProvider>
+        {children}
       </body>
     </html>
   )

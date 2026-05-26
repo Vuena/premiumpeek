@@ -1,6 +1,6 @@
 "use client"
 
-import Link from "next/link"
+import { Link } from "@/i18n/navigation"
 import { useAuth } from "@/context/AuthContext"
 
 export function CtaButton({ children, className }: { children: React.ReactNode; className?: string }) {

@@ -112,7 +112,7 @@ export async function joinPack(packId: string, user: User, memberType: "free" | 
   try {
     const d = getDb()
     const snap = await getDoc(doc(d, "packs", packId))
-    if (!snap.exists()) throw new Error("Pack bulunamadı.")
+    if (!snap.exists()) throw new Error("Pack not found.")
     return doJoinPack(d, packId, snap.data(), user, memberType)
   } catch (err) {
     console.error("joinPack failed:", err)
@@ -122,18 +122,18 @@ export async function joinPack(packId: string, user: User, memberType: "free" | 
 
 async function doJoinPack(d: any, packId: string, packData: any, user: User, memberType: "free" | "premium" = "free") {
   try {
-    if (packData.status !== "forming") throw new Error("Bu pack artık yeni üye kabul etmiyor.")
-    if (packData.members.length >= packData.maxMembers) throw new Error(`Bu pack dolu (${packData.maxMembers}/${packData.maxMembers}).`)
+    if (packData.status !== "forming") throw new Error("This pack is no longer accepting new members.")
+    if (packData.members.length >= packData.maxMembers) throw new Error(`This pack is full (${packData.maxMembers}/${packData.maxMembers}).`)
     const existingMember = packData.members.find((m: any) => m.uid === user.uid)
     if (existingMember) {
-      if (existingMember.type === "premium") throw new Error("Zaten premium üyesin.")
+      if (existingMember.type === "premium") throw new Error("You are already a premium member.")
       await runTransaction(d, async (transaction) => {
         const ref = doc(d, "packs", packId)
         const snap = await transaction.get(ref)
-        if (!snap.exists()) throw new Error("Pack bulunamadı.")
+        if (!snap.exists()) throw new Error("Pack not found.")
         const current = snap.data()
         const premiumCount = current.members.filter((m: any) => m.type === "premium").length
-        if (premiumCount >= 2) throw new Error("Premium kontenjanı dolu (max 2).")
+        if (premiumCount >= 2) throw new Error("Premium quota is full (max 2).")
         const updatedMembers = current.members.map((m: any) =>
           m.uid === user.uid ? { ...m, type: "premium" } : m
         )
@@ -145,19 +145,19 @@ async function doJoinPack(d: any, packId: string, packData: any, user: User, mem
     await runTransaction(d, async (transaction) => {
       const ref = doc(d, "packs", packId)
       const snap = await transaction.get(ref)
-      if (!snap.exists()) throw new Error("Pack bulunamadı.")
+      if (!snap.exists()) throw new Error("Pack not found.")
       const current = snap.data()
-      if (current.status !== "forming") throw new Error("Bu pack artık yeni üye kabul etmiyor.")
-      if (current.members.length >= current.maxMembers) throw new Error("Pack doldu.")
-      if (current.members.some((m: any) => m.uid === user.uid)) throw new Error("Zaten üyesin.")
+      if (current.status !== "forming") throw new Error("This pack is no longer accepting new members.")
+      if (current.members.length >= current.maxMembers) throw new Error("Pack is full.")
+      if (current.members.some((m: any) => m.uid === user.uid)) throw new Error("You are already a member.")
       if (memberType === "premium") {
         const premiumCount = current.members.filter((m: any) => m.type === "premium").length
-        if (premiumCount >= 2) throw new Error("Premium kontenjanı dolu (max 2).")
+        if (premiumCount >= 2) throw new Error("Premium quota is full (max 2).")
       }
 
       const newMember = {
         uid: user.uid,
-        displayName: user.displayName || user.email || "İsimsiz",
+        displayName: user.displayName || user.email || "Unnamed",
         photoURL: user.photoURL || "",
         type: memberType,
         installConfirmed: false,
@@ -186,7 +186,7 @@ async function doJoinPack(d: any, packId: string, packData: any, user: User, mem
       const existing = await getDocs(query(collection(d, "packs"), where("status", "==", "forming"), limit(1)))
       if (existing.empty) {
         await addDoc(collection(d, "packs"), {
-          name: "Geliştiriciler Bekleniyor",
+          name: "Waiting for Developers",
           status: "forming",
           currentDay: 0,
           maxMembers: 18,
@@ -214,11 +214,11 @@ export async function leavePack(packId: string, uid: string) {
 
     await runTransaction(d, async (transaction) => {
       const snap = await transaction.get(packRef)
-      if (!snap.exists()) throw new Error("Pack bulunamadı.")
+      if (!snap.exists()) throw new Error("Pack not found.")
       const data = snap.data()
-      if (data.status !== "forming") throw new Error("Sadece oluşma aşamasındaki pack'lerden ayrılabilirsin.")
+      if (data.status !== "forming") throw new Error("You can only leave packs that are in formation phase.")
       const member = data.members.find((m: PackMember) => m.uid === uid)
-      if (!member) throw new Error("Bu pack'in üyesi değilsin.")
+      if (!member) throw new Error("You are not a member of this pack.")
 
       transaction.update(packRef, {
         members: arrayRemove(member),
@@ -260,13 +260,13 @@ export async function getFormingPacks() {
       .sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0))
 
     // Ensure consistent naming
-    packs = packs.map(p => ({ ...p, name: "Geliştiriciler Bekleniyor" }))
+    packs = packs.map(p => ({ ...p, name: "Waiting for Developers" }))
 
     if (packs.length === 0) {
       await runTransaction(d, async (transaction) => {
         const newPackRef = doc(collection(d, "packs"))
         transaction.set(newPackRef, {
-          name: "Geliştiriciler Bekleniyor",
+          name: "Waiting for Developers",
           status: "forming",
           currentDay: 0,
           maxMembers: 18,
@@ -308,14 +308,14 @@ export async function confirmInstall(packId: string, uid: string) {
     await runTransaction(d, async (transaction) => {
       const ref = doc(d, "packs", packId)
       const snap = await transaction.get(ref)
-      if (!snap.exists()) throw new Error("Pack bulunamadı.")
+      if (!snap.exists()) throw new Error("Pack not found.")
       const data = snap.data()
-      if (data.status !== "installing") throw new Error("Yükleme aşamasında değil.")
+      if (data.status !== "installing") throw new Error("Not in installation phase.")
 
       const member = data.members.find((m: PackMember) => m.uid === uid)
-      if (!member) throw new Error("Bu pack'in üyesi değilsin.")
-      if (member.type === "premium") throw new Error("Premium üyelerin yükleme yapması gerekmez.")
-      if (member.installConfirmed) throw new Error("Zaten onayladın.")
+      if (!member) throw new Error("You are not a member of this pack.")
+      if (member.type === "premium") throw new Error("Premium members don't need to install.")
+      if (member.installConfirmed) throw new Error("You have already confirmed.")
 
       const updatedMembers = data.members.map((m: PackMember) =>
         m.uid === uid ? { ...m, installConfirmed: true } : m
@@ -345,7 +345,7 @@ export async function transitionInstallingToTesting(packId: string) {
     await runTransaction(d, async (transaction) => {
       const ref = doc(d, "packs", packId)
       const snap = await transaction.get(ref)
-      if (!snap.exists()) throw new Error("Pack bulunamadı.")
+      if (!snap.exists()) throw new Error("Pack not found.")
       const data = snap.data()
       if (data.status !== "installing") return
 
@@ -494,7 +494,7 @@ export async function joinTesterPool(uid: string) {
   try {
     const d = getDb()
     const snap = await getDoc(doc(d, "users", uid))
-    if (!snap.exists()) throw new Error("Kullanıcı bulunamadı.")
+    if (!snap.exists()) throw new Error("User not found.")
     await updateDoc(doc(d, "users", uid), { isTester: true, testerSince: serverTimestamp() })
   } catch (err) {
     console.error("joinTesterPool failed:", err)
@@ -702,7 +702,7 @@ export async function resolveComplaint(complaintId: string, action: "resolved" |
   try {
     const d = getDb()
     const complaintSnap = await getDoc(doc(d, "complaints", complaintId))
-    if (!complaintSnap.exists()) throw new Error("Şikayet bulunamadı")
+    if (!complaintSnap.exists()) throw new Error("Complaint not found")
     const complaint = complaintSnap.data() as Complaint
 
     if (action === "resolved") {

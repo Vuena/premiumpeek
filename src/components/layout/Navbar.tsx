@@ -1,12 +1,12 @@
 "use client"
 
-import Link from "next/link"
 import { useAuth } from "@/context/AuthContext"
 import { Button } from "@/components/ui/button"
-import { Menu, X, Moon, Sun, ChevronDown } from "lucide-react"
+import { Menu, X, Moon, Sun, ChevronDown, Globe } from "lucide-react"
 import { useState, useEffect, useRef, memo } from "react"
 import { useTheme } from "./ThemeProvider"
-import { usePathname } from "next/navigation"
+import { useTranslations, useLocale } from "next-intl"
+import { Link, usePathname, useRouter } from "@/i18n/navigation"
 
 export const Navbar = memo(function Navbar() {
   const { user, logout } = useAuth()
@@ -14,32 +14,36 @@ export const Navbar = memo(function Navbar() {
   const [open, setOpen] = useState(false)
   const [dropdown, setDropdown] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const [langOpen, setLangOpen] = useState(false)
+  const langRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
+  const t = useTranslations("Navbar")
+  const locale = useLocale()
+  const router = useRouter()
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setDropdown(false)
       }
+      if (langRef.current && !langRef.current.contains(e.target as Node)) {
+        setLangOpen(false)
+      }
     }
-    const handleNavigate = () => setDropdown(false)
     document.addEventListener("mousedown", handleClick)
-    document.addEventListener("popstate", handleNavigate)
-    return () => {
-      document.removeEventListener("mousedown", handleClick)
-      document.removeEventListener("popstate", handleNavigate)
-    }
+    return () => document.removeEventListener("mousedown", handleClick)
   }, [])
+  useEffect(() => { setOpen(false); setDropdown(false) }, [pathname])
 
   const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/signup")
   if (isAuthPage) return null
 
   const links = [
-    { href: "/#how-it-works", label: "Nasıl Çalışır" },
-    { href: "/#pricing", label: "Fiyatlandırma" },
-    { href: "/blog", label: "Blog" },
-    { href: "/#reviews", label: "Yorumlar" },
-    { href: "/#faq", label: "SSS" },
+    { href: "/#how-it-works" as const, label: t("howItWorks") },
+    { href: "/#pricing" as const, label: t("pricing") },
+    { href: "/blog" as const, label: t("blog") },
+    { href: "/#reviews" as const, label: t("reviews") },
+    { href: "/#faq" as const, label: t("faq") },
   ]
 
   return (
@@ -70,7 +74,37 @@ export const Navbar = memo(function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button onClick={toggleTheme} aria-label="Temayı değiştir" className="hidden md:flex h-9 w-9 items-center justify-center rounded-xl hover:bg-subtle transition-colors">
+          <div className="relative" ref={langRef}>
+            <button
+              onClick={() => setLangOpen(!langOpen)}
+              className="hidden md:flex items-center gap-1.5 h-9 px-2 rounded-xl hover:bg-subtle transition-colors text-sm cursor-pointer"
+              aria-label={t("themeToggle")}
+            >
+              <Globe size={16} />
+              <span className="uppercase font-medium">{locale}</span>
+              <ChevronDown size={12} className={`transition-transform ${langOpen ? "rotate-180" : ""}`} />
+            </button>
+            {langOpen && (
+              <div className="absolute right-0 mt-2 w-32 rounded-xl border border-cardborder bg-card shadow-lg py-1 z-50">
+                {[["tr", "Türkçe"], ["en", "English"]].map(([code, label]) => (
+                  <button
+                    key={code}
+                    onClick={() => {
+                      if (code !== locale) {
+                        router.replace(pathname, { locale: code })
+                      }
+                      setLangOpen(false)
+                    }}
+                    className={`flex items-center gap-2 w-full px-4 py-3 min-h-11 text-sm hover:bg-subtle cursor-pointer ${code === locale ? "font-medium text-blue-600" : "text-muted"}`}
+                  >
+                    <span className="text-base">{code === "tr" ? "🇹🇷" : "🇬🇧"}</span>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <button onClick={toggleTheme} aria-label={t("themeToggle")} className="hidden md:flex h-9 w-9 items-center justify-center rounded-xl hover:bg-subtle transition-colors">
             {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
           </button>
 
@@ -85,23 +119,23 @@ export const Navbar = memo(function Navbar() {
               </button>
               {dropdown && (
                 <div className="absolute right-0 mt-2 w-48 rounded-xl border border-cardborder bg-card shadow-lg py-1">
-                  <Link href="/dashboard" onClick={() => setDropdown(false)} className="block px-4 py-3 min-h-11 text-sm hover:bg-subtle">Panel</Link>
-                  <Link href="/dashboard/orders" onClick={() => setDropdown(false)} className="block px-4 py-3 min-h-11 text-sm hover:bg-subtle">Siparişlerim</Link>
-                  <Link href="/dashboard/settings" onClick={() => setDropdown(false)} className="block px-4 py-3 min-h-11 text-sm hover:bg-subtle">Ayarlar</Link>
+                  <Link href="/dashboard" onClick={() => setDropdown(false)} className="block px-4 py-3 min-h-11 text-sm hover:bg-subtle">{t("dashboard")}</Link>
+                  <Link href="/dashboard/orders" onClick={() => setDropdown(false)} className="block px-4 py-3 min-h-11 text-sm hover:bg-subtle">{t("myOrders")}</Link>
+                  <Link href="/dashboard/settings" onClick={() => setDropdown(false)} className="block px-4 py-3 min-h-11 text-sm hover:bg-subtle">{t("settings")}</Link>
                   {(user as any).role === "admin" && (
-                    <Link href="/dashboard/admin" onClick={() => setDropdown(false)} className="block px-4 py-3 min-h-11 text-sm text-blue-600 hover:bg-subtle">Admin Paneli</Link>
+                    <Link href="/dashboard/admin" onClick={() => setDropdown(false)} className="block px-4 py-3 min-h-11 text-sm text-blue-600 hover:bg-subtle">{t("adminPanel")}</Link>
                   )}
-                  <button onClick={async () => { if (!confirm("Çıkış yapmak istediğine emin misin?")) return; try { await logout() } catch {}; setDropdown(false) }} className="block w-full text-left px-4 py-3 min-h-11 text-sm text-red-600 hover:bg-subtle cursor-pointer">Çıkış Yap</button>
+                  <button onClick={async () => { if (!confirm(t("logoutConfirm"))) return; try { await logout() } catch {}; setDropdown(false) }} className="block w-full text-left px-4 py-3 min-h-11 text-sm text-red-600 hover:bg-subtle cursor-pointer">{t("logout")}</button>
                 </div>
               )}
             </div>
           ) : (
             <Link href="/login">
-              <Button size="sm">Giriş Yap</Button>
+              <Button size="sm">{t("login")}</Button>
             </Link>
           )}
 
-          <button onClick={() => setOpen(!open)} aria-label={open ? "Menüyü kapat" : "Menüyü aç"} className="md:hidden h-11 w-11 flex items-center justify-center rounded-xl hover:bg-subtle cursor-pointer">
+          <button onClick={() => setOpen(!open)} aria-label={open ? t("menuClose") : t("menuOpen")} className="md:hidden h-11 w-11 flex items-center justify-center rounded-xl hover:bg-subtle cursor-pointer">
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
@@ -110,14 +144,30 @@ export const Navbar = memo(function Navbar() {
       {open && (
         <div className="md:hidden border-t border-cardborder px-4 py-4 space-y-3 bg-background">
           {links.map((link) => (
-            <Link key={link.href} href={link.href} onClick={() => setOpen(false)} className="block py-3 text-sm text-muted hover:text-foreground">
+            <Link key={link.href} href={link.href} className="block py-3 text-sm text-muted hover:text-foreground">
               {link.label}
             </Link>
           ))}
           <button onClick={toggleTheme} className="flex items-center gap-2 text-sm text-muted cursor-pointer min-h-11">
             {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-            {theme === "dark" ? "Açık Tema" : "Koyu Tema"}
+            {theme === "dark" ? t("lightTheme") : t("darkTheme")}
           </button>
+          <div className="pt-2 border-t border-cardborder mt-2">
+            <p className="text-xs text-muted mb-2 px-1">{t("language")}</p>
+            {[["tr", "Türkçe"], ["en", "English"]].map(([code, label]) => (
+              <button
+                key={code}
+                onClick={() => {
+                  if (code !== locale) router.replace(pathname, { locale: code })
+                  setOpen(false)
+                }}
+                className={`flex items-center gap-2 w-full py-3 text-sm cursor-pointer min-h-11 ${code === locale ? "font-medium text-blue-600" : "text-muted"}`}
+              >
+                <span className="text-base">{code === "tr" ? "🇹🇷" : "🇬🇧"}</span>
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </nav>

@@ -12,14 +12,14 @@ export async function POST(req: NextRequest) {
 
     const { action, appId } = await req.json()
     if (!appId || !action) {
-      return NextResponse.json({ error: "appId ve action gerekli" }, { status: 400 })
+      return NextResponse.json({ error: "appId and action are required" }, { status: 400 })
     }
 
     switch (action) {
       case "delete": {
         const appSnap = await adminDb!.collection("apps").doc(appId).get()
         if (!appSnap.exists) {
-          return NextResponse.json({ error: "Uygulama bulunamadı" }, { status: 404 })
+          return NextResponse.json({ error: "App not found" }, { status: 404 })
         }
         await adminDb!.collection("apps").doc(appId).delete()
         await adminDb!.collection("auditLogs").add({
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
       }
 
       default:
-        return NextResponse.json({ error: "Geçersiz işlem" }, { status: 400 })
+        return NextResponse.json({ error: "Invalid action" }, { status: 400 })
     }
 
     return NextResponse.json({ success: true })

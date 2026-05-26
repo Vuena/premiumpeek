@@ -1,5 +1,7 @@
 import { sendEmail, dailyReminderHtml, warningHtml, removedHtml } from "@/lib/email"
 
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.premiumpeek.com"
+
 interface EmailOptions {
   to: string
   userName: string
@@ -9,8 +11,8 @@ export async function sendDailyReminder({ to, userName }: EmailOptions, appCount
   try {
     await sendEmail({
       to,
-      subject: "Günlük Test Hatırlatması | PremiumPeek",
-      html: dailyReminderHtml(userName, appCount, packName, "https://www.premiumpeek.com/dashboard/testing"),
+      subject: "Daily Test Reminder | PremiumPeek",
+      html: dailyReminderHtml(userName, appCount, packName, `${siteUrl}/dashboard/testing`),
     })
   } catch (err) {
     console.error("Failed to send email:", err)
@@ -21,7 +23,7 @@ export async function sendWarning({ to, userName }: EmailOptions, daysMissed: nu
   try {
     await sendEmail({
       to,
-      subject: "Uyarı: Test Aksatma | PremiumPeek",
+      subject: "Warning: Missed Test | PremiumPeek",
       html: warningHtml(userName, daysMissed, packName),
     })
   } catch (err) {
@@ -33,7 +35,7 @@ export async function sendRemoved({ to, userName }: EmailOptions, packName: stri
   try {
     await sendEmail({
       to,
-      subject: "Pack'ten Atıldın | PremiumPeek",
+      subject: "Removed from Pack | PremiumPeek",
       html: removedHtml(userName, packName),
     })
   } catch (err) {

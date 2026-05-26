@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     const { orderId, txHash, packId, appId } = body
 
     if (!orderId || !txHash) {
-      return NextResponse.json({ error: "Eksik alanlar" }, { status: 400 })
+      return NextResponse.json({ error: "Missing fields" }, { status: 400 })
     }
 
     const d = adminDb!
@@ -35,16 +35,16 @@ export async function POST(req: NextRequest) {
     const orderSnap = await orderRef.get()
 
     if (!orderSnap.exists) {
-      return NextResponse.json({ error: "Sipariş bulunamadı" }, { status: 404 })
+      return NextResponse.json({ error: "Order not found" }, { status: 404 })
     }
 
     const order = orderSnap.data()!
     if (order.uid !== decoded.uid) {
-      return NextResponse.json({ error: "Bu sipariş size ait değil" }, { status: 403 })
+      return NextResponse.json({ error: "This order does not belong to you" }, { status: 403 })
     }
 
     if (order.status !== "awaiting_payment") {
-      return NextResponse.json({ error: "Bu sipariş için ödeme beklenmiyor" }, { status: 400 })
+      return NextResponse.json({ error: "Payment is not expected for this order" }, { status: 400 })
     }
 
     // Store TX hash for admin verification
@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "Ödeme bilgisi kaydedildi. Admin onayından sonra test süreci başlayacak.",
+      message: "Payment info saved. Testing will begin after admin approval.",
     })
   } catch (error: any) {
     console.error("Verify payment error:", error)

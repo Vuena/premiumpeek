@@ -15,11 +15,11 @@ export async function POST(req: NextRequest) {
 
     const { subject, message, target } = await req.json()
     if (!subject || !message) {
-      return NextResponse.json({ error: "Konu ve mesaj gerekli" }, { status: 400 })
+      return NextResponse.json({ error: "Subject and message are required" }, { status: 400 })
     }
 
     if (!resend) {
-      return NextResponse.json({ error: "E-posta servisi yapılandırılmamış" }, { status: 500 })
+      return NextResponse.json({ error: "Email service not configured" }, { status: 500 })
     }
 
     const d = adminDb!
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     } else if (target === "premium") {
       usersSnap = await d.collection("users").where("role", "==", "premium").get()
     } else {
-      return NextResponse.json({ error: "Geçersiz hedef" }, { status: 400 })
+      return NextResponse.json({ error: "Invalid target" }, { status: 400 })
     }
 
     const emails = usersSnap.docs
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
       .slice(0, 50)
 
     if (emails.length === 0) {
-      return NextResponse.json({ error: "Gönderilecek e-posta bulunamadı" }, { status: 400 })
+      return NextResponse.json({ error: "No emails found to send" }, { status: 400 })
     }
 
     const sent: string[] = []

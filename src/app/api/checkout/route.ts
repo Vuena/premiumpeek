@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     const { appName, packageName, googlePlayLink, instructions } = body
 
     if (!appName || !packageName || !googlePlayLink) {
-      return NextResponse.json({ error: "Eksik alanlar" }, { status: 400 })
+      return NextResponse.json({ error: "Missing fields" }, { status: 400 })
     }
 
     const d = adminDb!

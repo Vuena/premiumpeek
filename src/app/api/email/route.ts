@@ -33,15 +33,15 @@ export async function POST(req: NextRequest) {
 
     switch (type) {
       case "daily-reminder":
-        subject = "📱 Bugün test etmen gereken uygulamalar var!"
+        subject = "You have apps to test today!"
         html = dailyReminderHtml(data.userName, data.appCount, data.packName, data.testingLink)
         break
       case "warning":
-        subject = `⚠️ ${data.daysMissed}. gün uyarısı - ${data.packName}`
+        subject = `⚠️ Day ${data.daysMissed} warning - ${data.packName}`
         html = warningHtml(data.userName, data.daysMissed, data.packName)
         break
       case "removed":
-        subject = `❌ ${data.packName} pack'inden atıldın`
+        subject = `❌ You were removed from ${data.packName}`
         html = removedHtml(data.userName, data.packName)
         break
       default:

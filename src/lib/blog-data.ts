@@ -6,7 +6,9 @@ export interface BlogPost {
   content: string
 }
 
-export const blogPosts: BlogPost[] = [
+import { blogPosts as enPosts } from "./blog-data-en"
+
+const trPosts: BlogPost[] = [
   {
     slug: "google-play-kapali-test-sarti-2026",
     title: "Google Play Kapalı Test Şartı 2026",
@@ -78,3 +80,15 @@ export const blogPosts: BlogPost[] = [
     content: "Tek başınıza 12 testçi bulup 14 gün boyunca aktif tutmak neredeyse imkansızdır. Bir toplulukla çalışmanın avantajları: herkes birbirinin uygulamasını test eder, karşılıklı güven sistemi vardır, kurallar herkes için geçerlidir, test süreci 4 aşamalı otomatik sistemle şeffaf ve takip edilebilirdir. PremiumPeek topluluğunda 5.000'den fazla geliştirici aynı amaç için birbirine destek oluyor. Siz de aramıza katılın, Google Play'de yayınlama hedefinize birlikte ulaşalım.",
   },
 ]
+
+export const blogPosts = trPosts
+
+export function getBlogPosts(locale: string): BlogPost[] {
+  if (locale === "en") return enPosts
+  return trPosts
+}
+
+export function getBlogPost(slug: string, locale: string): BlogPost | undefined {
+  const posts = getBlogPosts(locale)
+  return posts.find((p) => p.slug === slug)
+}

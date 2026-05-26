@@ -13,14 +13,14 @@ export async function POST(req: NextRequest) {
 
     const { packId, action: op, data } = await req.json()
     if (!packId || !op) {
-      return NextResponse.json({ error: "packId ve action gerekli" }, { status: 400 })
+      return NextResponse.json({ error: "packId and action are required" }, { status: 400 })
     }
 
     const d = adminDb!
     const packRef = d.collection("packs").doc(packId)
     const packSnap = await packRef.get()
     if (!packSnap.exists) {
-      return NextResponse.json({ error: "Pack bulunamadı" }, { status: 404 })
+      return NextResponse.json({ error: "Pack not found" }, { status: 404 })
     }
 
     const validStatuses = ["forming", "installing", "testing", "completed"]
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       case "changeStatus": {
         const newStatus = data?.status
         if (!newStatus || !validStatuses.includes(newStatus)) {
-          return NextResponse.json({ error: "Geçersiz durum" }, { status: 400 })
+          return NextResponse.json({ error: "Invalid status" }, { status: 400 })
         }
         await packRef.update({ status: newStatus })
         await log(d, auth.uid, "pack_change_status", { packId, oldStatus: packSnap.data()?.status, newStatus })
@@ -39,14 +39,14 @@ export async function POST(req: NextRequest) {
       case "addMember": {
         const { uid, email, displayName, role } = data || {}
         if (!uid) {
-          return NextResponse.json({ error: "uid gerekli" }, { status: 400 })
+          return NextResponse.json({ error: "uid is required" }, { status: 400 })
         }
         const pack = packSnap.data()!
         if (pack.members?.some((m: any) => m.uid === uid)) {
-          return NextResponse.json({ error: "Kullanıcı zaten pack'te" }, { status: 400 })
+          return NextResponse.json({ error: "User is already in the pack" }, { status: 400 })
         }
         if ((pack.members?.length || 0) >= (pack.maxMembers || 18)) {
-          return NextResponse.json({ error: "Pack dolu" }, { status: 400 })
+          return NextResponse.json({ error: "Pack is full" }, { status: 400 })
         }
         const newMember = {
           uid,
@@ -65,12 +65,12 @@ export async function POST(req: NextRequest) {
       case "removeMember": {
         const { uid: removeUid } = data || {}
         if (!removeUid) {
-          return NextResponse.json({ error: "uid gerekli" }, { status: 400 })
+          return NextResponse.json({ error: "uid is required" }, { status: 400 })
         }
         const pack = packSnap.data()!
         const member = pack.members?.find((m: any) => m.uid === removeUid)
         if (!member) {
-          return NextResponse.json({ error: "Kullanıcı pack'te bulunamadı" }, { status: 404 })
+          return NextResponse.json({ error: "User not found in pack" }, { status: 404 })
         }
         await packRef.update({
           members: pack.members.filter((m: any) => m.uid !== removeUid),
@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
       }
 
       default:
-        return NextResponse.json({ error: "Geçersiz işlem" }, { status: 400 })
+        return NextResponse.json({ error: "Invalid action" }, { status: 400 })
     }
 
     return NextResponse.json({ success: true })

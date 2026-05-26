@@ -1,6 +1,9 @@
-import Link from "next/link"
+import { getTranslations } from "next-intl/server"
+import { Link } from "@/i18n/navigation"
 
-export function Footer() {
+export async function Footer() {
+  const t = await getTranslations("Footer")
+
   return (
     <footer className="border-t border-cardborder bg-subtle">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
@@ -22,42 +25,42 @@ export function Footer() {
               PremiumPeek
             </Link>
             <p className="text-sm text-muted max-w-xs sm:max-w-none">
-              Geliştiricilerin Google Play yayın şartlarını kolayca karşılaması için kurulmuş test topluluğu.
+              {t("description")}
             </p>
           </div>
 
           <div>
-            <h4 className="font-medium text-sm mb-3">Platform</h4>
+            <h4 className="font-medium text-sm mb-3">{t("platform")}</h4>
             <div className="space-y-2">
-              <Link href="/#how-it-works" className="block text-sm text-muted hover:text-foreground">Nasıl Çalışır</Link>
-              <Link href="/#pricing" className="block text-sm text-muted hover:text-foreground">Fiyatlandırma</Link>
-              <Link href="/#reviews" className="block text-sm text-muted hover:text-foreground">Yorumlar</Link>
-              <Link href="/#faq" className="block text-sm text-muted hover:text-foreground">SSS</Link>
+              <Link href="/#how-it-works" className="block text-sm text-muted hover:text-foreground">{t("howItWorks")}</Link>
+              <Link href="/#pricing" className="block text-sm text-muted hover:text-foreground">{t("pricing")}</Link>
+              <Link href="/#reviews" className="block text-sm text-muted hover:text-foreground">{t("reviews")}</Link>
+              <Link href="/#faq" className="block text-sm text-muted hover:text-foreground">{t("faq")}</Link>
             </div>
           </div>
 
           <div>
-            <h4 className="font-medium text-sm mb-3">Şirket</h4>
+            <h4 className="font-medium text-sm mb-3">{t("company")}</h4>
             <div className="space-y-2">
-              <Link href="/about" className="block text-sm text-muted hover:text-foreground">Hakkımızda</Link>
-              <Link href="/app-rejected" className="block text-sm text-muted hover:text-foreground">Red mi Yedin?</Link>
-              <Link href="/blog" className="block text-sm text-muted hover:text-foreground">Blog</Link>
-              <Link href="/contact" className="block text-sm text-muted hover:text-foreground">İletişim</Link>
+              <Link href="/about" className="block text-sm text-muted hover:text-foreground">{t("about")}</Link>
+              <Link href="/app-rejected" className="block text-sm text-muted hover:text-foreground">{t("appRejected")}</Link>
+              <Link href="/blog" className="block text-sm text-muted hover:text-foreground">{t("blog")}</Link>
+              <Link href="/contact" className="block text-sm text-muted hover:text-foreground">{t("contact")}</Link>
             </div>
           </div>
 
           <div>
-            <h4 className="font-medium text-sm mb-3">Yasal</h4>
+            <h4 className="font-medium text-sm mb-3">{t("legal")}</h4>
             <div className="space-y-2">
-              <Link href="/privacy" className="block text-sm text-muted hover:text-foreground">Gizlilik Politikası</Link>
-              <Link href="/terms" className="block text-sm text-muted hover:text-foreground">Kullanım Şartları</Link>
-              <Link href="/refund" className="block text-sm text-muted hover:text-foreground">İade Politikası</Link>
+              <Link href="/privacy" className="block text-sm text-muted hover:text-foreground">{t("privacy")}</Link>
+              <Link href="/terms" className="block text-sm text-muted hover:text-foreground">{t("terms")}</Link>
+              <Link href="/refund" className="block text-sm text-muted hover:text-foreground">{t("refund")}</Link>
             </div>
           </div>
         </div>
 
         <div className="mt-10 pt-6 border-t border-cardborder flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-muted">&copy; 2026 PremiumPeek. Tüm hakları saklıdır.</p>
+          <p className="text-xs text-muted">{t("copyright")}</p>
         </div>
       </div>
     </footer>

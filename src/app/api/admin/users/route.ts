@@ -12,12 +12,12 @@ export async function POST(req: NextRequest) {
 
     const { uid, role } = await req.json()
     if (!uid || !role) {
-      return NextResponse.json({ error: "uid ve role gerekli" }, { status: 400 })
+      return NextResponse.json({ error: "uid and role are required" }, { status: 400 })
     }
 
     const validRoles = ["user", "admin", "banned"]
     if (!validRoles.includes(role)) {
-      return NextResponse.json({ error: "Geçersiz rol" }, { status: 400 })
+      return NextResponse.json({ error: "Invalid role" }, { status: 400 })
     }
 
     await adminDb!.collection("users").doc(uid).update({ role })

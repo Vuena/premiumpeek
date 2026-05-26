@@ -10,23 +10,23 @@ export async function POST(req: NextRequest) {
   try {
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown"
     if (!rateLimit(ip, 5, 60000)) {
-      return NextResponse.json({ error: "Çok fazla istek. Lütfen 1 dakika bekleyin." }, { status: 429 })
+      return NextResponse.json({ error: "Too many requests. Please wait 1 minute." }, { status: 429 })
     }
 
     const body = await req.json()
     const { name, email, message } = body
 
     if (!name || !email || !message) {
-      return NextResponse.json({ error: "Tüm alanlar gerekli" }, { status: 400 })
+      return NextResponse.json({ error: "All fields are required" }, { status: 400 })
     }
 
     await sendEmail({
       to: "premiumpeektest@gmail.com",
-      subject: `İletişim Formu: ${escapeHtml(name)} <${escapeHtml(email)}>`,
-      html: `<h2>Yeni İletişim Mesajı</h2><p><strong>Ad:</strong> ${escapeHtml(name)}</p><p><strong>E-posta:</strong> ${escapeHtml(email)}</p><p><strong>Mesaj:</strong></p><p>${escapeHtml(message)}</p>`,
+      subject: `Contact Form: ${escapeHtml(name)} <${escapeHtml(email)}>`,
+      html: `<h2>New Contact Message</h2><p><strong>Name:</strong> ${escapeHtml(name)}</p><p><strong>Email:</strong> ${escapeHtml(email)}</p><p><strong>Message:</strong></p><p>${escapeHtml(message)}</p>`,
     }).catch(err => console.error("Contact email send failed:", err))
 
-    return NextResponse.json({ success: true, message: "Mesajınız alındı. En kısa sürede size dönüş yapacağız." })
+    return NextResponse.json({ success: true, message: "Your message has been received. We will get back to you as soon as possible." })
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }

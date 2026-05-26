@@ -25,23 +25,23 @@ export async function POST(req: NextRequest) {
 
     const { orderId } = await req.json()
     if (!orderId) {
-      return NextResponse.json({ error: "orderId gerekli" }, { status: 400 })
+      return NextResponse.json({ error: "orderId is required" }, { status: 400 })
     }
 
     const d = adminDb!
     const orderRef = d.collection("orders").doc(orderId)
     const orderSnap = await orderRef.get()
     if (!orderSnap.exists) {
-      return NextResponse.json({ error: "Sipariş bulunamadı" }, { status: 404 })
+      return NextResponse.json({ error: "Order not found" }, { status: 404 })
     }
 
     const order = orderSnap.data()!
     if (order.uid !== decoded.uid) {
-      return NextResponse.json({ error: "Bu siparişi silme yetkin yok" }, { status: 403 })
+      return NextResponse.json({ error: "You don't have permission to delete this order" }, { status: 403 })
     }
 
     if (order.status !== "awaiting_payment" && order.status !== "awaiting_confirmation" && order.status !== "paid") {
-      return NextResponse.json({ error: "Bu sipariş silinemez" }, { status: 400 })
+      return NextResponse.json({ error: "This order cannot be deleted" }, { status: 400 })
     }
 
     await orderRef.delete()

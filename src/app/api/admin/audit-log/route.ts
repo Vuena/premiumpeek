@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
 
     const { action, details } = await req.json()
     if (!action) {
-      return NextResponse.json({ error: "action gerekli" }, { status: 400 })
+      return NextResponse.json({ error: "action is required" }, { status: 400 })
     }
 
     const d = adminDb!

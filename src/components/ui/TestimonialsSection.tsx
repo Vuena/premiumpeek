@@ -3,11 +3,13 @@
 import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Star, ChevronDown } from "lucide-react"
+import { useTranslations } from "next-intl"
 import allReviews from "@/lib/reviews.json"
 
 export function TestimonialsSection() {
   const [showAll, setShowAll] = useState(false)
   const visible = showAll ? allReviews : allReviews.slice(0, 6)
+  const t = useTranslations("HomePage")
 
   return (
     <section id="reviews" className="py-20 sm:py-28">
@@ -27,25 +29,25 @@ export function TestimonialsSection() {
       }} />
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Geliştiriciler Ne Diyor?</h2>
-          <p className="mt-4 text-lg text-muted max-w-2xl mx-auto">5.000+ geliştirici uygulamasını yayınladı.</p>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{t("reviewsTitle")}</h2>
+          <p className="mt-4 text-lg text-muted max-w-2xl mx-auto">{t("reviewsSubtitle")}</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
-          {visible.map((t) => (
-            <Card key={t.name} className="border-cardborder">
+          {visible.map((r) => (
+            <Card key={r.name} className="border-cardborder">
               <CardContent className="p-6">
                 <div className="flex gap-1 mb-3">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star key={i} className="h-4 w-4 fill-yellow-500 text-yellow-500" />
                   ))}
                 </div>
-                <p className="text-sm text-muted mb-4 leading-relaxed italic">&ldquo;{t.text}&rdquo;</p>
+                <p className="text-sm text-muted mb-4 leading-relaxed italic">&ldquo;{r.text}&rdquo;</p>
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-950/30 flex items-center justify-center text-sm font-medium text-blue-700 dark:text-blue-400">{t.name[0]}</div>
+                  <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-950/30 flex items-center justify-center text-sm font-medium text-blue-700 dark:text-blue-400">{r.name[0]}</div>
                   <div>
-                    <p className="text-sm font-medium">{t.name}</p>
-                    <p className="text-xs text-muted">{t.title}</p>
+                    <p className="text-sm font-medium">{r.name}</p>
+                    <p className="text-xs text-muted">{r.title}</p>
                   </div>
                 </div>
               </CardContent>
@@ -56,7 +58,7 @@ export function TestimonialsSection() {
         {!showAll && allReviews.length > 6 && (
           <div className="text-center mt-8">
             <button onClick={() => setShowAll(true)} className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer min-h-11">
-              Tüm Yorumları Gör ({allReviews.length}) <ChevronDown size={16} />
+              {t("seeAllReviews")} ({allReviews.length}) <ChevronDown size={16} />
             </button>
           </div>
         )}
