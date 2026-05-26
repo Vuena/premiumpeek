@@ -35,7 +35,7 @@ export default function TesterPage() {
         setLoading(false)
       }
     })()
-  }, [user, authLoading])
+  }, [user, authLoading, router])
 
   const loadTasks = async () => {
     if (!user) return

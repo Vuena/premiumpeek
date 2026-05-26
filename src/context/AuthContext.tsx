@@ -68,24 +68,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const createUserDocument = async (user: User, name?: string) => {
-    try {
-      const d = getFirestoreDb()
-      const userRef = doc(d, "users", user.uid)
-      const userSnap = await getDoc(userRef)
-      if (!userSnap.exists()) {
-        await setDoc(userRef, {
-          email: user.email,
-          displayName: name || user.displayName || "",
-          photoURL: user.photoURL || "",
-          totalTested: 0,
-          totalPosted: 0,
-          isTester: false,
-          role: "user",
-          createdAt: serverTimestamp(),
-        })
-      }
-    } catch (err) {
-      console.error("createUserDocument error:", err)
+    const d = getFirestoreDb()
+    const userRef = doc(d, "users", user.uid)
+    const userSnap = await getDoc(userRef)
+    if (!userSnap.exists()) {
+      await setDoc(userRef, {
+        email: user.email,
+        displayName: name || user.displayName || "",
+        photoURL: user.photoURL || "",
+        totalTested: 0,
+        totalPosted: 0,
+        isTester: false,
+        role: "user",
+        createdAt: serverTimestamp(),
+      })
     }
   }
 

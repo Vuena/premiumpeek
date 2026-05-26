@@ -32,7 +32,7 @@ export default function NewReportPage() {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
     loadApps()
-  }, [user, authLoading])
+  }, [user, authLoading, router])
 
   const loadApps = async () => {
     if (!db) { addToast("error", t("dbError")); return }

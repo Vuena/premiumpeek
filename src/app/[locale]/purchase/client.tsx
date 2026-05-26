@@ -163,8 +163,8 @@ export default function PurchaseClient() {
             body: JSON.stringify({ orderId: orderData.orderId, txHash: txHash.trim(), packId: formingPacks[0].id, appId }),
           })
         } catch (e: any) {
-          addToast("error", t("errorPostPayment"))
           console.error("Post-payment error:", e)
+          throw new Error(t("errorPostPayment"))
         }
       }
 

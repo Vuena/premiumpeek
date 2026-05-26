@@ -32,7 +32,7 @@ export default function AppsPage() {
         setLoading(false)
       }
     })()
-  }, [user, authLoading])
+  }, [user, authLoading, router])
 
   const loadApps = async () => {
     if (!user) return

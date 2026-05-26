@@ -27,8 +27,9 @@ export default function AdminEmailPage() {
 
   useEffect(() => {
     if (authLoading) return
-    if (!user || (user as any).role !== "admin") { router.push("/dashboard"); return }
-  }, [user, authLoading])
+    if (!user) { router.push("/login"); return }
+    if ((user as any).role !== "admin") { router.push("/dashboard"); return }
+  }, [user, authLoading, router])
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault()
