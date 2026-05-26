@@ -4,6 +4,8 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import {
   onAuthStateChanged,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
@@ -45,9 +47,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       try {
         if (firebaseUser) {
-          const userDoc = await getDoc(doc(getFirestoreDb(), "users", firebaseUser.uid))
-          if (userDoc.exists()) {
-            setUser({ ...firebaseUser, ...userDoc.data() } as AuthUser)
+          const userSnap = await getDoc(doc(getFirestoreDb(), "users", firebaseUser.uid)).catch(() => null)
+          if (userSnap?.exists()) {
+            setUser({ ...firebaseUser, ...userSnap.data() } as AuthUser)
           } else {
             setUser(firebaseUser as AuthUser)
           }
@@ -65,6 +67,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false)
     })
     return () => unsubscribe()
+  }, [])
+
+  useEffect(() => {
+    if (!auth) return
+    getRedirectResult(auth).then((result) => {
+      if (result) {
+        createUserDocument(result.user).then(() => {
+          const locale = window.location.pathname.split("/")[1]
+          window.location.href = `/${locale}/dashboard`
+        }).catch((err) => {
+          console.error("Redirect sign-in doc error:", err)
+        })
+      }
+    }).catch((err) => {
+      console.error("Redirect sign-in error:", err)
+    })
   }, [])
 
   const createUserDocument = async (user: User, name?: string) => {
@@ -92,8 +110,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider()
-    const result = await signInWithPopup(getFirebaseAuth(), provider)
-    await createUserDocument(result.user)
+    const a = getFirebaseAuth()
+    try {
+      const result = await signInWithPopup(a, provider)
+      await createUserDocument(result.user)
+    } catch (err: any) {
+      if (err?.code === "auth/popup-blocked" || err?.code === "auth/popup-closed-by-user") {
+        signInWithRedirect(a, provider)
+        return
+      }
+      throw err
+    }
   }
 
   const signInWithEmail = async (email: string, password: string) => {
