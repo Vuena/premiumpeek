@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useAuth } from "@/context/AuthContext"
 import { useRouter, Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
@@ -13,17 +13,13 @@ import { usePageMeta } from "@/lib/usePageMeta"
 export default function LoginClient() {
   const t = useTranslations("LoginPage")
   usePageMeta({ title: `${t("title")} | PremiumPeek`, description: `${t("subtitle")}.` })
-  const { signInWithGoogle, signInWithEmail } = useAuth()
+  const { signInWithGoogle, signInWithEmail, user: authUser, loading: authLoading } = useAuth()
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const clearLoadingTimeout = () => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current)
-  }
+  const pendingRef = useRef(false)
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,7 +27,6 @@ export default function LoginClient() {
     setLoading(true)
     try {
       await signInWithEmail(email, password)
-      setLoading(false)
       router.push("/dashboard")
     } catch (err: any) {
       console.error("Email login error:", err)
@@ -43,13 +38,10 @@ export default function LoginClient() {
   const handleGoogleLogin = async () => {
     setError("")
     setLoading(true)
-    timeoutRef.current = setTimeout(() => {
-      setError(t("errorGoogle"))
-      setLoading(false)
-    }, 30000)
+    pendingRef.current = true
     try {
       const result = await signInWithGoogle()
-      clearLoadingTimeout()
+      pendingRef.current = false
       if (result === "redirect") {
         return
       }
@@ -57,16 +49,23 @@ export default function LoginClient() {
         setLoading(false)
         return
       }
-      setLoading(false)
       router.push("/dashboard")
     } catch (err: any) {
-      clearLoadingTimeout()
+      pendingRef.current = false
       const msg = err?.code ? `${err.code}: ${err.message}` : (err.message || t("errorGoogle"))
       console.error("Google login error:", err)
       setError(msg)
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (!authLoading && authUser && pendingRef.current) {
+      pendingRef.current = false
+      setLoading(false)
+      router.push("/dashboard")
+    }
+  }, [authLoading, authUser, router])
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">

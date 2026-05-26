@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useAuth } from "@/context/AuthContext"
 import { useRouter, Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
@@ -13,7 +13,7 @@ import { usePageMeta } from "@/lib/usePageMeta"
 export default function SignupClient() {
   const t = useTranslations("SignupPage")
   usePageMeta({ title: `${t("title")} | PremiumPeek`, description: `${t("subtitle")}.` })
-  const { signUpWithEmail, signInWithGoogle } = useAuth()
+  const { signUpWithEmail, signInWithGoogle, user: authUser, loading: authLoading } = useAuth()
   const router = useRouter()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
@@ -21,11 +21,7 @@ export default function SignupClient() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const clearLoadingTimeout = () => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current)
-  }
+  const pendingRef = useRef(false)
 
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -35,7 +31,6 @@ export default function SignupClient() {
     setLoading(true)
     try {
       await signUpWithEmail(email, password, name)
-      setLoading(false)
       router.push("/dashboard")
     } catch (err: any) {
       console.error("Email signup error:", err)
@@ -47,13 +42,10 @@ export default function SignupClient() {
   const handleGoogleSignup = async () => {
     setError("")
     setLoading(true)
-    timeoutRef.current = setTimeout(() => {
-      setError(t("errorGoogle"))
-      setLoading(false)
-    }, 30000)
+    pendingRef.current = true
     try {
       const result = await signInWithGoogle()
-      clearLoadingTimeout()
+      pendingRef.current = false
       if (result === "redirect") {
         return
       }
@@ -61,16 +53,23 @@ export default function SignupClient() {
         setLoading(false)
         return
       }
-      setLoading(false)
       router.push("/dashboard")
     } catch (err: any) {
-      clearLoadingTimeout()
+      pendingRef.current = false
       const msg = err?.code ? `${err.code}: ${err.message}` : (err.message || t("errorGoogle"))
       console.error("Google signup error:", err)
       setError(msg)
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (!authLoading && authUser && pendingRef.current) {
+      pendingRef.current = false
+      setLoading(false)
+      router.push("/dashboard")
+    }
+  }, [authLoading, authUser, router])
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">

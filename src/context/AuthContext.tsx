@@ -51,7 +51,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (userSnap?.exists()) {
             setUser({ ...firebaseUser, ...userSnap.data() } as AuthUser)
           } else {
-            setUser(firebaseUser as AuthUser)
+            await createUserDocument(firebaseUser)
+            const newSnap = await getDoc(doc(getFirestoreDb(), "users", firebaseUser.uid))
+            setUser({ ...firebaseUser, ...newSnap.data() } as AuthUser)
           }
         } else {
           setUser(null)
