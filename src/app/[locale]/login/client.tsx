@@ -40,6 +40,10 @@ export default function LoginClient() {
       await signInWithGoogle()
       router.push("/dashboard")
     } catch (err: any) {
+      if (err?.code === "auth/popup-closed-by-user") {
+        setLoading(false)
+        return
+      }
       if (err?.code === "auth/popup-blocked") {
         setError(t("popupBlocked"))
       } else {
