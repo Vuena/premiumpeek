@@ -43,7 +43,7 @@ export default function PackDetailPage() {
       try {
         await loadData()
       } catch (err) {
-        console.error("Failed to load:", err)
+        addToast("error", t("loadError")); console.error("Failed to load:", err)
       } finally {
         setLoading(false)
       }
@@ -319,6 +319,7 @@ export default function PackDetailPage() {
                     <button
                       onClick={() => { setInstallScreenshot(null); setInstallScreenshotPreview("") }}
                       className="absolute -top-2 -right-2 h-8 w-8 rounded-full bg-red-500 text-white flex items-center justify-center cursor-pointer text-xs"
+                      aria-label="Remove screenshot"
                     >X</button>
                   </div>
                 ) : (

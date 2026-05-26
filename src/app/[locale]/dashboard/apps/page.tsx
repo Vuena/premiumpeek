@@ -11,12 +11,14 @@ import { getUserApps, type App } from "@/lib/firestore"
 import { ArrowLeft, Plus, FileText, ExternalLink, Clock, CheckCircle2, AlertCircle, Loader2 } from "lucide-react"
 import { usePageMeta } from "@/lib/usePageMeta"
 import { useTranslations } from "next-intl"
+import { useToast } from "@/context/ToastContext"
 
 export default function AppsPage() {
   const t = useTranslations("DashboardApps")
   usePageMeta({ title: t("pageTitle") })
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
+  const { toast: addToast } = useToast()
   const [apps, setApps] = useState<App[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -27,7 +29,7 @@ export default function AppsPage() {
       try {
         await loadApps()
       } catch (err) {
-        console.error("Failed to load:", err)
+        addToast("error", t("loadError")); console.error("Failed to load:", err)
       } finally {
         setLoading(false)
       }

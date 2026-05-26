@@ -12,12 +12,14 @@ import { logAudit } from "@/lib/useAuditLog"
 import { ArrowLeft, Loader2, Shield, CheckCircle2, XCircle, AlertTriangle } from "lucide-react"
 import { Link } from "@/i18n/navigation"
 import { usePageMeta } from "@/lib/usePageMeta"
+import { useToast } from "@/context/ToastContext"
 
 export default function AdminComplaintsPage() {
   const t = useTranslations("AdminComplaints")
   usePageMeta({ title: t("metaTitle") })
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
+  const { toast: addToast } = useToast()
   const [complaints, setComplaints] = useState<Complaint[]>([])
   const [loading, setLoading] = useState(true)
   const [processing, setProcessing] = useState<string | null>(null)
@@ -33,7 +35,7 @@ export default function AdminComplaintsPage() {
     try {
       const data = await getComplaints()
       setComplaints(data)
-    } catch (err) { console.error("Failed to load complaints:", err)
+    } catch (err) { addToast("error", t("loadError")); console.error("Failed to load complaints:", err)
     } finally {
       setLoading(false)
     }
@@ -46,7 +48,7 @@ export default function AdminComplaintsPage() {
       await resolveComplaint(complaintId, action)
       await logAudit("complaint_resolve", { complaintId, action, appName: complaint?.appName || "" })
       setComplaints(prev => prev.map(c => c.id === complaintId ? { ...c, status: action } : c))
-    } catch (err) { console.error("Failed to resolve complaint:", err)
+    } catch (err) { addToast("error", t("loadError")); console.error("Failed to resolve complaint:", err)
     } finally {
       setProcessing(null)
     }

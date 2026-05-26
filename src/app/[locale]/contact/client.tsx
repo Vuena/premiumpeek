@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/button"
 import { Mail, MessageSquare, Clock, Loader2, CheckCircle2 } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { usePageMeta } from "@/lib/usePageMeta"
+import { useToast } from "@/context/ToastContext"
 
 export default function ContactClient() {
   const t = useTranslations("ContactPage")
   usePageMeta({ title: t("metaTitle"), description: t("metaDescription") })
+  const { toast: addToast } = useToast()
   const [form, setForm] = useState({ name: "", email: "", message: "" })
   const [sending, setSending] = useState(false)
   const [status, setStatus] = useState<{ type: "success" | "error"; text: string } | null>(null)
@@ -30,8 +32,8 @@ export default function ContactClient() {
       } else {
         setStatus({ type: "error", text: data.error || t("formError") })
       }
-    } catch {
-      setStatus({ type: "error", text: t("formRetry") })
+    } catch (err) {
+      setStatus({ type: "error", text: t("formRetry") }); addToast("error", t("formRetry")); console.error("Contact form error:", err)
     } finally {
       setSending(false)
     }

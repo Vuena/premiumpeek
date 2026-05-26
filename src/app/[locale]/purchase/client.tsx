@@ -104,7 +104,7 @@ export default function PurchaseClient() {
       sessionStorage.removeItem("paidAppData")
       setStep("payment")
     } catch (err: any) {
-      setError(err.message || t("errorVerify"))
+      setError(err.message || t("errorVerify")); addToast("error", err.message || t("errorVerify"))
     } finally {
       setLoading(false)
     }
@@ -115,6 +115,7 @@ export default function PurchaseClient() {
     setError("")
     if (!form.appName.trim()) { setError(t("errorAppName")); return }
     if (!form.googlePlayLink.trim()) { setError(t("errorPlayLink")); return }
+    if (!form.googlePlayLink.match(/^https?:\/\/play\.google\.com\//)) { setError(t("invalidPlayUrl")); return }
     await createOrder({
       appName: form.appName,
       googlePlayLink: form.googlePlayLink,
@@ -163,14 +164,14 @@ export default function PurchaseClient() {
             body: JSON.stringify({ orderId: orderData.orderId, txHash: txHash.trim(), packId: formingPacks[0].id, appId }),
           })
         } catch (e: any) {
-          console.error("Post-payment error:", e)
+          addToast("error", t("errorPostPayment")); console.error("Post-payment error:", e)
           throw new Error(t("errorPostPayment"))
         }
       }
 
       setStep("success")
     } catch (err: any) {
-      setError(err.message || t("errorVerify"))
+      setError(err.message || t("errorVerify")); addToast("error", err.message || t("errorVerify"))
     } finally {
       setLoading(false)
     }
@@ -225,7 +226,8 @@ export default function PurchaseClient() {
                   <div className="flex items-center gap-2 bg-white dark:bg-zinc-900 rounded-xl p-3 border border-zinc-300 dark:border-zinc-600">
                     <code className="text-xs font-mono font-bold flex-1 select-all break-all">{orderData.walletAddress}</code>
                     <button onClick={() => { navigator.clipboard.writeText(orderData.walletAddress) }}
-                      className="h-11 w-11 flex items-center justify-center rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer">
+                      className="h-11 w-11 flex items-center justify-center rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                      aria-label="Copy address">
                       <Copy size={16} className="text-zinc-500" />
                     </button>
                   </div>

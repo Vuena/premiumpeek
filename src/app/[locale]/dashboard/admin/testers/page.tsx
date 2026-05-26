@@ -11,6 +11,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { getAvailableTesters } from "@/lib/firestore"
 import { Loader2, ArrowLeft, Users, Search } from "lucide-react"
 import { usePageMeta } from "@/lib/usePageMeta"
+import { useToast } from "@/context/ToastContext"
 
 export default function AdminTestersPage() {
   const t = useTranslations("AdminTesters")
@@ -18,6 +19,7 @@ export default function AdminTestersPage() {
   usePageMeta({ title: t("metaTitle") })
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
+  const { toast: addToast } = useToast()
   const [testers, setTesters] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
@@ -26,7 +28,7 @@ export default function AdminTestersPage() {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
     if ((user as any).role !== "admin") { router.push("/dashboard"); return }
-    ;(async () => { try { await loadTesters() } catch { setTesters([]) } finally { setLoading(false) } })()
+    ;(async () => { try { await loadTesters() } catch (err) { setTesters([]); addToast("error", t("loadError")); console.error("Failed to load:", err) } finally { setLoading(false) } })()
   }, [user, authLoading, router])
 
   const loadTesters = async () => {

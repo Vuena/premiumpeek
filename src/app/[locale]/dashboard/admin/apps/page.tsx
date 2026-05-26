@@ -32,7 +32,7 @@ export default function AdminAppsPage() {
       try {
         await loadApps()
       } catch (err) {
-        console.error("Failed to load:", err)
+        addToast("error", t("loadError")); console.error("Failed to load:", err)
       } finally {
         setLoading(false)
       }

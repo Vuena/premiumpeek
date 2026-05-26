@@ -12,12 +12,14 @@ import { logAudit } from "@/lib/useAuditLog"
 import { Loader2, ArrowLeft, CreditCard, CheckCircle2, Ban, Search, Users, ExternalLink } from "lucide-react"
 import { Link } from "@/i18n/navigation"
 import { usePageMeta } from "@/lib/usePageMeta"
+import { useToast } from "@/context/ToastContext"
 
 export default function AdminOrdersPage() {
   const t = useTranslations("AdminOrders")
   usePageMeta({ title: t("metaTitle") })
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
+  const { toast: addToast } = useToast()
   const [orders, setOrders] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
@@ -26,7 +28,7 @@ export default function AdminOrdersPage() {
     if (authLoading) return
     if (!user) { router.push("/login"); return }
     if ((user as any).role !== "admin") { router.push("/dashboard"); return }
-    ;(async () => { try { await loadOrders() } catch { setOrders([]) } finally { setLoading(false) } })()
+    ;(async () => { try { await loadOrders() } catch (err) { setOrders([]); addToast("error", t("loadError")); console.error("Failed to load:", err) } finally { setLoading(false) } })()
   }, [user, authLoading, router])
 
   const loadOrders = async () => {

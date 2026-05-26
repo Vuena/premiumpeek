@@ -12,6 +12,7 @@ import { db } from "@/lib/firebase"
 import { Loader2, FileText, Plus, ArrowRight } from "lucide-react"
 import { usePageMeta } from "@/lib/usePageMeta"
 import { useTranslations, useLocale } from "next-intl"
+import { useToast } from "@/context/ToastContext"
 
 export default function ReportsPage() {
   const t = useTranslations("DashboardReports")
@@ -19,6 +20,7 @@ export default function ReportsPage() {
   usePageMeta({ title: t("pageTitle") })
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
+  const { toast: addToast } = useToast()
   const [reports, setReports] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -29,7 +31,7 @@ export default function ReportsPage() {
       try {
         await loadReports()
       } catch (err) {
-        console.error("Failed to load:", err)
+        addToast("error", t("loadError")); console.error("Failed to load:", err)
       } finally {
         setLoading(false)
       }

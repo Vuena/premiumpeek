@@ -13,6 +13,7 @@ import { db } from "@/lib/firebase"
 import { ArrowLeft, Loader2, Download } from "lucide-react"
 import { usePageMeta } from "@/lib/usePageMeta"
 import { useTranslations, useLocale } from "next-intl"
+import { useToast } from "@/context/ToastContext"
 
 export default function ReportDetailPage() {
   const t = useTranslations("DashboardReports")
@@ -21,6 +22,7 @@ export default function ReportDetailPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const params = useParams()
+  const { toast: addToast } = useToast()
   const [report, setReport] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
@@ -31,7 +33,7 @@ export default function ReportDetailPage() {
       try {
         await loadReport()
       } catch (err) {
-        console.error("Failed to load:", err)
+        addToast("error", t("loadError")); console.error("Failed to load:", err)
       } finally {
         setLoading(false)
       }
@@ -39,7 +41,7 @@ export default function ReportDetailPage() {
   }, [user, authLoading, router])
 
   const loadReport = async () => {
-    if (!db) { return }
+    if (!db) { setLoading(false); return }
     const d = db
     const snap = await getDoc(doc(d, "reports", params.id as string))
     if (!snap.exists() || snap.data().uid !== user!.uid) {
@@ -69,19 +71,19 @@ export default function ReportDetailPage() {
       .b{color:#dc2626;font-weight:600}.u{color:#2563eb;font-weight:600}.f{color:#16a34a;font-weight:600}
       .footer{margin-top:32px;padding-top:16px;border-top:1px solid #e4e4e7;font-size:12px;color:#a1a1aa}
     </style></head><body>
-    <h1>Test Raporu</h1>
-    <div class="meta">Tarih: ${dateStr}</div>
+    <h1>${locale === "en" ? "Test Report" : "Test Raporu"}</h1>
+    <div class="meta">${locale === "en" ? "Date" : "Tarih"}: ${dateStr}</div>
     <table><thead><tr><th>#</th><th>Type</th><th>Description</th></tr></thead><tbody>`
     report.items.forEach((item: any, i: number) => {
       const cls = item.type === "bug" ? "b" : item.type === "uiux" ? "u" : item.type === "feature" ? "f" : ""
       const lbl = item.type === "bug" ? "Bug" : item.type === "uiux" ? "UI/UX" : item.type === "feature" ? "Suggestion" : "Other"
       html += `<tr><td>${i+1}</td><td class="${cls}">${lbl}</td><td>${escapeHtml(item.description)}</td></tr>`
     })
-    html += `</tbody></table><div class="footer">PremiumPeek - Test Raporu</div></body></html>`
+    html += `</tbody></table><div class="footer">PremiumPeek - ${locale === "en" ? "Test Report" : "Test Raporu"}</div></body></html>`
     const blob = new Blob([html], { type: "text/html" })
     const url = URL.createObjectURL(blob)
     const a = window.document.createElement("a")
-    a.href = url; a.download = `rapor-${report.id}.html`
+    a.href = url; a.download = `${locale === "en" ? "report" : "rapor"}-${report.id}.html`
     a.click(); URL.revokeObjectURL(url)
   }
 

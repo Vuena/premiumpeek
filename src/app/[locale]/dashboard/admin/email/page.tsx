@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input"
 import { auth } from "@/lib/firebase"
 import { Loader2, ArrowLeft, Send, Mail } from "lucide-react"
 import { usePageMeta } from "@/lib/usePageMeta"
+import { useToast } from "@/context/ToastContext"
 
 export default function AdminEmailPage() {
   const t = useTranslations("AdminEmail")
@@ -24,6 +25,7 @@ export default function AdminEmailPage() {
   const [sending, setSending] = useState(false)
   const [result, setResult] = useState<{ sent: number; failed: number } | null>(null)
   const [error, setError] = useState("")
+  const { toast: addToast } = useToast()
 
   useEffect(() => {
     if (authLoading) return
@@ -52,12 +54,13 @@ export default function AdminEmailPage() {
       setSubject("")
       setMessage("")
     } catch (err: any) {
-      setError(err.message || t("errorGeneric"))
+      setError(err.message || t("errorGeneric")); addToast("error", err.message || t("errorGeneric"))
     } finally {
       setSending(false)
     }
   }
 
+  if (authLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Loader2 className="h-8 w-8 animate-spin text-muted" /></div>
   return (
     <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
       <Link href="/dashboard/admin" className="inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white mb-6">

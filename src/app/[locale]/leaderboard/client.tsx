@@ -9,11 +9,13 @@ import { db } from "@/lib/firebase"
 import { Trophy, Medal, Loader2 } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { usePageMeta } from "@/lib/usePageMeta"
+import { useToast } from "@/context/ToastContext"
 
 const LeaderboardClient = memo(function LeaderboardClient() {
   const t = useTranslations("LeaderboardPage")
   usePageMeta({ title: t("metaTitle"), description: t("metaDescription") })
   const { user } = useAuth()
+  const { toast: addToast } = useToast()
   const [topUsers, setTopUsers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -22,7 +24,7 @@ const LeaderboardClient = memo(function LeaderboardClient() {
       try {
         await loadLeaderboard()
       } catch (err) {
-        console.error("Failed to load:", err)
+        addToast("error", t("loadError")); console.error("Failed to load:", err)
       } finally {
         setLoading(false)
       }
@@ -35,7 +37,7 @@ const LeaderboardClient = memo(function LeaderboardClient() {
       const d = db
       const snap = await getDocs(query(collection(d, "users"), orderBy("totalTested", "desc"), limit(50)))
       setTopUsers(snap.docs.map((doc, i) => ({ id: doc.id, rank: i + 1, ...doc.data() })))
-    } catch (err) { console.error("Failed to load leaderboard:", err) }
+    } catch (err) { addToast("error", t("loadError")); console.error("Failed to load leaderboard:", err) }
     setLoading(false)
   }
 
@@ -55,6 +57,12 @@ const LeaderboardClient = memo(function LeaderboardClient() {
         </div>
       </div>
 
+      {topUsers.length === 0 && !loading ? (
+        <Card className="border-0 shadow-sm p-12 text-center">
+          <p className="text-zinc-500">{t("noData")}</p>
+        </Card>
+      ) : (
+      <>
       <div className="hidden md:block">
         <Card className="border-0 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
@@ -129,6 +137,8 @@ const LeaderboardClient = memo(function LeaderboardClient() {
           </Card>
         ))}
       </div>
+      </>
+    )}
     </div>
   )
 })

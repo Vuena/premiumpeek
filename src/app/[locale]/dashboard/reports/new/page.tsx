@@ -35,12 +35,17 @@ export default function NewReportPage() {
   }, [user, authLoading, router])
 
   const loadApps = async () => {
-    if (!db) { addToast("error", t("dbError")); return }
-    const d = db
-    const q = query(collection(d, "apps"), where("uid", "==", user!.uid))
-    const snap = await getDocs(q)
-    setApps(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })))
-    setLoading(false)
+    try {
+      if (!db) { addToast("error", t("dbError")); setLoading(false); return }
+      const d = db
+      const q = query(collection(d, "apps"), where("uid", "==", user!.uid))
+      const snap = await getDocs(q)
+      setApps(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })))
+    } catch (err) {
+      addToast("error", t("saveError", { error: (err as Error)?.message || t("unknownError") }))
+    } finally {
+      setLoading(false)
+    }
   }
 
   const addItem = () => {
@@ -73,19 +78,19 @@ export default function NewReportPage() {
       .b{color:#dc2626;font-weight:600}.u{color:#2563eb;font-weight:600}.f{color:#16a34a;font-weight:600}
       .footer{margin-top:32px;padding-top:16px;border-top:1px solid #e4e4e7;font-size:12px;color:#a1a1aa}
     </style></head><body>
-    <h1>Test Raporu - ${app?.appName || ""}</h1>
-    <div class="meta">Tarih: ${dateStr} | Paket: ${app?.packageName || ""}</div>
+    <h1>${locale === "en" ? "Test Report" : "Test Raporu"} - ${app?.appName || ""}</h1>
+    <div class="meta">${locale === "en" ? "Date" : "Tarih"}: ${dateStr} | ${locale === "en" ? "Package" : "Paket"}: ${app?.packageName || ""}</div>
     <table><thead><tr><th>#</th><th>Type</th><th>Description</th></tr></thead><tbody>`
     items.forEach((item, i) => {
       const cls = item.type === "bug" ? "b" : item.type === "uiux" ? "u" : item.type === "feature" ? "f" : ""
       const lbl = item.type === "bug" ? "Bug" : item.type === "uiux" ? "UI/UX" : item.type === "feature" ? "Suggestion" : "Other"
       html += `<tr><td>${i+1}</td><td class="${cls}">${lbl}</td><td>${escapeHtml(item.description)}</td></tr>`
     })
-    html += `</tbody></table><div class="footer">PremiumPeek - Test Raporu</div></body></html>`
+    html += `</tbody></table><div class="footer">PremiumPeek - ${locale === "en" ? "Test Report" : "Test Raporu"}</div></body></html>`
     const blob = new Blob([html], { type: "text/html" })
     const url = URL.createObjectURL(blob)
     const a = window.document.createElement("a")
-    a.href = url; a.download = `rapor-${app?.appName?.toLowerCase().replace(/\s+/g,"-")}.html`
+    a.href = url; a.download = `${locale === "en" ? "report" : "rapor"}-${app?.appName?.toLowerCase().replace(/\s+/g,"-")}.html`
     a.click(); URL.revokeObjectURL(url)
   }
 

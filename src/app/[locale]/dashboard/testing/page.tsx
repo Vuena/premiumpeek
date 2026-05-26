@@ -42,7 +42,7 @@ export default function TestingPage() {
       try {
         await loadTesting()
       } catch (err) {
-        console.error("Failed to load:", err)
+        addToast("error", t("loadError")); console.error("Failed to load:", err)
       } finally {
         setLoading(false)
       }
@@ -265,6 +265,7 @@ export default function TestingPage() {
                             <button
                               onClick={() => { setScreenshots(prev => ({ ...prev, [app.id]: null })); setScreenshotPreviews(prev => ({ ...prev, [app.id]: "" })) }}
                               className="absolute -top-2 -right-2 h-8 w-8 rounded-full bg-red-500 text-white flex items-center justify-center cursor-pointer"
+                              aria-label="Remove screenshot"
                             >
                               <X size={12} />
                             </button>

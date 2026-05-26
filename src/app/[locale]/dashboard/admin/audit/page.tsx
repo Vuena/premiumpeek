@@ -11,12 +11,14 @@ import { Card, CardContent } from "@/components/ui/card"
 import { auth } from "@/lib/firebase"
 import { Loader2, ArrowLeft, Search } from "lucide-react"
 import { usePageMeta } from "@/lib/usePageMeta"
+import { useToast } from "@/context/ToastContext"
 
 export default function AdminAuditPage() {
   const t = useTranslations("AdminAudit")
   const locale = useLocale()
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
+  const { toast: addToast } = useToast()
   const [logs, setLogs] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
@@ -39,7 +41,7 @@ export default function AdminAuditPage() {
       })
       const data = await res.json()
       setLogs(data.logs || [])
-    } catch (err) { console.error("Failed to load audit logs:", err)
+    } catch (err) { addToast("error", t("loadError")); console.error("Failed to load audit logs:", err)
     } finally {
       setLoading(false)
     }

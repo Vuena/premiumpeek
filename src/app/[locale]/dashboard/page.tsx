@@ -34,7 +34,7 @@ export default function DashboardPage() {
       try {
         await loadData()
       } catch (err) {
-        console.error("Failed to load:", err)
+        addToast("error", t("loadError")); console.error("Failed to load:", err)
       } finally {
         setLoading(false)
       }

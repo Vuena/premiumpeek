@@ -13,12 +13,14 @@ import { collection, getDocs, getCountFromServer, query, orderBy, limit, where }
 import { db, auth } from "@/lib/firebase"
 import { Users, Layers, FileText, Loader2, ArrowRight, Shield, CreditCard, UserCheck, AlertTriangle, Mail, History } from "lucide-react"
 import { usePageMeta } from "@/lib/usePageMeta"
+import { useToast } from "@/context/ToastContext"
 
 export default function AdminPage() {
   const t = useTranslations("AdminMain")
   const locale = useLocale()
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
+  const { toast: addToast } = useToast()
   const [stats, setStats] = useState({ users: 0, packs: 0, apps: 0, activePacks: 0 })
   const [loading, setLoading] = useState(true)
   const [recentLogs, setRecentLogs] = useState<any[]>([])
@@ -68,7 +70,7 @@ export default function AdminPage() {
       const data = await res.json()
       setRecentLogs(data.logs || [])
     } catch (e) {
-      console.error("Failed to load audit logs:", e)
+      addToast("error", t("loadError")); console.error("Failed to load audit logs:", e)
     }
   }
 

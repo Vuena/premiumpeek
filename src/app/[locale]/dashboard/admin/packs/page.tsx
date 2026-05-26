@@ -40,7 +40,7 @@ export default function AdminPacksPage() {
       try {
         await loadPacks()
       } catch (err) {
-        console.error("Failed to load:", err)
+        addToast("error", t("actionErrorGeneric")); console.error("Failed to load:", err)
       } finally {
         setLoading(false)
       }
@@ -121,10 +121,10 @@ export default function AdminPacksPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm" onClick={() => setExpanded(expanded === p.id ? null : p.id)}>
+                  <Button variant="ghost" size="sm" onClick={() => setExpanded(expanded === p.id ? null : p.id)} aria-label="Manage pack">
                     <Settings size={16} />
                   </Button>
-                  <Button variant="ghost" size="sm" onClick={() => deletePack(p.id)}>
+                  <Button variant="ghost" size="sm" onClick={() => deletePack(p.id)} aria-label="Delete pack">
                     <Trash2 size={14} className="text-red-600" />
                   </Button>
                 </div>

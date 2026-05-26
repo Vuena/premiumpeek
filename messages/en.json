@@ -74,7 +74,8 @@
     "action_complaint_resolve": "Complaint",
     "action_send_email": "Email",
     "errorTitle": "Admin Panel Error",
-    "errorDesc": "An error occurred in the admin panel. Please try again."
+    "errorDesc": "An error occurred in the admin panel. Please try again.",
+    "loadError": "An error occurred while loading. Please try again."
   },
   "AdminUsers": {
     "metaTitle": "Users | PremiumPeek",
@@ -92,7 +93,8 @@
     "banError": "Operation failed",
     "unbanTitle": "Unban",
     "banTitle": "Ban",
-    "backToAdmin": "Admin Panel"
+    "backToAdmin": "Admin Panel",
+    "loadError": "An error occurred while loading. Please try again."
   },
   "AdminPacks": {
     "metaTitle": "Packs | PremiumPeek",
@@ -124,7 +126,8 @@
     "backToAdmin": "Admin Panel",
     "deleteConfirm": "Are you sure you want to delete this app?",
     "deleteSuccess": "App deleted.",
-    "deleteError": "Delete failed"
+    "deleteError": "Delete failed",
+    "loadError": "An error occurred while loading. Please try again."
   },
   "AdminOrders": {
     "metaTitle": "Orders | PremiumPeek",
@@ -164,7 +167,8 @@
     "tableEmail": "Email",
     "tableSince": "Since",
     "noName": "Unnamed",
-    "noEmail": "-"
+    "noEmail": "-",
+    "loadError": "An error occurred while loading. Please try again."
   },
   "AdminAudit": {
     "metaTitle": "Audit Log | PremiumPeek",
@@ -184,7 +188,8 @@
     "action_pack_remove_member": "Remove Member",
     "action_app_delete": "Delete App",
     "action_complaint_resolve": "Resolve Complaint",
-    "action_send_email": "Send Email"
+    "action_send_email": "Send Email",
+    "loadError": "An error occurred while loading. Please try again."
   },
   "AdminComplaints": {
     "metaTitle": "Complaints | PremiumPeek",
@@ -202,7 +207,8 @@
     "statusResolved": "Resolved",
     "statusDismissed": "Dismissed",
     "empty": "No complaints yet",
-    "backToAdmin": "Admin Panel"
+    "backToAdmin": "Admin Panel",
+    "loadError": "An error occurred while loading. Please try again."
   },
   "AdminEmail": {
     "metaTitle": "Send Email | PremiumPeek",
@@ -225,7 +231,8 @@
     "errorSession": "Session not found",
     "errorSend": "Could not send",
     "errorGeneric": "An error occurred",
-    "backToAdmin": "Admin Panel"
+    "backToAdmin": "Admin Panel",
+    "loadError": "An error occurred while loading. Please try again."
   },
   "Common": {
     "loading": "Loading...",
@@ -447,7 +454,8 @@
     "select": "Select",
     "addNewApp": "Add New App",
     "noAppToJoin": "You have no apps to join the pack. You must add an app first.",
-    "uploadAppModal": "Upload App"
+    "uploadAppModal": "Upload App",
+    "loadError": "An error occurred while loading. Please try again."
   },
   "DashboardApps": {
     "pageTitle": "My Apps | PremiumPeek",
@@ -537,7 +545,8 @@
     "urlHelpStep3": "Create a tester group and save",
     "urlHelpStep4": "Copy the invite link and paste it here",
     "urlHelpExample": "Example link:",
-    "urlHelpWarning": "Warning: The link must start with play.google.com/apps/testing/. Use a test link, not a store link."
+    "urlHelpWarning": "Warning: The link must start with play.google.com/apps/testing/. Use a test link, not a store link.",
+    "loadError": "An error occurred while loading. Please try again."
   },
   "DashboardPacks": {
     "pageTitle": "Pack Details | PremiumPeek",
@@ -584,7 +593,8 @@
     "appsTitle": "Apps ({count})",
     "addApp": "Add App",
     "noAppsDesc": "No apps yet",
-    "noAppsSub": "Apps will be added while the pack is forming"
+    "noAppsSub": "Apps will be added while the pack is forming",
+    "loadError": "An error occurred while loading. Please try again."
   },
   "DashboardTesting": {
     "pageTitle": "Daily Test | PremiumPeek",
@@ -609,7 +619,8 @@
     "complaintTitle": "Report a Complaint",
     "complaintPlaceholder": "Explain the reason for your complaint...",
     "report": "Report",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "loadError": "An error occurred while loading. Please try again."
   },
   "DashboardCredits": {
     "pageTitle": "Credits | PremiumPeek"
@@ -635,6 +646,7 @@
     "becomeTester": "Become a Tester",
     "joinPoolSuccess": "You have joined the tester pool",
     "joinPoolError": "An error occurred while joining the pool",
+    "nameRequired": "Display name is required",
     "accountInfo": "Account Information",
     "email": "Email",
     "membership": "Membership",
@@ -673,7 +685,8 @@
     "paymentReceivedDesc": "Your payment has been received and is awaiting admin approval. Testing will start after approval.",
     "dailyStatus": "Daily Status",
     "testComplete": "Test Complete",
-    "testCompleteDesc": "Your app has been successfully tested. You're ready to publish on Google Play."
+    "testCompleteDesc": "Your app has been successfully tested. You're ready to publish on Google Play.",
+    "loadError": "An error occurred while loading. Please try again."
   },
   "DashboardReports": {
     "pageTitle": "Reports | PremiumPeek",
@@ -706,7 +719,8 @@
     "save": "Save",
     "saveError": "An error occurred while saving: {error}",
     "unknownError": "Unknown error",
-    "appRequired": "Please select an app"
+    "appRequired": "Please select an app",
+    "loadError": "An error occurred while loading. Please try again."
   },
   "DashboardTester": {
     "pageTitle": "Tester Panel | PremiumPeek",
@@ -821,6 +835,7 @@
     "errorDB": "Database connection failed",
     "errorAppName": "App name is required",
     "errorPlayLink": "Google Play link is required",
+    "invalidPlayUrl": "Enter a valid Google Play link",
     "errorTxHash": "TX Hash is required",
     "errorVerify": "Verification failed",
     "errorPostPayment": "Order created but there was an error adding to pack. Contact admin.",
@@ -841,7 +856,9 @@
     "admin": "Admin",
     "user": "User",
     "metaTitle": "Leaderboard | PremiumPeek",
-    "metaDescription": "See the top testers. Discover the most active testers on PremiumPeek leaderboard."
+    "metaDescription": "See the top testers. Discover the most active testers on PremiumPeek leaderboard.",
+    "loadError": "An error occurred while loading. Please try again.",
+    "noData": "No testers found yet."
   },
   "PrivacyPage": {
     "title": "Privacy Policy",

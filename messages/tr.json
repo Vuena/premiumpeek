@@ -74,7 +74,8 @@
     "action_complaint_resolve": "Şikayet",
     "action_send_email": "E-posta",
     "errorTitle": "Admin Paneli Hatası",
-    "errorDesc": "Admin panelinde bir hata oluştu. Lütfen tekrar dene."
+    "errorDesc": "Admin panelinde bir hata oluştu. Lütfen tekrar dene.",
+    "loadError": "Yüklenirken bir hata oluştu. Lütfen tekrar dene."
   },
   "AdminUsers": {
     "metaTitle": "Kullanıcılar | PremiumPeek",
@@ -92,7 +93,8 @@
     "banError": "İşlem başarısız",
     "unbanTitle": "Banı kaldır",
     "banTitle": "Banla",
-    "backToAdmin": "Admin Paneli"
+    "backToAdmin": "Admin Paneli",
+    "loadError": "Yüklenirken bir hata oluştu. Lütfen tekrar dene."
   },
   "AdminPacks": {
     "metaTitle": "Pack'ler | PremiumPeek",
@@ -124,7 +126,8 @@
     "backToAdmin": "Admin Paneli",
     "deleteConfirm": "Uygulamayı silmek istediğine emin misin?",
     "deleteSuccess": "Uygulama silindi.",
-    "deleteError": "Silme işlemi başarısız"
+    "deleteError": "Silme işlemi başarısız",
+    "loadError": "Yüklenirken bir hata oluştu. Lütfen tekrar dene."
   },
   "AdminOrders": {
     "metaTitle": "Siparişler | PremiumPeek",
@@ -164,7 +167,8 @@
     "tableEmail": "E-posta",
     "tableSince": "Katılma",
     "noName": "İsimsiz",
-    "noEmail": "-"
+    "noEmail": "-",
+    "loadError": "Yüklenirken bir hata oluştu. Lütfen tekrar dene."
   },
   "AdminAudit": {
     "metaTitle": "Denetim Kaydı | PremiumPeek",
@@ -184,7 +188,8 @@
     "action_pack_remove_member": "Üye Çıkar",
     "action_app_delete": "Uygulama Sil",
     "action_complaint_resolve": "Şikayet Çöz",
-    "action_send_email": "E-posta Gönder"
+    "action_send_email": "E-posta Gönder",
+    "loadError": "Yüklenirken bir hata oluştu. Lütfen tekrar dene."
   },
   "AdminComplaints": {
     "metaTitle": "Şikayetler | PremiumPeek",
@@ -202,7 +207,8 @@
     "statusResolved": "Atıldı",
     "statusDismissed": "Reddedildi",
     "empty": "Henüz hiç şikayet yok",
-    "backToAdmin": "Admin Paneli"
+    "backToAdmin": "Admin Paneli",
+    "loadError": "Yüklenirken bir hata oluştu. Lütfen tekrar dene."
   },
   "AdminEmail": {
     "metaTitle": "E-posta Gönder | PremiumPeek",
@@ -225,7 +231,8 @@
     "errorSession": "Oturum bulunamadı",
     "errorSend": "Gönderilemedi",
     "errorGeneric": "Bir hata oluştu",
-    "backToAdmin": "Admin Paneli"
+    "backToAdmin": "Admin Paneli",
+    "loadError": "Yüklenirken bir hata oluştu. Lütfen tekrar dene."
   },
   "Common": {
     "loading": "Yükleniyor...",
@@ -447,7 +454,8 @@
     "select": "Seç",
     "addNewApp": "Yeni Uygulama Ekle",
     "noAppToJoin": "Pack'e katılacak uygulaman yok. Önce bir uygulama eklemelisin.",
-    "uploadAppModal": "Uygulama Yükle"
+    "uploadAppModal": "Uygulama Yükle",
+    "loadError": "Yüklenirken bir hata oluştu. Lütfen tekrar dene."
   },
   "DashboardApps": {
     "pageTitle": "Uygulamalarım | PremiumPeek",
@@ -537,7 +545,8 @@
     "urlHelpStep3": "Testçi grubunu oluştur ve kaydet",
     "urlHelpStep4": "Davet linkini kopyala ve buraya yapıştır",
     "urlHelpExample": "Örnek link:",
-    "urlHelpWarning": "Uyarı: Link play.google.com/apps/testing/ ile başlamalıdır. Store linki değil, test linki kullanmalısın."
+    "urlHelpWarning": "Uyarı: Link play.google.com/apps/testing/ ile başlamalıdır. Store linki değil, test linki kullanmalısın.",
+    "loadError": "Yüklenirken bir hata oluştu. Lütfen tekrar dene."
   },
   "DashboardPacks": {
     "pageTitle": "Pack Detay | PremiumPeek",
@@ -584,7 +593,8 @@
     "appsTitle": "Uygulamalar ({count})",
     "addApp": "Uygulama Ekle",
     "noAppsDesc": "Henüz uygulama yok",
-    "noAppsSub": "Pack oluşma aşamasındayken uygulamalar eklenecek"
+    "noAppsSub": "Pack oluşma aşamasındayken uygulamalar eklenecek",
+    "loadError": "Yüklenirken bir hata oluştu. Lütfen tekrar dene."
   },
   "DashboardTesting": {
     "pageTitle": "Günlük Test | PremiumPeek",
@@ -609,7 +619,8 @@
     "complaintTitle": "Şikayet Bildir",
     "complaintPlaceholder": "Şikayet sebebini açıkla...",
     "report": "Bildir",
-    "cancel": "İptal"
+    "cancel": "İptal",
+    "loadError": "Yüklenirken bir hata oluştu. Lütfen tekrar dene."
   },
   "DashboardCredits": {
     "pageTitle": "Krediler | PremiumPeek"
@@ -635,6 +646,7 @@
     "becomeTester": "Testçi Ol",
     "joinPoolSuccess": "Testçi havuzuna katıldın",
     "joinPoolError": "Havuza katılırken hata oluştu",
+    "nameRequired": "Görünen ad zorunludur",
     "accountInfo": "Hesap Bilgileri",
     "email": "E-posta",
     "membership": "Üyelik",
@@ -673,7 +685,8 @@
     "paymentReceivedDesc": "Ödemeniz alınmış ve onay bekliyor. Admin onayından sonra test süreci başlayacak.",
     "dailyStatus": "Günlük Durum",
     "testComplete": "Test Tamamlandı",
-    "testCompleteDesc": "Uygulaman başarıyla test edildi. Artık Google Play'de yayına hazırsın."
+    "testCompleteDesc": "Uygulaman başarıyla test edildi. Artık Google Play'de yayına hazırsın.",
+    "loadError": "Yüklenirken bir hata oluştu. Lütfen tekrar dene."
   },
   "DashboardReports": {
     "pageTitle": "Raporlar | PremiumPeek",
@@ -706,7 +719,8 @@
     "save": "Kaydet",
     "saveError": "Kaydedilirken hata oluştu: {error}",
     "unknownError": "Bilinmeyen hata",
-    "appRequired": "Lütfen bir uygulama seç"
+    "appRequired": "Lütfen bir uygulama seç",
+    "loadError": "Yüklenirken bir hata oluştu. Lütfen tekrar dene."
   },
   "DashboardTester": {
     "pageTitle": "Testçi Paneli | PremiumPeek",
@@ -821,6 +835,7 @@
     "errorDB": "Veritabanı bağlantısı kurulamadı",
     "errorAppName": "Uygulama adı gerekli",
     "errorPlayLink": "Google Play linki gerekli",
+    "invalidPlayUrl": "Geçerli bir Google Play linki gir",
     "errorTxHash": "TX Hash gerekli",
     "errorVerify": "Doğrulama başarısız",
     "errorPostPayment": "Sipariş oluşturuldu ancak pack'e eklenirken hata oluştu. Admin ile iletişime geçin.",
@@ -841,7 +856,9 @@
     "admin": "Admin",
     "user": "Kullanıcı",
     "metaTitle": "Liderlik Tablosu | PremiumPeek",
-    "metaDescription": "En çok test yapan kullanıcıları görün. PremiumPeek liderlik tablosu ile en aktif testçileri keşfedin."
+    "metaDescription": "En çok test yapan kullanıcıları görün. PremiumPeek liderlik tablosu ile en aktif testçileri keşfedin.",
+    "loadError": "Yüklenirken bir hata oluştu. Lütfen tekrar dene.",
+    "noData": "Henüz testçi bulunamadı."
   },
   "PrivacyPage": {
     "title": "Gizlilik Politikası",

@@ -38,6 +38,7 @@ export default function SettingsPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!form.displayName.trim()) { addToast("error", t("nameRequired")); return }
     setLoading(true)
     setSaved(false)
     try {

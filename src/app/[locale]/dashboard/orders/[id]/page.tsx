@@ -12,14 +12,18 @@ import { getOrderById } from "@/lib/firestore"
 import { Loader2, ArrowLeft, Clock, CheckCircle2, CreditCard } from "lucide-react"
 import { usePageMeta } from "@/lib/usePageMeta"
 import type { Order } from "@/types/order"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
+import { useToast } from "@/context/ToastContext"
 
 export default function OrderDetailPage() {
   const t = useTranslations("DashboardOrders")
+  const t2 = useTranslations("PurchasePage")
+  const locale = useLocale()
   usePageMeta({ title: t("orderDetailTitle") })
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const params = useParams()
+  const { toast: addToast } = useToast()
   const [order, setOrder] = useState<Order | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -30,7 +34,7 @@ export default function OrderDetailPage() {
       try {
         await loadOrder()
       } catch (err) {
-        console.error("Failed to load:", err)
+        addToast("error", t("loadError")); console.error("Failed to load:", err)
       } finally {
         setLoading(false)
       }
@@ -60,7 +64,7 @@ export default function OrderDetailPage() {
   if (loading) return <div className="flex items-center justify-center min-h-[40vh]"><Loader2 className="h-8 w-8 animate-spin text-zinc-400" /></div>
   if (!order) return <div className="text-center py-20 text-zinc-500">{t("notFound")}</div>
 
-  const progress = order.totalDays > 0 ? Math.round((order.currentDay / order.totalDays) * 100) : 0
+  const progress = (order.currentDay ?? 0) > 0 && (order.totalDays ?? 0) > 0 ? Math.round(((order.currentDay ?? 0) / (order.totalDays ?? 1)) * 100) : 0
 
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
@@ -104,7 +108,7 @@ export default function OrderDetailPage() {
               </div>
               {order.txHash && (
                 <div className="col-span-2">
-                  <span className="text-zinc-500">TX Hash</span>
+                  <span className="text-zinc-500">{t2("txHash")}</span>
                   <p className="font-mono text-xs break-all">{order.txHash}</p>
                 </div>
               )}
