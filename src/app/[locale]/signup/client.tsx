@@ -23,6 +23,15 @@ export default function SignupClient() {
   const [loading, setLoading] = useState(false)
   const pendingRef = useRef(false)
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const authErr = params.get("auth_error")
+    if (authErr) {
+      setError(decodeURIComponent(authErr))
+      window.history.replaceState({}, "", window.location.pathname)
+    }
+  }, [])
+
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")

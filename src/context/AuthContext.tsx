@@ -85,6 +85,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }).catch((err) => {
       console.error("Redirect sign-in error:", err)
+      const locale = window.location.pathname.split("/")[1]
+      const safeLocale = locale === "__" || !locale ? "en" : locale
+      const msg = encodeURIComponent(err?.code || err?.message || "redirect_error")
+      window.location.href = `/${safeLocale}/login?auth_error=${msg}`
     })
   }, [])
 
