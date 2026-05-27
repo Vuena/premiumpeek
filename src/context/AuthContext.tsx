@@ -44,21 +44,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return
     }
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      console.log("[AUTH] onAuthStateChanged fired. user:", firebaseUser?.uid || "null", "loading before:", loading)
       try {
         if (firebaseUser) {
           const userSnap = await getDoc(doc(getFirestoreDb(), "users", firebaseUser.uid)).catch(() => null)
           if (userSnap?.exists()) {
+            console.log("[AUTH] User doc exists, setting user")
             setUser({ ...firebaseUser, ...userSnap.data() } as AuthUser)
           } else {
+            console.log("[AUTH] No user doc, creating...")
             await createUserDocument(firebaseUser)
             const newSnap = await getDoc(doc(getFirestoreDb(), "users", firebaseUser.uid))
             setUser({ ...firebaseUser, ...newSnap.data() } as AuthUser)
           }
         } else {
+          console.log("[AUTH] No user, setting null")
           setUser(null)
         }
       } catch (err) {
-        console.error("Auth state change error:", err)
+        console.error("[AUTH] onAuthStateChanged error:", err)
         if (firebaseUser) {
           setUser(firebaseUser as AuthUser)
         } else {
@@ -66,24 +70,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       }
       setLoading(false)
+      console.log("[AUTH] Loading set to false")
     })
     return () => unsubscribe()
   }, [])
 
   useEffect(() => {
-    if (!auth) return
+    if (!auth) {
+      console.log("[AUTH] No auth instance, skipping getRedirectResult")
+      return
+    }
+    console.log("[AUTH] Calling getRedirectResult...")
     getRedirectResult(auth).then((result) => {
+      console.log("[AUTH] getRedirectResult resolved. result:", result?.user?.uid || "null")
       if (result) {
         createUserDocument(result.user).then(() => {
           const locale = window.location.pathname.split("/")[1]
           const safeLocale = locale === "__" || !locale ? "en" : locale
+          console.log("[AUTH] Redirect result handled, redirecting to dashboard")
           window.location.href = `/${safeLocale}/dashboard`
         }).catch((err) => {
-          console.error("Redirect sign-in doc error:", err)
+          console.error("[AUTH] Redirect sign-in doc error:", err)
         })
+      } else {
+        console.log("[AUTH] getRedirectResult returned null (no pending redirect)")
       }
     }).catch((err) => {
-      console.error("Redirect sign-in error:", err)
+      console.error("[AUTH] getRedirectResult error:", err, "code:", err?.code, "message:", err?.message)
       const locale = window.location.pathname.split("/")[1]
       const safeLocale = locale === "__" || !locale ? "en" : locale
       const msg = encodeURIComponent(err?.code || err?.message || "redirect_error")
