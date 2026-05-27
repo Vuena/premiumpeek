@@ -30,6 +30,12 @@ export default function LoginClient() {
     }
   }, [])
 
+  useEffect(() => {
+    if (!authLoading && authUser && !error) {
+      router.replace("/dashboard")
+    }
+  }, [authLoading, authUser, error, router])
+
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")

@@ -32,6 +32,12 @@ export default function SignupClient() {
     }
   }, [])
 
+  useEffect(() => {
+    if (!authLoading && authUser && !error) {
+      router.replace("/dashboard")
+    }
+  }, [authLoading, authUser, error, router])
+
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
