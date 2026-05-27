@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import { useAuth } from "@/context/AuthContext"
 import { useRouter, Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
@@ -19,7 +19,6 @@ export default function LoginClient() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
-  const pendingRef = useRef(false)
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -53,20 +52,10 @@ export default function LoginClient() {
   const handleGoogleLogin = async () => {
     setError("")
     setLoading(true)
-    pendingRef.current = true
     try {
-      const result = await signInWithGoogle()
-      pendingRef.current = false
-      if (result === "redirect") {
-        return
-      }
-      if (result === "closed") {
-        setLoading(false)
-        return
-      }
-      router.push("/dashboard")
+      await signInWithGoogle()
     } catch (err: any) {
-      pendingRef.current = false
+      setLoading(false)
       console.error("Google login error:", err, "keys:", Object.keys(err ?? {}), "toString:", err?.toString?.())
       try { console.error("JSON:", JSON.stringify(err)) } catch {}
       let msg = t("errorGoogle")
@@ -78,17 +67,8 @@ export default function LoginClient() {
         msg = err
       }
       setError(msg)
-      setLoading(false)
     }
   }
-
-  useEffect(() => {
-    if (!authLoading && authUser && pendingRef.current) {
-      pendingRef.current = false
-      setLoading(false)
-      router.push("/dashboard")
-    }
-  }, [authLoading, authUser, router])
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">

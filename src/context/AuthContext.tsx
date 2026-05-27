@@ -3,7 +3,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
 import {
   onAuthStateChanged,
-  signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
   signInWithEmailAndPassword,
@@ -22,7 +21,7 @@ interface AuthUser extends User {
 interface AuthContextType {
   user: AuthUser | null
   loading: boolean
-  signInWithGoogle: () => Promise<"popup" | "redirect" | "closed">
+  signInWithGoogle: () => Promise<void>
   signInWithEmail: (email: string, password: string) => Promise<void>
   signUpWithEmail: (email: string, password: string, name: string) => Promise<void>
   logout: () => Promise<void>
@@ -115,29 +114,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return auth
   }
 
-  const signInWithGoogle = async (): Promise<"popup" | "redirect" | "closed"> => {
+  const signInWithGoogle = async (): Promise<void> => {
     const provider = new GoogleAuthProvider()
     const a = getFirebaseAuth()
-    try {
-      const result = await Promise.race([
-        signInWithPopup(a, provider),
-        new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error("POPUP_TIMEOUT")), 20000)
-        ),
-      ])
-      await createUserDocument(result.user)
-      return "popup"
-    } catch (err: any) {
-      if (err?.code === "auth/popup-blocked" || err?.message === "POPUP_TIMEOUT") {
-        setLoading(true)
-        await signInWithRedirect(a, provider)
-        return "redirect"
-      }
-      if (err?.code === "auth/popup-closed-by-user") {
-        return "closed"
-      }
-      throw err
-    }
+    await signInWithRedirect(a, provider)
   }
 
   const signInWithEmail = async (email: string, password: string) => {
