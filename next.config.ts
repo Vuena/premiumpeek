@@ -10,6 +10,14 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/__/auth/:path*",
+        destination: "https://testersin-app.firebaseapp.com/__/auth/:path*",
+      },
+    ]
+  },
 }
 
 export default withNextIntl(nextConfig)

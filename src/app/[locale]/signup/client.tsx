@@ -57,7 +57,15 @@ export default function SignupClient() {
     setError("")
     setLoading(true)
     try {
-      await signInWithGoogle()
+      const result = await signInWithGoogle()
+      if (result === "redirect") {
+        return
+      }
+      if (result === "closed") {
+        setLoading(false)
+        return
+      }
+      router.push("/dashboard")
     } catch (err: any) {
       setLoading(false)
       console.error("Google signup error:", err, "keys:", Object.keys(err ?? {}), "toString:", err?.toString?.())

@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
 import {
   onAuthStateChanged,
+  signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
   signInWithEmailAndPassword,
@@ -21,7 +22,7 @@ interface AuthUser extends User {
 interface AuthContextType {
   user: AuthUser | null
   loading: boolean
-  signInWithGoogle: () => Promise<void>
+  signInWithGoogle: () => Promise<"popup" | "redirect" | "closed">
   signInWithEmail: (email: string, password: string) => Promise<void>
   signUpWithEmail: (email: string, password: string, name: string) => Promise<void>
   logout: () => Promise<void>
@@ -127,10 +128,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return auth
   }
 
-  const signInWithGoogle = async (): Promise<void> => {
+  const signInWithGoogle = async (): Promise<"popup" | "redirect" | "closed"> => {
     const provider = new GoogleAuthProvider()
     const a = getFirebaseAuth()
-    await signInWithRedirect(a, provider)
+    try {
+      const result = await signInWithPopup(a, provider)
+      await createUserDocument(result.user)
+      return "popup"
+    } catch (err: any) {
+      if (err?.code === "auth/popup-blocked") {
+        setLoading(true)
+        await signInWithRedirect(a, provider)
+        return "redirect"
+      }
+      if (err?.code === "auth/popup-closed-by-user") {
+        return "closed"
+      }
+      throw err
+    }
   }
 
   const signInWithEmail = async (email: string, password: string) => {

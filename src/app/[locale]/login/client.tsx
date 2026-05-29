@@ -53,7 +53,15 @@ export default function LoginClient() {
     setError("")
     setLoading(true)
     try {
-      await signInWithGoogle()
+      const result = await signInWithGoogle()
+      if (result === "redirect") {
+        return
+      }
+      if (result === "closed") {
+        setLoading(false)
+        return
+      }
+      router.push("/dashboard")
     } catch (err: any) {
       setLoading(false)
       console.error("Google login error:", err, "keys:", Object.keys(err ?? {}), "toString:", err?.toString?.())
