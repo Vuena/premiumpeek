@@ -3,23 +3,22 @@
 import { useEffect, useState } from "react"
 import { signInWithCredential, GoogleAuthProvider } from "firebase/auth"
 import { auth } from "@/lib/firebase"
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore"
-import { db } from "@/lib/firebase"
+import { useRouter } from "@/i18n/navigation"
 import { Loader2 } from "lucide-react"
 
 export default function AuthCallbackClient() {
-  const [status, setStatus] = useState("redirecting...")
+  const router = useRouter()
+  const [status, setStatus] = useState("Yönlendiriliyor...")
 
   useEffect(() => {
-    if (!auth || !db) {
-      setStatus("Firebase not initialized")
+    if (!auth) {
+      setStatus("Firebase başlatılamadı")
       return
     }
 
     const hash = window.location.hash.replace(/^#/, "")
     if (!hash) {
-      const locale = window.location.pathname.split("/")[1] || "tr"
-      window.location.href = `/${locale}/login`
+      router.replace("/login")
       return
     }
 
@@ -28,37 +27,20 @@ export default function AuthCallbackClient() {
     const accessToken = params.get("access_token")
 
     if (!idToken) {
-      const locale = window.location.pathname.split("/")[1] || "tr"
-      window.location.href = `/${locale}/login?auth_error=missing_id_token`
+      router.replace("/login?auth_error=missing_id_token")
       return
     }
 
     const credential = GoogleAuthProvider.credential(idToken, accessToken || undefined)
 
     signInWithCredential(auth, credential)
-      .then(async (result) => {
-        const userRef = doc(db!, "users", result.user.uid)
-        const userSnap = await getDoc(userRef)
-        if (!userSnap.exists()) {
-          await setDoc(userRef, {
-            email: result.user.email,
-            displayName: result.user.displayName || "",
-            photoURL: result.user.photoURL || "",
-            totalTested: 0,
-            totalPosted: 0,
-            isTester: false,
-            role: "user",
-            createdAt: serverTimestamp(),
-          })
-        }
-        const locale = window.location.pathname.split("/")[1] || "tr"
-        window.location.href = `/${locale}/dashboard`
+      .then(() => {
+        router.replace("/dashboard")
       })
       .catch((err) => {
         console.error("[AUTH] signInWithCredential error:", err)
-        const locale = window.location.pathname.split("/")[1] || "tr"
         const msg = encodeURIComponent(err?.code || err?.message || "credential_error")
-        window.location.href = `/${locale}/login?auth_error=${msg}`
+        router.replace(`/login?auth_error=${msg}`)
       })
   }, [])
 
