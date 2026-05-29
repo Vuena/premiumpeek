@@ -3,8 +3,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
 import {
   onAuthStateChanged,
-  signInWithRedirect,
-  getRedirectResult,
+  signInWithCredential,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
@@ -44,21 +43,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return
     }
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      console.log("[AUTH] onAuthStateChanged fired. user:", firebaseUser?.uid || "null", "loading before:", loading)
+      console.log("[AUTH] onAuthStateChanged fired. user:", firebaseUser?.uid || "null")
       try {
         if (firebaseUser) {
           const userSnap = await getDoc(doc(getFirestoreDb(), "users", firebaseUser.uid)).catch(() => null)
           if (userSnap?.exists()) {
-            console.log("[AUTH] User doc exists, setting user")
             setUser({ ...firebaseUser, ...userSnap.data() } as AuthUser)
           } else {
-            console.log("[AUTH] No user doc, creating...")
             await createUserDocument(firebaseUser)
             const newSnap = await getDoc(doc(getFirestoreDb(), "users", firebaseUser.uid))
             setUser({ ...firebaseUser, ...newSnap.data() } as AuthUser)
           }
         } else {
-          console.log("[AUTH] No user, setting null")
           setUser(null)
         }
       } catch (err) {
@@ -70,38 +66,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       }
       setLoading(false)
-      console.log("[AUTH] Loading set to false")
     })
     return () => unsubscribe()
-  }, [])
-
-  useEffect(() => {
-    if (!auth) {
-      console.log("[AUTH] No auth instance, skipping getRedirectResult")
-      return
-    }
-    console.log("[AUTH] Calling getRedirectResult...")
-    getRedirectResult(auth).then((result) => {
-      console.log("[AUTH] getRedirectResult resolved. result:", result?.user?.uid || "null")
-      if (result) {
-        createUserDocument(result.user).then(() => {
-          const locale = window.location.pathname.split("/")[1]
-          const safeLocale = locale === "__" || !locale ? "en" : locale
-          console.log("[AUTH] Redirect result handled, redirecting to dashboard")
-          window.location.href = `/${safeLocale}/dashboard`
-        }).catch((err) => {
-          console.error("[AUTH] Redirect sign-in doc error:", err)
-        })
-      } else {
-        console.log("[AUTH] getRedirectResult returned null (no pending redirect)")
-      }
-    }).catch((err) => {
-      console.error("[AUTH] getRedirectResult error:", err, "code:", err?.code, "message:", err?.message)
-      const locale = window.location.pathname.split("/")[1]
-      const safeLocale = locale === "__" || !locale ? "en" : locale
-      const msg = encodeURIComponent(err?.code || err?.message || "redirect_error")
-      window.location.href = `/${safeLocale}/login?auth_error=${msg}`
-    })
   }, [])
 
   const createUserDocument = async (user: User, name?: string) => {
@@ -128,9 +94,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signInWithGoogle = async (): Promise<void> => {
-    const provider = new GoogleAuthProvider()
-    const a = getFirebaseAuth()
-    await signInWithRedirect(a, provider)
+    const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY
+    if (!apiKey) throw new Error("Missing Firebase API key")
+
+    const locale = window.location.pathname.split("/")[1]
+    const safeLocale = locale === "__" || !locale ? "en" : locale
+    const callbackUrl = `${window.location.origin}/${safeLocale}/auth/callback`
+
+    const authHandlerUrl = `https://testersin-app.firebaseapp.com/__/auth/handler?apiKey=${apiKey}&providerId=google.com&authType=signInWithRedirect&redirectUrl=${encodeURIComponent(callbackUrl)}`
+
+    window.location.href = authHandlerUrl
   }
 
   const signInWithEmail = async (email: string, password: string) => {
