@@ -53,27 +53,15 @@ export default function LoginClient() {
     setError("")
     setLoading(true)
     try {
-      const result = await signInWithGoogle()
-      if (result === "redirect") {
-        return
-      }
-      if (result === "closed") {
-        setLoading(false)
-        return
-      }
-      router.push("/dashboard")
+      await signInWithGoogle()
     } catch (err: any) {
       setLoading(false)
       console.error("Google login error:", err, "keys:", Object.keys(err ?? {}), "toString:", err?.toString?.())
       try { console.error("JSON:", JSON.stringify(err)) } catch {}
       let msg = t("errorGoogle")
-      if (err?.code && err?.message) {
-        msg = `${err.code}: ${err.message}`
-      } else if (err?.message) {
-        msg = err.message
-      } else if (typeof err === "string") {
-        msg = err
-      }
+      if (err?.code && err?.message) msg = `${err.code}: ${err.message}`
+      else if (err?.message) msg = err.message
+      else if (typeof err === "string") msg = err
       setError(msg)
     }
   }

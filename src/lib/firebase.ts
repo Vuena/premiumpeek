@@ -12,14 +12,6 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 }
 
-// Production'da authDomain'i mevcut hostname ile değiştir (same-origin popup için)
-if (typeof window !== "undefined") {
-  const host = window.location.hostname
-  if (host !== "localhost" && host !== "127.0.0.1") {
-    firebaseConfig.authDomain = host
-  }
-}
-
 const hasConfig = firebaseConfig.apiKey && firebaseConfig.projectId
 
 let app: import("firebase/app").FirebaseApp | undefined
